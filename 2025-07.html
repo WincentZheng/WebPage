@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【C專案 維護合約】截至目前達成狀況</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .header {
+            margin-bottom: 24px;
+        }
+        
+        .header-title {
+            background-color: #1d4ed8;
+            color: white;
+            padding: 16px;
+            border-radius: 8px 8px 0 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .status-section {
+            background-color: white;
+            padding: 16px;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+        
+        .status-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .legend-section {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        
+        .color-guide {
+            background-color: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+        
+        .color-guide h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .color-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+        }
+        
+        .color-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .color-square {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .chart-card {
+            background-color: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .chart-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .legend-section {
+                margin-left: 0;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 12px;
+        }
+        
+        .data-table th,
+        .data-table td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .data-table th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 標題與狀態指示器 -->
+        <div class="header">
+            <div class="header-title">
+                【C專案 維護合約】截至目前達成狀況
+            </div>
+            <div class="status-section">
+                <div class="status-item">
+                    <div class="status-dot" style="background-color: #f59e0b;"></div>
+                    <span class="status-text">FN業務六部</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot" style="background-color: #10b981;"></div>
+                    <span class="status-text">台中</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot" style="background-color: #10b981;"></div>
+                    <span class="status-text">高雄</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot" style="background-color: #10b981;"></div>
+                    <span class="status-text">全省合計</span>
+                </div>
+                
+                <div class="legend-section">
+                    <span>圖示說明</span>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #10b981;"></div>
+                        <span>達成 (≥100%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #f59e0b;"></div>
+                        <span>接近達成 (90-99.999%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background-color: #ef4444;"></div>
+                        <span>未達成 (<90%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 部門顏色對照說明 -->
+        <div class="color-guide">
+            <h2>部門顏色對照說明</h2>
+            <div class="color-items">
+                <div class="color-item">
+                    <div class="color-square" style="background-color: #3b82f6;"></div>
+                    <span>FN（企業服務業務六部）</span>
+                </div>
+                <div class="color-item">
+                    <div class="color-square" style="background-color: #10b981;"></div>
+                    <span>FT（台中分公司）</span>
+                </div>
+                <div class="color-item">
+                    <div class="color-square" style="background-color: #f97316;"></div>
+                    <span>FX（高雄分公司）</span>
+                </div>
+                <div class="color-item">
+                    <div class="color-square" style="background-color: #ea580c;"></div>
+                    <span>全公司（合計）</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 圖表區域 -->
+        <div class="charts-grid">
+            <!-- 截至目前達成狀況 -->
+            <div class="chart-card">
+                <h2 class="chart-title">C專案 截至目前達成狀況</h2>
+                <p class="chart-subtitle">單位：萬元</p>
+                <div class="chart-container">
+                    <canvas id="currentChart"></canvas>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>部門</th>
+                            <th>實際金額</th>
+                            <th>預算金額</th>
+                            <th>達成率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FN</td>
+                            <td>3,168.39</td>
+                            <td>3,306.13</td>
+                            <td>95.83%</td>
+                        </tr>
+                        <tr>
+                            <td>FT</td>
+                            <td>2,038.57</td>
+                            <td>1,857.27</td>
+                            <td>109.76%</td>
+                        </tr>
+                        <tr>
+                            <td>FX</td>
+                            <td>2,189.67</td>
+                            <td>2,068.25</td>
+                            <td>105.87%</td>
+                        </tr>
+                        <tr style="font-weight: bold; background-color: #fef3c7;">
+                            <td>全公司</td>
+                            <td>7,418.09</td>
+                            <td>7,263.20</td>
+                            <td>102.13%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 截至目前達成率 -->
+            <div class="chart-card">
+                <h2 class="chart-title">C專案 截至目前達成率</h2>
+                <div class="chart-container">
+                    <canvas id="currentRateChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 全年度達成狀況 -->
+            <div class="chart-card">
+                <h2 class="chart-title">C專案 全年度達成狀況</h2>
+                <p class="chart-subtitle">單位：萬元</p>
+                <div class="chart-container">
+                    <canvas id="yearlyChart"></canvas>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>部門</th>
+                            <th>實際金額</th>
+                            <th>預算金額</th>
+                            <th>達成率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FN</td>
+                            <td>3,168.39</td>
+                            <td>6,529.92</td>
+                            <td>48.52%</td>
+                        </tr>
+                        <tr>
+                            <td>FT</td>
+                            <td>2,038.57</td>
+                            <td>3,819.44</td>
+                            <td>53.37%</td>
+                        </tr>
+                        <tr>
+                            <td>FX</td>
+                            <td>2,189.67</td>
+                            <td>4,266.40</td>
+                            <td>51.32%</td>
+                        </tr>
+                        <tr style="font-weight: bold; background-color: #fef3c7;">
+                            <td>全公司</td>
+                            <td>7,418.09</td>
+                            <td>14,676.35</td>
+                            <td>50.55%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 全年度達成率 -->
+            <div class="chart-card">
+                <h2 class="chart-title">C專案 全年度達成率</h2>
+                <div class="chart-container">
+                    <canvas id="yearlyRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 部門顏色定義
+        const departmentColors = {
+            'FN': '#3b82f6',
+            'FT': '#10b981',
+            'FX': '#f97316',
+            '全公司': '#ea580c'
+        };
+
+        // 數據定義
+        const currentData = [
+            { name: 'FN', actual: 3168.39, budget: 3306.13, rate: 95.83 },
+            { name: 'FT', actual: 2038.57, budget: 1857.27, rate: 109.76 },
+            { name: 'FX', actual: 2189.67, budget: 2068.25, rate: 105.87 },
+            { name: '全公司', actual: 7418.09, budget: 7263.20, rate: 102.13 }
+        ];
+
+        const yearlyData = [
+            { name: 'FN', actual: 3168.39, budget: 6529.92, rate: 48.52 },
+            { name: 'FT', actual: 2038.57, budget: 3819.44, rate: 53.37 },
+            { name: 'FX', actual: 2189.67, budget: 4266.40, rate: 51.32 },
+            { name: '全公司', actual: 7418.09, budget: 14676.35, rate: 50.55 }
+        ];
+
+        // Chart.js 默認設定
+        Chart.defaults.font.family = "'Microsoft JhengHei', Arial, sans-serif";
+        Chart.defaults.font.size = 12;
+
+        // 截至目前達成狀況圖表
+        const currentChart = new Chart(document.getElementById('currentChart'), {
+            type: 'bar',
+            data: {
+                labels: currentData.map(d => d.name),
+                datasets: [
+                    {
+                        label: '實際金額',
+                        data: currentData.map(d => d.actual),
+                        backgroundColor: currentData.map(d => departmentColors[d.name]),
+                        borderWidth: 1
+                    },
+                    {
+                        label: '預算金額',
+                        data: currentData.map(d => d.budget),
+                        backgroundColor: '#eab308',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' 萬元';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 截至目前達成率圖表
+        const currentRateChart = new Chart(document.getElementById('currentRateChart'), {
+            type: 'bar',
+            data: {
+                labels: currentData.map(d => d.name),
+                datasets: [{
+                    label: '達成率',
+                    data: currentData.map(d => d.rate),
+                    backgroundColor: currentData.map(d => departmentColors[d.name]),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 120,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '達成率: ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 全年度達成狀況圖表
+        const yearlyChart = new Chart(document.getElementById('yearlyChart'), {
+            type: 'bar',
+            data: {
+                labels: yearlyData.map(d => d.name),
+                datasets: [
+                    {
+                        label: '實際金額',
+                        data: yearlyData.map(d => d.actual),
+                        backgroundColor: yearlyData.map(d => departmentColors[d.name]),
+                        borderWidth: 1
+                    },
+                    {
+                        label: '預算金額',
+                        data: yearlyData.map(d => d.budget),
+                        backgroundColor: '#eab308',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' 萬元';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 全年度達成率圖表
+        const yearlyRateChart = new Chart(document.getElementById('yearlyRateChart'), {
+            type: 'bar',
+            data: {
+                labels: yearlyData.map(d => d.name),
+                datasets: [{
+                    label: '達成率',
+                    data: yearlyData.map(d => d.rate),
+                    backgroundColor: yearlyData.map(d => departmentColors[d.name]),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 60,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '達成率: ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
