@@ -2294,49 +2294,16 @@
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
   <script>
-    // 載入 xlsx-js-style 以支援樣式（如果標準版本已載入，則覆蓋）
+    // 確認 xlsx-js-style 已載入
     (function() {
-      function loadXlsxStyle() {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/xlsx-js-style@1.4.0/dist/xlsx.full.min.js';
-        script.async = false; // 同步載入以確保覆蓋
-        script.onload = function() {
-          console.log('xlsx-js-style loaded successfully');
-          if (typeof XLSX !== 'undefined') {
-            window._xlsxLoaded = true;
-            console.log('XLSX object:', XLSX);
-          } else {
-            console.error('XLSX still undefined after loading xlsx-js-style');
-          }
-        };
-        script.onerror = function() {
-          console.error('Failed to load xlsx-js-style from unpkg, trying jsdelivr...');
-          const script2 = document.createElement('script');
-          script2.src = 'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.4.0/dist/xlsx.full.min.js';
-          script2.async = false;
-          script2.onload = function() {
-            console.log('xlsx-js-style loaded from jsdelivr');
-            if (typeof XLSX !== 'undefined') {
-              window._xlsxLoaded = true;
-              console.log('XLSX object:', XLSX);
-            }
-          };
-          script2.onerror = function() {
-            console.error('Failed to load xlsx-js-style from all CDNs, using standard XLSX');
-            window._xlsxLoaded = false;
-          };
-          document.head.appendChild(script2);
-        };
-        document.head.appendChild(script);
-      }
-      
-      // 等待 jszip 載入完成後再載入 xlsx-js-style
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', loadXlsxStyle);
+      if (typeof XLSX !== 'undefined') {
+        window._xlsxStyleLoaded = true;
+        console.log('xlsx-js-style loaded successfully');
       } else {
-        loadXlsxStyle();
+        window._xlsxStyleLoaded = false;
+        console.error('xlsx-js-style failed to load');
       }
     })();
   </script>
@@ -4636,29 +4603,17 @@
     
     // 匯出規格預覽為 Excel
     async function exportSpecToExcel() {
-      console.log('匯出 Excel 按鈕被點擊');
-      
       // 檢查 XLSX 是否已載入
       if (typeof XLSX === 'undefined') {
         showToast("Excel 匯出功能載入中，請稍候再試...");
-        console.error('XLSX library is not defined, attempting to load...');
-        
-        // 嘗試動態載入
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/xlsx-js-style@1.4.0/dist/xlsx.full.min.js';
-        script.onload = async function() {
-          console.log('xlsx-js-style loaded, retrying export...');
-          await exportSpecToExcel(); // 重新嘗試
-        };
-        script.onerror = function() {
-          showToast("Excel 匯出功能載入失敗，請檢查網路連線");
-          console.error('Failed to load xlsx-js-style');
-        };
-        document.head.appendChild(script);
-        return;
+        console.error('XLSX library is not defined');
+        // 等待一下讓腳本有時間載入
+        await new Promise(resolve => setTimeout(resolve, 500));
+        if (typeof XLSX === 'undefined') {
+          showToast("Excel 匯出功能載入失敗，請重新整理頁面");
+          return;
+        }
       }
-      
-      console.log('XLSX 已載入，開始匯出流程');
       
       const layout = collectLayout();
       const panels = layout.layout.panels;
@@ -4674,7 +4629,7 @@
       // 創建工作簿
       const wb = XLSX.utils.book_new();
       
-      // 收集所有面板的資料，合併到一個工作表
+      // 收集所有面板和頁籤的數據到一個數組中
       const allPanelData = [];
       
       // 按面板順序處理
@@ -4682,12 +4637,7 @@
         const isGrid = panel.type === "grid-panel";
         const hasTabs = panel.tabs && panel.tabs.length > 0;
         
-        // 如果不是第一個面板，在前面添加空行分隔
-        if (panelIndex > 0) {
-          allPanelData.push([]); // 空行分隔
-        }
-        
-        // 如果是 [區塊面板(有頁籤)]，收集所有頁籤的資料
+        // 如果是 [區塊面板(有頁籤)]，按頁籤順序處理
         if (hasTabs && !isGrid) {
           panel.tabs.forEach((tab, tabIndex) => {
             const tabTitle = tab.title || "頁籤";
@@ -4729,16 +4679,16 @@
               }
             });
             
-            // 生成該頁籤的工作表數據
-            const tabSheetData = generateSheetData(tableTitle, processedFields);
+            // 生成工作表數據
+            const sheetData = generateSheetData(tableTitle, processedFields);
             
-            // 如果不是第一個頁籤，在前面添加空行分隔
-            if (tabIndex > 0) {
+            // 如果不是第一個面板/頁籤，添加空行分隔
+            if (allPanelData.length > 0) {
               allPanelData.push([]); // 空行分隔
             }
             
-            // 添加該頁籤的資料
-            allPanelData.push(...tabSheetData);
+            // 將數據添加到總數組中
+            allPanelData.push(...sheetData);
           });
         } else {
           // 無頁籤的面板或 GRID 面板
@@ -4785,12 +4735,17 @@
           // 生成工作表數據
           const sheetData = generateSheetData(tableTitle, fields);
           
-          // 添加該面板的資料
+          // 如果不是第一個面板/頁籤，添加空行分隔
+          if (allPanelData.length > 0) {
+            allPanelData.push([]); // 空行分隔
+          }
+          
+          // 將數據添加到總數組中
           allPanelData.push(...sheetData);
         }
       });
       
-      // 將所有面板的資料合併到一個工作表
+      // 創建單一工作表，包含所有數據
       const ws = XLSX.utils.aoa_to_sheet(allPanelData);
       
       // 設置列寬
@@ -4807,99 +4762,93 @@
         { wch: 20 }  // 其他說明
       ];
       
-      // 應用樣式和邊框（合併所有面板的情況）
+      // 應用樣式和邊框（需要識別每個標題行和表頭行）
       applyExcelStylesForMergedSheet(ws, allPanelData);
       
-      // 創建單一工作表
-      XLSX.utils.book_append_sheet(wb, ws, "欄位規格");
+      // 添加單一工作表到工作簿（使用功能名稱作為頁籤名稱）
+      const sheetName = documentTitle.substring(0, 31); // Excel 工作表名稱限制 31 個字符
+      XLSX.utils.book_append_sheet(wb, ws, sheetName);
       
-      // 匯出檔案（使用檔案選擇對話框）
-      console.log('準備匯出檔案，檔名:', fileName);
+      // 匯出檔案（使用檔案選擇對話框並記憶路徑）
       await saveExcelFile(wb, fileName);
     }
     
     // 儲存 Excel 檔案（使用檔案選擇對話框並記憶路徑）
     async function saveExcelFile(wb, defaultFileName) {
-      console.log('開始匯出 Excel 檔案:', defaultFileName);
-      
       try {
         // 檢查是否支援 File System Access API
-        const supportsFileSystemAccess = 'showSaveFilePicker' in window;
-        console.log('File System Access API 支援:', supportsFileSystemAccess);
-        
-        if (supportsFileSystemAccess) {
-          console.log('嘗試使用 File System Access API...');
-          
+        if ('showSaveFilePicker' in window) {
           // 嘗試從 IndexedDB 讀取上次的目錄 handle
-          let startIn = undefined; // 使用 undefined 而不是 null
+          let startIn = undefined;
           try {
             const savedHandle = await getSavedDirectoryHandle();
             if (savedHandle) {
               startIn = savedHandle;
-              console.log('找到記憶的目錄');
             }
           } catch (e) {
             console.log('無法讀取記憶的目錄:', e);
           }
           
-          try {
-            // 使用 File System Access API（會自動記住上次選擇的目錄）
-            console.log('開啟檔案選擇對話框...');
-            
-            // 構建選項對象，只有當 startIn 有效時才包含它
-            const pickerOptions = {
-              suggestedName: defaultFileName + '.xlsx',
-              types: [{
-                description: 'Excel 檔案',
-                accept: {
-                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
-                }
-              }]
-            };
-            
-            // 只有當 startIn 不是 undefined 時才添加它
-            if (startIn !== undefined) {
-              pickerOptions.startIn = startIn;
-            }
-            
-            const fileHandle = await window.showSaveFilePicker(pickerOptions);
-            
-            console.log('檔案選擇完成，開始寫入檔案...');
-            
-            // 將工作簿轉換為二進位資料
-            const excelBuffer = XLSX.write(wb, { 
-              type: 'array', 
-              bookType: 'xlsx' 
-            });
-            
-            // 寫入檔案
-            const writable = await fileHandle.createWritable();
-            await writable.write(new Blob([excelBuffer], { 
-              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-            }));
-            await writable.close();
-            
-            console.log('檔案寫入完成');
-            showToast("Excel 檔案已匯出");
-            return;
-          } catch (pickerError) {
-            // 如果用戶取消選擇，不顯示錯誤
-            if (pickerError.name === 'AbortError') {
-              console.log('用戶取消檔案選擇');
-              return;
-            }
-            
-            // 其他錯誤：降級到傳統下載方式
-            console.warn('File System Access API 錯誤，降級到傳統下載方式:', pickerError);
-            throw pickerError; // 重新拋出錯誤，讓外層 catch 處理
+          // 構建選項對象
+          const pickerOptions = {
+            suggestedName: defaultFileName + '.xlsx',
+            types: [{
+              description: 'Excel 檔案',
+              accept: {
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
+              }
+            }]
+          };
+          
+          // 只有當 startIn 不是 undefined 時才添加它
+          if (startIn !== undefined) {
+            pickerOptions.startIn = startIn;
           }
+          
+          // 使用 File System Access API
+          const fileHandle = await window.showSaveFilePicker(pickerOptions);
+          
+          // 將工作簿轉換為二進位資料（使用 xlsx-js-style 的 write 方法以保留樣式）
+          const excelBuffer = XLSX.write(wb, { 
+            type: 'array', 
+            bookType: 'xlsx',
+            cellStyles: true // 確保樣式被寫入
+          });
+          
+          // 寫入檔案
+          const writable = await fileHandle.createWritable();
+          await writable.write(new Blob([excelBuffer], { 
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+          }));
+          await writable.close();
+          
+          // 嘗試記憶檔案所在的目錄
+          // 注意：File System Access API 的 FileSystemFileHandle 不支援 getParent() 方法
+          // 但我們可以通過請求目錄權限來記憶目錄
+          try {
+            // 方法：在用戶選擇檔案後，請求選擇目錄來記憶路徑
+            // 但這會額外彈出對話框，影響用戶體驗
+            // 替代方案：使用瀏覽器的自動記憶功能（大多數瀏覽器會自動記住上次選擇的目錄）
+            
+            // 實際上，現代瀏覽器（Chrome/Edge）會自動記住 showSaveFilePicker 上次選擇的目錄
+            // 所以我們不需要手動記憶，瀏覽器會自動處理
+            console.log('檔案已匯出，瀏覽器會自動記住上次選擇的目錄');
+            
+            // 如果未來需要更精確的控制，可以考慮：
+            // 1. 在首次匯出時，額外請求目錄權限（使用 showDirectoryPicker）
+            // 2. 將目錄 handle 保存到 IndexedDB
+            // 3. 下次匯出時使用保存的目錄 handle 作為 startIn 選項
+          } catch (e) {
+            console.log('無法記憶目錄:', e);
+            // 即使失敗也不影響匯出功能
+          }
+          
+          showToast("Excel 檔案已匯出");
+        } else {
+          // 降級方案：使用傳統下載方式
+          XLSX.writeFile(wb, `${defaultFileName}.xlsx`);
+          showToast("Excel 檔案已下載");
         }
-        
-        // 降級方案：使用傳統下載方式
-        console.log('使用傳統下載方式...');
-        XLSX.writeFile(wb, `${defaultFileName}.xlsx`);
-        showToast("Excel 檔案已下載");
-        
       } catch (error) {
         // 如果用戶取消選擇，不顯示錯誤
         if (error.name === 'AbortError') {
@@ -4908,20 +4857,13 @@
         }
         
         // 其他錯誤：降級到傳統下載方式
-        console.error('匯出過程發生錯誤:', error);
-        console.error('錯誤詳情:', {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        });
-        
+        console.warn('File System Access API 失敗，使用傳統下載方式:', error);
         try {
-          console.log('嘗試使用傳統下載方式作為備用方案...');
           XLSX.writeFile(wb, `${defaultFileName}.xlsx`);
-          showToast("Excel 檔案已下載（使用備用方式）");
+          showToast("Excel 檔案已下載");
         } catch (downloadError) {
           showToast("匯出失敗：" + downloadError.message);
-          console.error('備用下載方式也失敗:', downloadError);
+          console.error('匯出失敗:', downloadError);
         }
       }
     }
@@ -4965,7 +4907,7 @@
       });
     }
     
-    // 儲存目錄 handle 到 IndexedDB（可選功能：讓用戶選擇並記憶目錄）
+    // 儲存目錄 handle 到 IndexedDB
     async function saveDirectoryHandle(handle) {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open('ExcelExportDB', 1);
@@ -4975,9 +4917,14 @@
           const db = request.result;
           const transaction = db.transaction(['handles'], 'readwrite');
           const store = transaction.objectStore('handles');
+          
+          // 儲存目錄 handle
           const putRequest = store.put(handle, 'lastDirectory');
           
-          putRequest.onsuccess = () => resolve();
+          putRequest.onsuccess = () => {
+            console.log('目錄 handle 已儲存到 IndexedDB');
+            resolve();
+          };
           putRequest.onerror = () => reject(putRequest.error);
         };
         
@@ -4996,7 +4943,7 @@
       
       // 標題行
       data.push([tableTitle]);
-      data.push([]); // 空行
+      // 移除空行，標題行後直接接表頭
       
       // 表頭
       data.push([
@@ -5031,8 +4978,9 @@
           const readonly = field.readonly ? "Y" : "";
           const primaryKey = field.primaryKey ? "Y" : "";
           const selectOptions = field.selectOptions || "";
-          const relationField = field.relationField || "";
-          const otherNote = field.otherNote || "N/A";
+          // 保留換行符號（\n）用於 Excel 顯示
+          const relationField = (field.relationField || "").replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          const otherNote = (field.otherNote || "N/A").replace(/\r\n/g, '\n').replace(/\r/g, '\n');
           
           data.push([
             fieldName,
@@ -5052,10 +5000,163 @@
       return data;
     }
     
-    // 應用 Excel 樣式和邊框
-    function applyExcelStyles(ws, totalRows) {
+    // 應用 Excel 樣式和邊框（用於合併的工作表）
+    function applyExcelStylesForMergedSheet(ws, allData) {
+      // 檢查是否支援樣式（xlsx-js-style 已載入）
+      if (!window._xlsxStyleLoaded || typeof XLSX === 'undefined') {
+        console.warn('xlsx-js-style not loaded, skipping styles');
+        return;
+      }
+      
       const range = XLSX.utils.decode_range(ws['!ref']);
       const numCols = range.e.c + 1;
+      const totalRows = allData.length;
+      
+      // 設置行高（預設 30，約 40 像素）
+      if (!ws['!rows']) ws['!rows'] = [];
+      for (let row = 0; row < totalRows; row++) {
+        if (!ws['!rows'][row]) ws['!rows'][row] = {};
+        ws['!rows'][row].hpt = 30;
+      }
+      
+      // 遍歷所有行，識別標題行、表頭行和資料行
+      let currentRow = 0;
+      while (currentRow < totalRows) {
+        const rowData = allData[currentRow];
+        
+        // 跳過空行
+        if (!rowData || rowData.length === 0 || (rowData.length === 1 && !rowData[0])) {
+          currentRow++;
+          continue;
+        }
+        
+        // 檢查是否為標題行（第一個單元格有值，且不是表頭）
+        const isTitleRow = rowData[0] && 
+                          rowData[0] !== "欄位名稱" && 
+                          (currentRow === 0 || !allData[currentRow - 1] || allData[currentRow - 1].length === 0 || !allData[currentRow - 1][0]);
+        
+        if (isTitleRow) {
+          // 標題行樣式
+          const titleRow = currentRow;
+          
+          // 合併標題行單元格（跨所有列）
+          if (!ws['!merges']) ws['!merges'] = [];
+          ws['!merges'].push({
+            s: { r: titleRow, c: 0 },
+            e: { r: titleRow, c: numCols - 1 }
+          });
+          
+          // 設置標題行所有單元格的樣式（確保邊框正確顯示）
+          for (let col = 0; col < numCols; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: titleRow, c: col });
+            if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
+            
+            // 標題行邊框與資料行一樣（thin），底色與表頭一樣（淺藍色）
+            const borderStyle = {
+              bottom: { style: "thin", color: { rgb: "000000" } },
+              top: { style: "thin", color: { rgb: "000000" } },
+              left: { style: "thin", color: { rgb: "000000" } },
+              right: { style: "thin", color: { rgb: "000000" } }
+            };
+            
+            ws[cellAddress].s = {
+              fill: { fgColor: { rgb: "DDEBF7" } }, // 與表頭一樣的淺藍色背景
+              font: { bold: true, sz: 14, color: { rgb: "DC2626" } },
+              border: borderStyle,
+              alignment: { horizontal: "left", vertical: "center" }
+            };
+          }
+          
+          currentRow++;
+          
+          // 下一行應該是表頭行
+          if (currentRow < totalRows && allData[currentRow] && allData[currentRow][0] === "欄位名稱") {
+            const headerRow = currentRow;
+            
+            for (let col = 0; col < numCols; col++) {
+              const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
+              if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
+              
+              ws[cellAddress].s = {
+                fill: { fgColor: { rgb: "DDEBF7" } },
+                font: { bold: true, sz: 11, color: { rgb: "1E3A5F" } },
+                border: {
+                  top: { style: "thin", color: { rgb: "000000" } },
+                  bottom: { style: "thin", color: { rgb: "000000" } },
+                  left: { style: "thin", color: { rgb: "000000" } },
+                  right: { style: "thin", color: { rgb: "000000" } }
+                },
+                alignment: { horizontal: "left", vertical: "center", wrapText: true }
+              };
+            }
+            
+            currentRow++;
+            
+            // 資料行樣式
+            while (currentRow < totalRows) {
+              const rowData = allData[currentRow];
+              
+              if (!rowData || rowData.length === 0 || !rowData[0] || 
+                  (rowData[0] !== "此區塊無欄位" && rowData[0] !== "" && 
+                   rowData[0] !== "欄位名稱" && 
+                   (!allData[currentRow - 1] || allData[currentRow - 1].length === 0 || !allData[currentRow - 1][0]))) {
+                break;
+              }
+              
+              for (let col = 0; col < numCols; col++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: currentRow, c: col });
+                if (!ws[cellAddress]) continue;
+                
+                if (!ws[cellAddress].s) ws[cellAddress].s = {};
+                
+                const isRelationField = col === 8;
+                const isOtherNote = col === 9;
+                
+                ws[cellAddress].s = {
+                  fill: { fgColor: { rgb: "FFFFFF" } },
+                  font: { sz: 11, color: { rgb: "000000" } },
+                  border: {
+                    bottom: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } },
+                    top: { style: "thin", color: { rgb: "000000" } }
+                  },
+                  alignment: {
+                    horizontal: "left",
+                    vertical: "top",
+                    wrapText: (isRelationField || isOtherNote) ? true : false
+                  }
+                };
+              }
+              
+              currentRow++;
+            }
+          } else {
+            currentRow++;
+          }
+        } else {
+          currentRow++;
+        }
+      }
+    }
+    
+    // 應用 Excel 樣式和邊框
+    function applyExcelStyles(ws, totalRows) {
+      // 檢查是否支援樣式（xlsx-js-style 已載入）
+      if (!window._xlsxStyleLoaded || typeof XLSX === 'undefined') {
+        console.warn('xlsx-js-style not loaded, skipping styles');
+        return; // 如果樣式庫未載入，跳過樣式應用
+      }
+      
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      const numCols = range.e.c + 1;
+      
+      // 設置行高（預設 30，約 40 像素）
+      if (!ws['!rows']) ws['!rows'] = [];
+      for (let row = 0; row < totalRows; row++) {
+        if (!ws['!rows'][row]) ws['!rows'][row] = {};
+        ws['!rows'][row].hpt = 30; // 行高 30（約 40 像素）
+      }
       
       // 標題行樣式（第1行，索引0）
       const titleRow = 0;
@@ -5066,47 +5167,49 @@
         e: { r: titleRow, c: numCols - 1 }
       });
       
-      // 只設置第一個單元格的樣式（因為已合併）
-      const titleCellAddress = XLSX.utils.encode_cell({ r: titleRow, c: 0 });
-      if (!ws[titleCellAddress]) ws[titleCellAddress] = { t: 's', v: '' };
+      // 設置標題行所有單元格的樣式（確保邊框正確顯示）
+      for (let col = 0; col < numCols; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: titleRow, c: col });
+        if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
+        
+        // 標題行：紅色文字、邊框與資料行一樣（thin），底色與表頭一樣（淺藍色）
+        const borderStyle = {
+          bottom: { style: "thin", color: { rgb: "000000" } }, // 細邊框（黑色）
+          top: { style: "thin", color: { rgb: "000000" } }, // 細邊框（黑色）
+          left: { style: "thin", color: { rgb: "000000" } }, // 細邊框（黑色）
+          right: { style: "thin", color: { rgb: "000000" } } // 細邊框（黑色）
+        };
+        
+        ws[cellAddress].s = {
+          fill: {
+            fgColor: { rgb: "DDEBF7" } // 與表頭一樣的淺藍色背景
+          },
+          font: {
+            bold: true,
+            sz: 14,
+            color: { rgb: "DC2626" } // 紅色文字（根據圖片）
+          },
+          border: borderStyle,
+          alignment: {
+            horizontal: "left",
+            vertical: "center"
+          }
+        };
+      }
       
-      // 標題行：淺灰色背景、深色文字、粗底邊框
-      ws[titleCellAddress].s = {
-        fill: {
-          fgColor: { rgb: "F3F4F6" } // 淺灰色背景
-        },
-        font: {
-          bold: true,
-          sz: 14,
-          color: { rgb: "1F2937" } // 深灰色文字
-        },
-        border: {
-          bottom: { style: "thick", color: { rgb: "1F2937" } }, // 粗底邊框
-          left: { style: "thin", color: { rgb: "E5E7EB" } },
-          right: { style: "thin", color: { rgb: "E5E7EB" } },
-          top: { style: "thin", color: { rgb: "E5E7EB" } }
-        },
-        alignment: {
-          horizontal: "left",
-          vertical: "center"
-        }
-      };
-      
-      // 表頭行樣式（第3行，索引2，因為第2行是空行）
-      const headerRow = 2;
+      // 表頭行樣式（第2行，索引1，因為已移除空行）
+      const headerRow = 1;
       for (let col = 0; col < numCols; col++) {
         const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
         if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
         
-        // 表頭：淺藍色背景、深藍色文字、邊框
+        // 表頭：淺藍色背景、深藍色文字、邊框（根據範例檔案）
         const borderStyle = {
-          top: { style: "thin", color: { rgb: "C5DDF0" } },
-          bottom: { style: "thin", color: { rgb: "C5DDF0" } },
-          left: { style: "thin", color: { rgb: "C5DDF0" } }
+          top: { style: "thin", color: { rgb: "000000" } }, // 黑色邊框
+          bottom: { style: "thin", color: { rgb: "000000" } },
+          left: { style: "thin", color: { rgb: "000000" } },
+          right: { style: "thin", color: { rgb: "000000" } } // 確保右邊框也設置
         };
-        if (col < numCols - 1) {
-          borderStyle.right = { style: "thin", color: { rgb: "C5DDF0" } };
-        }
         
         ws[cellAddress].s = {
           fill: {
@@ -5120,26 +5223,33 @@
           border: borderStyle,
           alignment: {
             horizontal: "left",
-            vertical: "center"
+            vertical: "center",
+            wrapText: true // 允許文字換行
           }
         };
       }
       
-      // 資料行樣式（從第4行開始，索引3）
-      for (let row = 3; row < totalRows; row++) {
+      // 資料行樣式（從第3行開始，索引2）
+      for (let row = 2; row < totalRows; row++) {
         for (let col = 0; col < numCols; col++) {
           const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
           if (!ws[cellAddress]) continue;
           
-          // 資料行：白色背景、邊框
-          const borderStyle = {
-            bottom: { style: "thin", color: { rgb: "E5E7EB" } },
-            left: { style: "thin", color: { rgb: "E5E7EB" } },
-            top: { style: "thin", color: { rgb: "E5E7EB" } }
-          };
-          if (col < numCols - 1) {
-            borderStyle.right = { style: "thin", color: { rgb: "E5E7EB" } };
+          if (!ws[cellAddress].s) {
+            ws[cellAddress].s = {};
           }
+          
+          // 資料行：白色背景、黑色邊框（根據範例檔案）
+          const borderStyle = {
+            bottom: { style: "thin", color: { rgb: "000000" } }, // 黑色邊框
+            left: { style: "thin", color: { rgb: "000000" } },
+            right: { style: "thin", color: { rgb: "000000" } }, // 確保右邊框也設置
+            top: { style: "thin", color: { rgb: "000000" } }
+          };
+          
+          // 檢查是否為 "關聯功能 / 關聯欄位 / 返回欄位" 或 "其他說明" 欄位（第9和第10欄，索引8和9）
+          const isRelationField = col === 8; // 關聯功能 / 關聯欄位 / 返回欄位
+          const isOtherNote = col === 9; // 其他說明
           
           ws[cellAddress].s = {
             fill: {
@@ -5152,145 +5262,14 @@
             border: borderStyle,
             alignment: {
               horizontal: "left",
-              vertical: "center"
+              vertical: "top", // 頂部對齊，方便多行顯示
+              wrapText: (isRelationField || isOtherNote) ? true : false // 這兩個欄位允許換行
             }
           };
         }
       }
     }
-    
-    // 應用 Excel 樣式和邊框（用於合併多個頁籤的工作表）
-    function applyExcelStylesForMergedSheet(ws, allData) {
-      const range = XLSX.utils.decode_range(ws['!ref']);
-      const numCols = range.e.c + 1;
-      let currentRow = 0;
-      
-      // 遍歷所有資料，識別標題行、表頭行和資料行
-      for (let row = 0; row < allData.length; row++) {
-        const rowData = allData[row];
-        
-        // 檢查是否為空行（分隔符）
-        if (rowData.length === 0 || (rowData.length === 1 && rowData[0] === '')) {
-          currentRow++;
-          continue;
-        }
-        
-        // 檢查是否為標題行（第一列有值，且不是表頭）
-        const isTitleRow = rowData[0] && 
-                          rowData[0] !== "欄位名稱" && 
-                          rowData[0] !== "此區塊無欄位" &&
-                          (row === 0 || allData[row - 1].length === 0 || (allData[row - 1].length === 1 && allData[row - 1][0] === ''));
-        
-        // 檢查是否為表頭行
-        const isHeaderRow = rowData[0] === "欄位名稱";
-        
-        if (isTitleRow) {
-          // 標題行樣式
-          const titleCellAddress = XLSX.utils.encode_cell({ r: currentRow, c: 0 });
-          if (!ws[titleCellAddress]) ws[titleCellAddress] = { t: 's', v: '' };
-          
-          // 合併標題行單元格（跨所有列）
-          if (!ws['!merges']) ws['!merges'] = [];
-          ws['!merges'].push({
-            s: { r: currentRow, c: 0 },
-            e: { r: currentRow, c: numCols - 1 }
-          });
-          
-          ws[titleCellAddress].s = {
-            fill: {
-              fgColor: { rgb: "F3F4F6" } // 淺灰色背景
-            },
-            font: {
-              bold: true,
-              sz: 14,
-              color: { rgb: "1F2937" } // 深灰色文字
-            },
-            border: {
-              bottom: { style: "thick", color: { rgb: "1F2937" } }, // 粗底邊框
-              left: { style: "thin", color: { rgb: "E5E7EB" } },
-              right: { style: "thin", color: { rgb: "E5E7EB" } },
-              top: { style: "thin", color: { rgb: "E5E7EB" } }
-            },
-            alignment: {
-              horizontal: "left",
-              vertical: "center"
-            }
-          };
-          
-          currentRow++;
-          
-          // 跳過空行
-          if (row + 1 < allData.length && (allData[row + 1].length === 0 || (allData[row + 1].length === 1 && allData[row + 1][0] === ''))) {
-            currentRow++;
-            continue;
-          }
-        } else if (isHeaderRow) {
-          // 表頭行樣式
-          for (let col = 0; col < numCols; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: currentRow, c: col });
-            if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
-            
-            const borderStyle = {
-              top: { style: "thin", color: { rgb: "C5DDF0" } },
-              bottom: { style: "thin", color: { rgb: "C5DDF0" } },
-              left: { style: "thin", color: { rgb: "C5DDF0" } }
-            };
-            if (col < numCols - 1) {
-              borderStyle.right = { style: "thin", color: { rgb: "C5DDF0" } };
-            }
-            
-            ws[cellAddress].s = {
-              fill: {
-                fgColor: { rgb: "DDEBF7" } // 淺藍色背景
-              },
-              font: {
-                bold: true,
-                sz: 11,
-                color: { rgb: "1E3A5F" } // 深藍色文字
-              },
-              border: borderStyle,
-              alignment: {
-                horizontal: "left",
-                vertical: "center"
-              }
-            };
-          }
-          currentRow++;
-        } else {
-          // 資料行樣式
-          for (let col = 0; col < numCols; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: currentRow, c: col });
-            if (!ws[cellAddress]) continue;
-            
-            const borderStyle = {
-              bottom: { style: "thin", color: { rgb: "E5E7EB" } },
-              left: { style: "thin", color: { rgb: "E5E7EB" } },
-              top: { style: "thin", color: { rgb: "E5E7EB" } }
-            };
-            if (col < numCols - 1) {
-              borderStyle.right = { style: "thin", color: { rgb: "E5E7EB" } };
-            }
-            
-            ws[cellAddress].s = {
-              fill: {
-                fgColor: { rgb: "FFFFFF" } // 白色背景
-              },
-              font: {
-                sz: 11,
-                color: { rgb: "000000" } // 黑色文字
-              },
-              border: borderStyle,
-              alignment: {
-                horizontal: "left",
-                vertical: "center"
-              }
-            };
-          }
-          currentRow++;
-        }
-      }
-    }
-    
+
     // 事件監聽器
     btnExport.addEventListener("click", openFieldSpecPreviewModal);
     if (btnExportSpecExcel) {
