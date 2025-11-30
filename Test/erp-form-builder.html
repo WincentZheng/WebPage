@@ -7125,6 +7125,27 @@
             e.stopPropagation();
           });
           
+          // 處理貼上事件：只保留純文字，移除所有格式
+          button.addEventListener("paste", (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+              const range = selection.getRangeAt(0);
+              range.deleteContents();
+              const textNode = document.createTextNode(text);
+              range.insertNode(textNode);
+              range.setStartAfter(textNode);
+              range.setEndAfter(textNode);
+              selection.removeAllRanges();
+              selection.addRange(range);
+            } else {
+              button.textContent = text;
+            }
+            // 觸發 input 事件以同步更新值
+            button.dispatchEvent(new Event("input", { bubbles: true }));
+          });
+          
           // 當按鈕文字改變時，同步更新值
           button.addEventListener("input", () => {
             wrapper.dataset.value = button.textContent.trim() || "按鈕";
@@ -7548,6 +7569,27 @@
         // 阻止點擊標題時觸發欄位選擇
         labelText.addEventListener("click", (e) => {
           e.stopPropagation();
+        });
+        
+        // 處理貼上事件：只保留純文字，移除所有格式
+        labelText.addEventListener("paste", (e) => {
+          e.preventDefault();
+          const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+          const selection = window.getSelection();
+          if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            const textNode = document.createTextNode(text);
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } else {
+            labelText.textContent = text;
+          }
+          // 觸發 input 事件以同步更新屬性面板
+          labelText.dispatchEvent(new Event("input", { bubbles: true }));
         });
         
         // 當標題內容改變時，同步更新屬性面板
