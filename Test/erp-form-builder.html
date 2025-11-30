@@ -1058,6 +1058,31 @@
       color: #b43429;
     }
 
+    /* 欄位標題可編輯樣式 */
+    .label-text {
+      outline: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      min-width: 60px;
+      cursor: text;
+    }
+
+    .label-text:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .label-text:focus {
+      background: rgba(197, 106, 0, 0.1);
+      border: 1px solid var(--accent);
+      padding: 1px 3px;
+    }
+
+    .label-text:empty::before {
+      content: "未命名欄位";
+      color: #9ca3af;
+    }
+
     .field-control {
       flex: 1;
     }
@@ -1287,6 +1312,29 @@
       transition: all 0.2s ease;
       text-align: center;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 按鈕文字可編輯樣式 */
+    .field-control .field-button[contenteditable="true"] {
+      outline: none;
+      min-height: 24px;
+    }
+
+    .field-control .field-button[contenteditable="true"]:hover {
+      box-shadow: 0 2px 4px var(--button-shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .field-control .field-button[contenteditable="true"]:focus {
+      box-shadow: 0 2px 4px var(--button-shadow), inset 0 0 0 2px var(--accent);
+      background: linear-gradient(to bottom, var(--button-hover-bg-start), var(--button-hover-bg-end));
+    }
+
+    .field-control .field-button[contenteditable="true"]:empty::before {
+      content: "按鈕";
+      color: rgba(0, 0, 0, 0.3);
     }
 
     /* 按鈕欄位：沒有 label，control 佔滿寬度 */
@@ -3947,6 +3995,11 @@
         return;
       }
       
+      // 如果點擊的是欄位標題（可編輯），不處理（讓標題可以編輯）
+      if (event.target.classList.contains("label-text")) {
+        return;
+      }
+      
       // 如果點擊的是 grid header cell 或標題，不處理（由 focus 事件處理）
       if (event.target.closest(".grid-header-cell") || 
           event.target.closest(".header-title")) {
@@ -3957,6 +4010,11 @@
       if (event.target.closest(".field-control input") || 
           event.target.closest(".field-control textarea") ||
           event.target.closest(".field-control select")) {
+        return;
+      }
+      
+      // 如果點擊的是按鈕（可編輯），不處理（讓按鈕可以編輯）
+      if (event.target.classList.contains("field-button") && event.target.contentEditable === "true") {
         return;
       }
       
@@ -7044,7 +7102,7 @@
         wrapper.innerHTML = `
           <div class="field-delete" title="刪除欄位">×</div>
           <div class="field-control">
-            ${fieldTemplates[type](buttonText)}
+            <button type="button" class="field-button" contenteditable="true">${buttonText}</button>
             <div class="button-width-resizer" title="拖曳調整寬度"></div>
           </div>
         `;
@@ -7057,9 +7115,31 @@
           }
         }
         
-        // 設置按鈕寬度調整器
-        const resizer = wrapper.querySelector(".button-width-resizer");
+        // 設置按鈕文字可編輯功能和寬度調整器
         const button = wrapper.querySelector(".field-control .field-button");
+        const resizer = wrapper.querySelector(".button-width-resizer");
+        
+        if (button) {
+          // 阻止點擊按鈕時觸發欄位選擇
+          button.addEventListener("click", (e) => {
+            e.stopPropagation();
+          });
+          
+          // 當按鈕文字改變時，同步更新值
+          button.addEventListener("input", () => {
+            wrapper.dataset.value = button.textContent.trim() || "按鈕";
+          });
+          
+          // 當按鈕失去焦點時，確保有內容
+          button.addEventListener("blur", () => {
+            if (!button.textContent.trim()) {
+              button.textContent = "按鈕";
+            }
+            wrapper.dataset.value = button.textContent.trim();
+          });
+        }
+        
+        // 設置按鈕寬度調整器
         if (resizer && button) {
           let isResizing = false;
           let startX = 0;
@@ -7315,7 +7395,7 @@
         wrapper.innerHTML = `
           <div class="field-delete" title="刪除欄位">×</div>
           <div class="${labelClass}">
-            <span class="label-text">${config.label || defaultLabel(type)}</span>
+            <span class="label-text" contenteditable="true">${config.label || defaultLabel(type)}</span>
           </div>
           <div class="field-control">
             ${controlHTML}
@@ -7460,6 +7540,29 @@
             btnFieldSpecModal.disabled = isEmpty || isButton || isFixedText;
           }
         }, true); // 使用捕獲階段，確保在其他事件之前處理
+      }
+      
+      // 設置標題可編輯功能
+      const labelText = wrapper.querySelector(".label-text");
+      if (labelText) {
+        // 阻止點擊標題時觸發欄位選擇
+        labelText.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+        
+        // 當標題內容改變時，同步更新屬性面板
+        labelText.addEventListener("input", () => {
+          if (selectedField === wrapper && propLabel) {
+            propLabel.value = labelText.textContent.trim() || "未命名欄位";
+          }
+        });
+        
+        // 當標題失去焦點時，確保有內容
+        labelText.addEventListener("blur", () => {
+          if (!labelText.textContent.trim()) {
+            labelText.textContent = "未命名欄位";
+          }
+        });
       }
       
       selectField(wrapper);
