@@ -2744,7 +2744,7 @@
     </aside>
     <section id="canvas" class="canvas" aria-live="polite">
       <div class="doc-title-row">
-        <input id="document-title" type="text" value="銷售訂單" placeholder="請輸入單據標題" />
+        <input id="document-title" type="text" value="功能名稱" placeholder="請輸入單據標題" />
       </div>
       <div id="canvas-placeholder" class="placeholder">
         拖曳左側「區塊面板」至此開始設計單據版面
@@ -4798,6 +4798,11 @@
         selectGridHeaderCell(null);
         setActivePanel(null);
         ensurePlaceholder();
+        // 清空功能標題並設置預設值
+        const documentTitleInput = document.getElementById("document-title");
+        if (documentTitleInput) {
+          documentTitleInput.value = "功能名稱";
+        }
       }
     });
 
@@ -8498,7 +8503,7 @@
       ensurePlaceholder();
       
       // 設定標題
-      const title = layout.title || "銷售訂單";
+      const title = layout.title || "功能名稱";
       documentTitleInput.value = title;
       
       // 載入所有面板
