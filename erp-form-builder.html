@@ -9,6 +9,11 @@
       color-scheme: light;
       font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
       font-size: 16px;
+    }
+
+    /* 綠色系主題（預設，不變動） */
+    :root,
+    [data-theme="green"] {
       --border: #c5cfb5;
       --border-dark: #6c7a57;
       --bg: #e6efd8;
@@ -17,6 +22,90 @@
       --header: #4e6a3a;
       --header-dark: #3b4f2a;
       --accent: #c56a00;
+      --header-gradient-start: #607c4d;
+      --header-gradient-end: #4e6a3a;
+      --section-bg-start: #eff5e3;
+      --section-bg-end: #dde7cc;
+      --grid-header-bg: #d4e4c5;
+      --grid-header-hover: #c5d5b5;
+      --preview-bg: #f5f9f0;
+      --preview-grid-row-bg: #f5f9f0;
+      --tool-bg: #f9fdf1; /* 工具框背景色 */
+      --tool-hover-bg: #f5f9f0; /* 工具框懸停背景色 */
+      --palette-header-hover-start: #e8f0dc; /* 區塊標題懸停背景色起始 */
+      --palette-header-hover-end: #d4e0c0; /* 區塊標題懸停背景色結束 */
+      --button-border: #a2b08c; /* 按鈕框線顏色 */
+      --button-bg-start: #f9fdf1; /* 按鈕背景色起始 */
+      --button-bg-end: #f5f9f0; /* 按鈕背景色結束 */
+      --button-text: #2a371d; /* 按鈕文字顏色 */
+      --button-hover-bg-start: #f5f9f0; /* 按鈕懸停背景色起始 */
+      --button-hover-bg-end: #eff5e3; /* 按鈕懸停背景色結束 */
+      --button-shadow: rgba(54, 74, 37, 0.15); /* 按鈕陰影顏色 */
+      --button-hover-shadow: rgba(54, 74, 37, 0.2); /* 按鈕懸停陰影顏色 */
+    }
+
+    /* 藍色系主題（參考 ERP 系統風格） */
+    [data-theme="blue"] {
+      --border: #b8c5d1;
+      --border-dark: #6b7d8f;
+      --bg: #e3eef7;
+      --canvas: #f0f5fa;
+      --panel: #ffffff;
+      --header: #2c5aa0;
+      --header-dark: #1e3d6f;
+      --accent: #2c5aa0;
+      --header-gradient-start: #3d6bb3;
+      --header-gradient-end: #2c5aa0;
+      --section-bg-start: #e8f2fa;
+      --section-bg-end: #d0e5f5;
+      --grid-header-bg: #c5d9e8;
+      --grid-header-hover: #b0c9dc;
+      --preview-bg: #f0f5fa;
+      --preview-grid-row-bg: #f0f5fa;
+      --tool-bg: #f0f8ff; /* 工具框背景色（藍色系） */
+      --tool-hover-bg: #e6f2ff; /* 工具框懸停背景色（藍色系） */
+      --palette-header-hover-start: #d0e5f5; /* 區塊標題懸停背景色起始（藍色系） */
+      --palette-header-hover-end: #b8d4ea; /* 區塊標題懸停背景色結束（藍色系） */
+      --button-border: #8ba3c4; /* 按鈕框線顏色（藍色系） */
+      --button-bg-start: #e8f2fa; /* 按鈕背景色起始（藍色系） */
+      --button-bg-end: #d0e5f5; /* 按鈕背景色結束（藍色系） */
+      --button-text: #1e3d6f; /* 按鈕文字顏色（藍色系） */
+      --button-hover-bg-start: #d0e5f5; /* 按鈕懸停背景色起始（藍色系） */
+      --button-hover-bg-end: #b8d4ea; /* 按鈕懸停背景色結束（藍色系） */
+      --button-shadow: rgba(44, 90, 160, 0.15); /* 按鈕陰影顏色（藍色系） */
+      --button-hover-shadow: rgba(44, 90, 160, 0.2); /* 按鈕懸停陰影顏色（藍色系） */
+    }
+
+    /* 橘色系主題（參考 ERP 系統風格） */
+    [data-theme="orange"] {
+      --border: #e6b88a;
+      --border-dark: #cc8533;
+      --bg: #fff4e6;
+      --canvas: #fff8f0;
+      --panel: #ffffff;
+      --header: #d97706;
+      --header-dark: #b45309;
+      --accent: #f97316;
+      --header-gradient-start: #fb923c;
+      --header-gradient-end: #ea580c;
+      --section-bg-start: #ffedd5;
+      --section-bg-end: #fed7aa;
+      --grid-header-bg: #ffd7a8;
+      --grid-header-hover: #ffc47a;
+      --preview-bg: #fff4e6;
+      --preview-grid-row-bg: #fff4e6;
+      --tool-bg: #fff8f0; /* 工具框背景色（橘色系） */
+      --tool-hover-bg: #ffedd5; /* 工具框懸停背景色（橘色系） */
+      --palette-header-hover-start: #fed7aa; /* 區塊標題懸停背景色起始（橘色系） */
+      --palette-header-hover-end: #ffd7a8; /* 區塊標題懸停背景色結束（橘色系） */
+      --button-border: #d97706; /* 按鈕框線顏色（橘色系） */
+      --button-bg-start: #ffedd5; /* 按鈕背景色起始（橘色系） */
+      --button-bg-end: #fed7aa; /* 按鈕背景色結束（橘色系） */
+      --button-text: #b45309; /* 按鈕文字顏色（橘色系） */
+      --button-hover-bg-start: #fed7aa; /* 按鈕懸停背景色起始（橘色系） */
+      --button-hover-bg-end: #ffd7a8; /* 按鈕懸停背景色結束（橘色系） */
+      --button-shadow: rgba(217, 119, 6, 0.15); /* 按鈕陰影顏色（橘色系） */
+      --button-hover-shadow: rgba(217, 119, 6, 0.2); /* 按鈕懸停陰影顏色（橘色系） */
     }
 
     * {
@@ -34,7 +123,7 @@
       align-items: center;
       padding: 12px 24px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(90deg, #607c4d, #4e6a3a);
+      background: linear-gradient(90deg, var(--header-gradient-start), var(--header-gradient-end));
       gap: 12px;
       flex-wrap: wrap;
       color: #f5f7ef;
@@ -70,6 +159,16 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       position: relative;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 按鈕圖示樣式 */
+    .btn-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
     }
 
     button::before {
@@ -96,6 +195,16 @@
                   inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
+    /* 橘色系主題：按鈕配色（使用藍色漸變以突出顯示） */
+    [data-theme="orange"] button.primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5), 
+                  0 2px 4px rgba(0, 0, 0, 0.2),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -117,6 +226,15 @@
                   inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
+    /* 橘色系主題：按鈕懸停效果（使用藍色漸變） */
+    [data-theme="orange"] button.primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.6), 
+                  0 3px 6px rgba(0, 0, 0, 0.25),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
     button:active:not(:disabled) {
       transform: translateY(0);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -126,6 +244,13 @@
       background: linear-gradient(135deg, #c56a00 0%, #b85a00 50%, #a85a00 100%);
       box-shadow: 0 2px 8px rgba(197, 106, 0, 0.3), 
                   inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 橘色系主題：按鈕按下效果（使用藍色漸變） */
+    [data-theme="orange"] button.primary:active:not(:disabled) {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4), 
+                  inset 0 2px 4px rgba(0, 0, 0, 0.25);
     }
 
     .column-picker {
@@ -141,6 +266,93 @@
       padding: 6px 10px;
       font-size: 0.9rem;
       background: #fefdf8;
+    }
+
+    /* 主題切換器樣式 */
+    .theme-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto; /* 靠右對齊 */
+      font-size: 0.9rem;
+    }
+
+    .theme-label {
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+    }
+
+    .theme-buttons {
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 4px;
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+    }
+
+    .theme-btn {
+      min-width: 40px;
+      height: 32px;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      padding: 0 10px;
+      color: white;
+    }
+
+    /* NBS 按鈕（綠色） */
+    .theme-btn[data-theme="green"] {
+      background: linear-gradient(135deg, #607c4d 0%, #4e6a3a 100%);
+    }
+
+    .theme-btn[data-theme="green"]:hover {
+      background: linear-gradient(135deg, #6c8a5a 0%, #5a7a46 100%);
+      transform: scale(1.05);
+    }
+
+    .theme-btn[data-theme="green"].active {
+      background: linear-gradient(135deg, #6c8a5a 0%, #5a7a46 100%);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* T9 按鈕（藍色） */
+    .theme-btn[data-theme="blue"] {
+      background: linear-gradient(135deg, #3d6bb3 0%, #2c5aa0 100%);
+    }
+
+    .theme-btn[data-theme="blue"]:hover {
+      background: linear-gradient(135deg, #4d7bc3 0%, #3c6ab0 100%);
+      transform: scale(1.05);
+    }
+
+    .theme-btn[data-theme="blue"].active {
+      background: linear-gradient(135deg, #4d7bc3 0%, #3c6ab0 100%);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* T8 按鈕（橘色） */
+    .theme-btn[data-theme="orange"] {
+      background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    }
+
+    .theme-btn[data-theme="orange"]:hover {
+      background: linear-gradient(135deg, #ffa64c 0%, #ff8326 100%);
+      transform: scale(1.05);
+    }
+
+    .theme-btn[data-theme="orange"].active {
+      background: linear-gradient(135deg, #ffa64c 0%, #ff8326 100%);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
     main.layout {
@@ -229,7 +441,7 @@
       padding: 12px 12px 12px 24px;
       margin-bottom: 10px;
       cursor: grab;
-      background: #f9fdf1;
+      background: var(--tool-bg);
       transition: all 0.2s ease;
       position: relative;
       min-height: 56px;
@@ -238,15 +450,15 @@
       justify-content: center;
       font-size: 0.9rem;
       font-weight: 600;
-      color: #2a371d;
+      color: var(--header-dark);
       line-height: 1.6;
       letter-spacing: 0.3px;
     }
 
     .tool:hover {
-      background: #f5f9f0;
-      border-color: #a2b08c;
-      box-shadow: 0 2px 8px rgba(54, 74, 37, 0.1);
+      background: var(--tool-hover-bg);
+      border-color: var(--border-dark);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .tool:active {
@@ -296,7 +508,7 @@
     }
 
     .panel-header {
-      background: linear-gradient(90deg, #eff5e3, #dde7cc);
+      background: linear-gradient(90deg, var(--section-bg-start), var(--section-bg-end));
       border-bottom: 1px solid var(--border);
     }
 
@@ -539,7 +751,7 @@
 
     .grid-header-row {
       display: flex;
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       border-bottom: 2px solid var(--border-dark);
       position: sticky;
       top: 0;
@@ -551,7 +763,7 @@
     .grid-header-row::after {
       content: "";
       flex: 1;
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       min-height: 100%;
     }
 
@@ -560,7 +772,7 @@
       min-width: 100px;
       padding: 8px 12px;
       border-right: 1px solid var(--border-dark);
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       font-weight: 600;
       font-size: 0.9rem;
       color: #2a371d;
@@ -655,7 +867,7 @@
       min-width: 80px;
       padding: 8px;
       border-right: 1px solid var(--border-dark);
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -666,7 +878,7 @@
     }
 
     .grid-add-header-btn:hover {
-      background: #c5d5b5;
+      background: var(--grid-header-hover);
       color: var(--accent);
     }
 
@@ -846,6 +1058,31 @@
       color: #b43429;
     }
 
+    /* 欄位標題可編輯樣式 */
+    .label-text {
+      outline: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      min-width: 60px;
+      cursor: text;
+    }
+
+    .label-text:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .label-text:focus {
+      background: rgba(197, 106, 0, 0.1);
+      border: 1px solid var(--accent);
+      padding: 1px 3px;
+    }
+
+    .label-text:empty::before {
+      content: "未命名欄位";
+      color: #9ca3af;
+    }
+
     .field-control {
       flex: 1;
     }
@@ -901,6 +1138,15 @@
     /* [區塊面板(有頁籤)]頁籤內的 GRID 表格：確保表頭行也有正確的寬度 */
     .field.field-grid-tab .grid-panel-body .grid-header-row {
       min-width: fit-content;
+    }
+
+    /* [區塊面板(有頁籤)]頁籤內的 GRID 表格：表頭行右方沒有欄位時顯示底色 */
+    .field-control .grid-panel-body .grid-header-row::after,
+    .field.field-grid-tab .grid-panel-body .grid-header-row::after {
+      content: "";
+      flex: 1;
+      background: var(--grid-header-bg);
+      min-height: 100%;
     }
 
     .field-control input,
@@ -1054,18 +1300,41 @@
     }
 
     .field-control .field-button {
-      border: 1px solid #a2b08c;
+      border: 1px solid var(--button-border);
       border-radius: 8px;
       padding: 5px 20px;
-      background: linear-gradient(to bottom, #f9fdf1, #f5f9f0);
-      color: #2a371d;
+      background: linear-gradient(to bottom, var(--button-bg-start), var(--button-bg-end));
+      color: var(--button-text);
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(54, 74, 37, 0.15);
+      box-shadow: 0 2px 4px var(--button-shadow);
       transition: all 0.2s ease;
       text-align: center;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 按鈕文字可編輯樣式 */
+    .field-control .field-button[contenteditable="true"] {
+      outline: none;
+      min-height: 24px;
+    }
+
+    .field-control .field-button[contenteditable="true"]:hover {
+      box-shadow: 0 2px 4px var(--button-shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .field-control .field-button[contenteditable="true"]:focus {
+      box-shadow: 0 2px 4px var(--button-shadow), inset 0 0 0 2px var(--accent);
+      background: linear-gradient(to bottom, var(--button-hover-bg-start), var(--button-hover-bg-end));
+    }
+
+    .field-control .field-button[contenteditable="true"]:empty::before {
+      content: "按鈕";
+      color: rgba(0, 0, 0, 0.3);
     }
 
     /* 按鈕欄位：沒有 label，control 佔滿寬度 */
@@ -1124,14 +1393,14 @@
     }
 
     .field-control .field-button:hover {
-      background: linear-gradient(to bottom, #f5f9f0, #eff5e3);
-      box-shadow: 0 3px 6px rgba(54, 74, 37, 0.2);
+      background: linear-gradient(to bottom, var(--button-hover-bg-start), var(--button-hover-bg-end));
+      box-shadow: 0 3px 6px var(--button-hover-shadow);
       transform: translateY(-1px);
     }
 
     .field-control .field-button:active {
       transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(54, 74, 37, 0.15);
+      box-shadow: 0 1px 2px var(--button-shadow);
     }
 
     .field.selected .field-control .field-button {
@@ -1249,7 +1518,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 12px;
-      background: linear-gradient(90deg, #eff5e3, #dde7cc);
+      background: linear-gradient(90deg, var(--section-bg-start), var(--section-bg-end));
       border-bottom: 1px solid var(--border);
       cursor: pointer;
       user-select: none;
@@ -1259,7 +1528,7 @@
     }
 
     .palette-section-header:hover {
-      background: linear-gradient(90deg, #e8f0dc, #d4e0c0);
+      background: linear-gradient(90deg, var(--palette-header-hover-start), var(--palette-header-hover-end));
     }
 
     .palette-section-toggle {
@@ -1322,7 +1591,7 @@
       display: flex;
       align-items: center;
       padding: 10px 12px;
-      background: linear-gradient(90deg, #eff5e3, #dde7cc);
+      background: linear-gradient(90deg, var(--section-bg-start), var(--section-bg-end));
       border-bottom: 1px solid var(--border);
       user-select: none;
       font-weight: 600;
@@ -1468,7 +1737,7 @@
       justify-content: space-between;
       padding: 20px 24px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(90deg, #eff5e3, #dde7cc);
+      background: linear-gradient(90deg, var(--section-bg-start), var(--section-bg-end));
       border-radius: 12px 12px 0 0;
     }
 
@@ -1506,10 +1775,26 @@
     }
 
     .preview-content {
-      background: #f5f9f0;
+      background: var(--preview-bg);
       padding: 24px;
       border-radius: 8px;
       min-height: 200px;
+    }
+
+    /* 預覽模式：面板樣式 */
+    .preview-content .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 預覽模式：面板標題列樣式 */
+    .preview-content .panel-header {
+      background: linear-gradient(90deg, var(--section-bg-start), var(--section-bg-end));
+      border-bottom: 1px solid var(--border);
     }
 
     /* 預覽模式：頁籤樣式 */
@@ -1658,6 +1943,15 @@
       min-width: fit-content;
     }
 
+    /* 預覽模式：[區塊面板(有頁籤)]頁籤內的 GRID 表格：表頭行右方沒有欄位時顯示底色 */
+    .preview-content .field-control .grid-panel-body .grid-header-row::after,
+    .preview-content .field.field-grid-tab .grid-panel-body .grid-header-row::after {
+      content: "";
+      flex: 1;
+      background: var(--grid-header-bg);
+      min-height: 100%;
+    }
+
     .preview-content .field-control input,
     .preview-content .field-control select {
       padding: 4px 0;
@@ -1683,15 +1977,15 @@
     }
 
     .preview-content .field-control .field-button {
-      border: 1px solid #a2b08c;
+      border: 1px solid var(--button-border);
       border-radius: 8px;
       padding: 5px 20px;
-      background: linear-gradient(to bottom, #f9fdf1, #f5f9f0);
-      color: #2a371d;
+      background: linear-gradient(to bottom, var(--button-bg-start), var(--button-bg-end));
+      color: var(--button-text);
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(54, 74, 37, 0.15);
+      box-shadow: 0 2px 4px var(--button-shadow);
       text-align: center;
       width: 100%;
     }
@@ -1747,7 +2041,7 @@
 
     .preview-content .grid-header-row {
       display: flex;
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       border-bottom: 2px solid var(--border-dark);
       position: sticky;
       top: 0;
@@ -1759,7 +2053,7 @@
     .preview-content .grid-header-row::after {
       content: "";
       flex: 1;
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       min-height: 100%;
     }
 
@@ -1768,7 +2062,7 @@
       min-width: 100px;
       padding: 8px 12px;
       border-right: 1px solid var(--border-dark);
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
     }
 
     .preview-content .grid-header-cell .grid-col-resizer {
@@ -1803,7 +2097,7 @@
       min-width: 100px;
       padding: 8px 12px;
       border-right: 1px solid var(--border-dark);
-      background: #d4e4c5;
+      background: var(--grid-header-bg);
       font-weight: 600;
       font-size: 0.9rem;
       color: #2a371d;
@@ -1831,7 +2125,7 @@
 
     .preview-content .grid-data-row {
       display: flex;
-      background: #f5f9f0;
+      background: var(--preview-grid-row-bg);
       border-bottom: 1px solid var(--border);
       position: relative;
       min-width: fit-content;
@@ -1868,7 +2162,7 @@
       min-width: 100px;
       padding: 6px 12px;
       border-right: 1px solid var(--border);
-      background: #f5f9f0;
+      background: white; /* 與編輯模式一致 */
       min-height: 32px;
       display: flex;
       align-items: center;
@@ -2320,11 +2614,46 @@
       </svg>
       畫面輔助產生器
     </h1>
-    <button id="btn-preview" class="primary">畫面預覽</button>
-    <button id="btn-export" class="primary">規格預覽</button>
-    <button id="btn-clear">清空畫布</button>
-    <button id="btn-save-layout">匯出畫面檔</button>
-    <button id="btn-load-layout">匯入畫面檔</button>
+    <button id="btn-preview" class="primary">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      畫面預覽
+    </button>
+    <button id="btn-export" class="primary">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      規格預覽
+    </button>
+    <button id="btn-clear">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      清空畫布
+    </button>
+    <button id="btn-save-layout">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      匯出畫面檔
+    </button>
+    <button id="btn-load-layout">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      匯入畫面檔
+    </button>
     <input id="input-load-layout" type="file" accept="application/json" hidden />
     <label class="column-picker">
       預設欄數
@@ -2334,6 +2663,14 @@
         <option value="5">5 欄</option>
       </select>
     </label>
+    <div class="theme-switcher">
+      <span class="theme-label">主題色系：</span>
+      <div class="theme-buttons">
+        <button class="theme-btn" data-theme="green" title="NBS">NBS</button>
+        <button class="theme-btn" data-theme="blue" title="T9">T9</button>
+        <button class="theme-btn" data-theme="orange" title="T8">T8</button>
+      </div>
+    </div>
   </header>
   <main class="layout">
     <aside class="palette">
@@ -2708,6 +3045,7 @@
     const panelProperties = document.getElementById("panel-properties");
     const fieldProperties = document.getElementById("field-properties");
     const columnCountSelect = document.getElementById("column-count");
+    const themeButtons = document.querySelectorAll(".theme-btn");
     const btnSaveLayout = document.getElementById("btn-save-layout");
     const btnLoadLayout = document.getElementById("btn-load-layout");
     const inputLoadLayout = document.getElementById("input-load-layout");
@@ -2965,6 +3303,43 @@
       if (activePanelBody) {
         setPanelColumns(activePanelBody.closest(".panel"), columnCountSelect.value);
       }
+    });
+
+    // 主題切換功能
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("erp-form-builder-theme", theme);
+    }
+
+    function getTheme() {
+      return localStorage.getItem("erp-form-builder-theme") || "green";
+    }
+
+    // 載入保存的主題
+    const savedTheme = getTheme();
+    setTheme(savedTheme);
+    
+    // 更新主題按鈕的 active 狀態
+    function updateThemeButtons(activeTheme) {
+      themeButtons.forEach((btn) => {
+        if (btn.dataset.theme === activeTheme) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    // 初始化按鈕狀態
+    updateThemeButtons(savedTheme);
+
+    // 主題按鈕事件監聽
+    themeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const theme = btn.dataset.theme;
+        setTheme(theme);
+        updateThemeButtons(theme);
+      });
     });
 
     // 匯出畫面檔
@@ -3620,6 +3995,11 @@
         return;
       }
       
+      // 如果點擊的是欄位標題（可編輯），不處理（讓標題可以編輯）
+      if (event.target.classList.contains("label-text")) {
+        return;
+      }
+      
       // 如果點擊的是 grid header cell 或標題，不處理（由 focus 事件處理）
       if (event.target.closest(".grid-header-cell") || 
           event.target.closest(".header-title")) {
@@ -3630,6 +4010,11 @@
       if (event.target.closest(".field-control input") || 
           event.target.closest(".field-control textarea") ||
           event.target.closest(".field-control select")) {
+        return;
+      }
+      
+      // 如果點擊的是按鈕（可編輯），不處理（讓按鈕可以編輯）
+      if (event.target.classList.contains("field-button") && event.target.contentEditable === "true") {
         return;
       }
       
@@ -4509,7 +4894,7 @@
       
       // 標題行（紅色文字，已由 CSS 處理樣式）
       html += `<caption>${tableTitle || "未命名表格"}</caption>`;
-      
+        
       // 表頭（已由 CSS 處理樣式）
         html += `<thead>`;
         html += `<tr>`;
@@ -5378,6 +5763,8 @@
       if (!isNoTabs && !isGrid) {
         const activeTabBody = panel.querySelector(".tab-body.active");
         if (activeTabBody) {
+          // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+          updatePanelColumnSelect(panel, activeTabBody);
           setActivePanel(activeTabBody);
         }
       }
@@ -5417,12 +5804,17 @@
         
         if (columnSelect) {
           columnSelect.addEventListener("change", () => {
+            // 對於有頁籤的面板，只應用到當前活動的 tab-body
+            const panelHasTabs = panel.querySelector(".panel-tabs");
+            const activeTabBody = panelHasTabs ? panel.querySelector(".tab-body.active") : null;
+            
             if (columnSelect.value === "custom") {
               // 顯示自訂輸入框
               if (columnCustom) {
                 columnCustom.style.display = "inline-block";
                 columnCustom.focus();
-                const currentColumns = panel.dataset.columns || "3";
+                // 從當前活動的 tab-body 或 panel 取得當前欄數
+                const currentColumns = activeTabBody ? (activeTabBody.dataset.columns || panel.dataset.columns || "3") : (panel.dataset.columns || "3");
                 if (!["2", "3", "4", "5"].includes(currentColumns)) {
                   columnCustom.value = currentColumns;
                 }
@@ -5432,7 +5824,7 @@
               if (columnCustom) {
                 columnCustom.style.display = "none";
               }
-              setPanelColumns(panel, columnSelect.value);
+              setPanelColumns(panel, columnSelect.value, activeTabBody);
             }
           });
         }
@@ -5441,18 +5833,25 @@
           columnCustom.addEventListener("input", () => {
             const customValue = columnCustom.value;
             if (customValue && parseInt(customValue) > 0 && parseInt(customValue) <= 20) {
-              setPanelColumns(panel, customValue);
+              // 對於有頁籤的面板，只應用到當前活動的 tab-body
+              const panelHasTabs = panel.querySelector(".panel-tabs");
+              const activeTabBody = panelHasTabs ? panel.querySelector(".tab-body.active") : null;
+              setPanelColumns(panel, customValue, activeTabBody);
             }
           });
           
           columnCustom.addEventListener("blur", () => {
             const customValue = columnCustom.value;
+            // 對於有頁籤的面板，只應用到當前活動的 tab-body
+            const panelHasTabs = panel.querySelector(".panel-tabs");
+            const activeTabBody = panelHasTabs ? panel.querySelector(".tab-body.active") : null;
+            
             if (!customValue || parseInt(customValue) < 1) {
               columnCustom.value = "3";
-              setPanelColumns(panel, "3");
+              setPanelColumns(panel, "3", activeTabBody);
             } else if (parseInt(customValue) > 20) {
               columnCustom.value = "20";
-              setPanelColumns(panel, "20");
+              setPanelColumns(panel, "20", activeTabBody);
             }
           });
         }
@@ -5574,6 +5973,10 @@
           } else if (config.dbTable) {
             tabBody.dataset.panelDbTable = config.dbTable;
           }
+          // 設置頁籤的欄數（優先使用 tabConfig.columns，否則使用 config.columns，最後使用預設值 "3"）
+          const tabColumns = tabConfig.columns || config.columns || "3";
+          tabBody.dataset.columns = tabColumns;
+          tabBody.style.setProperty("--column-count", tabColumns);
         });
       } else {
         // 無頁籤或 Grid 面板：設置在 panel 上
@@ -5757,6 +6160,8 @@
             // 切換頁籤時，清除選中的欄位，確保顯示區塊屬性
             selectField(null);
             selectGridHeaderCell(null);
+            // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+            updatePanelColumnSelect(panel, activeTabBody);
             // 重新載入該頁籤的區塊屬性
             setActivePanel(activeTabBody);
           });
@@ -5787,6 +6192,8 @@
               // 清除選中的欄位，確保顯示區塊屬性
               selectField(null);
               selectGridHeaderCell(null);
+              // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+              updatePanelColumnSelect(panel, activeTabBody);
               // 顯示該頁籤的區塊屬性
               setActivePanel(activeTabBody);
             } else if (tab && tab.classList.contains("active")) {
@@ -5796,6 +6203,8 @@
               if (activeTabBody) {
                 selectField(null);
                 selectGridHeaderCell(null);
+                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                updatePanelColumnSelect(panel, activeTabBody);
                 setActivePanel(activeTabBody);
               }
             }
@@ -6717,7 +7126,7 @@
         wrapper.innerHTML = `
           <div class="field-delete" title="刪除欄位">×</div>
           <div class="field-control">
-            ${fieldTemplates[type](buttonText)}
+            <button type="button" class="field-button" contenteditable="true">${buttonText}</button>
             <div class="button-width-resizer" title="拖曳調整寬度"></div>
           </div>
         `;
@@ -6730,9 +7139,52 @@
           }
         }
         
-        // 設置按鈕寬度調整器
-        const resizer = wrapper.querySelector(".button-width-resizer");
+        // 設置按鈕文字可編輯功能和寬度調整器
         const button = wrapper.querySelector(".field-control .field-button");
+        const resizer = wrapper.querySelector(".button-width-resizer");
+        
+        if (button) {
+          // 阻止點擊按鈕時觸發欄位選擇
+          button.addEventListener("click", (e) => {
+            e.stopPropagation();
+          });
+          
+          // 處理貼上事件：只保留純文字，移除所有格式
+          button.addEventListener("paste", (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+              const range = selection.getRangeAt(0);
+              range.deleteContents();
+              const textNode = document.createTextNode(text);
+              range.insertNode(textNode);
+              range.setStartAfter(textNode);
+              range.setEndAfter(textNode);
+              selection.removeAllRanges();
+              selection.addRange(range);
+            } else {
+              button.textContent = text;
+            }
+            // 觸發 input 事件以同步更新值
+            button.dispatchEvent(new Event("input", { bubbles: true }));
+          });
+          
+          // 當按鈕文字改變時，同步更新值
+          button.addEventListener("input", () => {
+            wrapper.dataset.value = button.textContent.trim() || "按鈕";
+          });
+          
+          // 當按鈕失去焦點時，確保有內容
+          button.addEventListener("blur", () => {
+            if (!button.textContent.trim()) {
+              button.textContent = "按鈕";
+            }
+            wrapper.dataset.value = button.textContent.trim();
+          });
+        }
+        
+        // 設置按鈕寬度調整器
         if (resizer && button) {
           let isResizing = false;
           let startX = 0;
@@ -6988,7 +7440,7 @@
         wrapper.innerHTML = `
           <div class="field-delete" title="刪除欄位">×</div>
           <div class="${labelClass}">
-            <span class="label-text">${config.label || defaultLabel(type)}</span>
+            <span class="label-text" contenteditable="true">${config.label || defaultLabel(type)}</span>
           </div>
           <div class="field-control">
             ${controlHTML}
@@ -7135,21 +7587,88 @@
         }, true); // 使用捕獲階段，確保在其他事件之前處理
       }
       
+      // 設置標題可編輯功能
+      const labelText = wrapper.querySelector(".label-text");
+      if (labelText) {
+        // 阻止點擊標題時觸發欄位選擇
+        labelText.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+        
+        // 處理貼上事件：只保留純文字，移除所有格式
+        labelText.addEventListener("paste", (e) => {
+          e.preventDefault();
+          const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+          const selection = window.getSelection();
+          if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            const textNode = document.createTextNode(text);
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } else {
+            labelText.textContent = text;
+          }
+          // 觸發 input 事件以同步更新屬性面板
+          labelText.dispatchEvent(new Event("input", { bubbles: true }));
+        });
+        
+        // 當標題內容改變時，同步更新屬性面板
+        labelText.addEventListener("input", () => {
+          if (selectedField === wrapper && propLabel) {
+            propLabel.value = labelText.textContent.trim() || "未命名欄位";
+          }
+        });
+        
+        // 當標題失去焦點時，確保有內容
+        labelText.addEventListener("blur", () => {
+          if (!labelText.textContent.trim()) {
+            labelText.textContent = "未命名欄位";
+          }
+        });
+      }
+      
       selectField(wrapper);
       setActivePanel(targetBody);
     }
 
 
-    function setPanelColumns(panel, columns) {
-      // 應用到所有 tab-body 和 panel-body
-      panel.querySelectorAll(".tab-body, .panel-body").forEach((body) => {
+    function setPanelColumns(panel, columns, targetBody = null) {
+      // 如果指定了 targetBody，只應用到該 body（用於有頁籤的面板）
+      if (targetBody) {
+        targetBody.style.setProperty("--column-count", columns);
+        // 保存到 targetBody 的 dataset
+        targetBody.dataset.columns = columns;
+      } else {
+        // 沒有指定 targetBody，應用到所有 tab-body 和 panel-body（向後兼容）
+        panel.querySelectorAll(".tab-body, .panel-body").forEach((body) => {
       body.style.setProperty("--column-count", columns);
-      });
+          body.dataset.columns = columns;
+        });
       panel.dataset.columns = columns;
+      }
+      
+      // 更新面板上的欄數選擇器
+      updatePanelColumnSelect(panel, targetBody);
+    }
+    
+    function updatePanelColumnSelect(panel, targetBody = null) {
       const select = panel.querySelector(".panel-column-select");
       const customInput = panel.querySelector(".panel-column-custom");
       
-      if (select) {
+      if (!select) return;
+      
+      // 如果有指定 targetBody，從 targetBody 取得欄數；否則從 panel 取得
+      let columns;
+      if (targetBody) {
+        columns = targetBody.dataset.columns || panel.dataset.columns || "3";
+      } else {
+        columns = panel.dataset.columns || "3";
+      }
+      
         const isCustom = !["2", "3", "4", "5"].includes(String(columns));
         if (isCustom) {
           select.value = "custom";
@@ -7161,7 +7680,6 @@
           select.value = String(columns);
           if (customInput) {
             customInput.style.display = "none";
-          }
         }
       }
     }
