@@ -145,6 +145,17 @@
       opacity: 0.95;
     }
 
+    .version-display {
+      font-size: 0.75rem;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-left: 8px;
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
     button {
       border: 1px solid rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.15);
@@ -2613,6 +2624,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
+      <span id="version-display" class="version-display"></span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2744,7 +2756,7 @@
     </aside>
     <section id="canvas" class="canvas" aria-live="polite">
       <div class="doc-title-row">
-        <input id="document-title" type="text" value="功能名稱" placeholder="請輸入單據標題" />
+        <input id="document-title" type="text" value="銷售訂單" placeholder="請輸入單據標題" />
       </div>
       <div id="canvas-placeholder" class="placeholder">
         拖曳左側「區塊面板」至此開始設計單據版面
@@ -3054,6 +3066,7 @@
     const btnPreview = document.getElementById("btn-preview");
     const btnExport = document.getElementById("btn-export");
     const btnClear = document.getElementById("btn-clear");
+    const versionDisplay = document.getElementById("version-display");
     const previewModal = document.getElementById("preview-modal");
     const previewContent = document.getElementById("preview-content");
     const previewModalClose = previewModal.querySelector(".preview-modal-close");
@@ -3332,6 +3345,43 @@
 
     // 初始化按鈕狀態
     updateThemeButtons(savedTheme);
+
+    // 版本號生成功能
+    function generateVersion() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const dateStr = `${year}${month}${day}`;
+      
+      // 從 localStorage 讀取當天的版本記錄
+      const versionKey = `erp-form-builder-version-${dateStr}`;
+      const lastVersion = localStorage.getItem(versionKey);
+      
+      let sequenceNumber = 1;
+      if (lastVersion) {
+        // 解析最後的版本號，提取流水號
+        const match = lastVersion.match(/^(\d{8})-(\d+)$/);
+        if (match && match[1] === dateStr) {
+          // 如果是同一天，流水號遞增
+          sequenceNumber = parseInt(match[2], 10) + 1;
+        }
+      }
+      
+      // 生成新版本號
+      const version = `${dateStr}-${String(sequenceNumber).padStart(3, "0")}`;
+      
+      // 保存到 localStorage
+      localStorage.setItem(versionKey, version);
+      
+      return version;
+    }
+
+    // 初始化版本顯示
+    if (versionDisplay) {
+      const version = generateVersion();
+      versionDisplay.textContent = `v${version}`;
+    }
 
     // 主題按鈕事件監聽
     themeButtons.forEach((btn) => {
@@ -4798,11 +4848,6 @@
         selectGridHeaderCell(null);
         setActivePanel(null);
         ensurePlaceholder();
-        // 清空功能標題並設置預設值
-        const documentTitleInput = document.getElementById("document-title");
-        if (documentTitleInput) {
-          documentTitleInput.value = "功能名稱";
-        }
       }
     });
 
@@ -5768,6 +5813,8 @@
       if (!isNoTabs && !isGrid) {
         const activeTabBody = panel.querySelector(".tab-body.active");
         if (activeTabBody) {
+          // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+          updatePanelColumnSelect(panel, activeTabBody);
           setActivePanel(activeTabBody);
         }
       }
@@ -5807,12 +5854,17 @@
         
         if (columnSelect) {
           columnSelect.addEventListener("change", () => {
+            // 對於有頁籤的面板，只應用到當前活動的 tab-body
+            const panelHasTabs = panel.querySelector(".panel-tabs");
+            const activeTabBody = panelHasTabs ? panel.querySelector(".tab-body.active") : null;
+            
             if (columnSelect.value === "custom") {
               // 顯示自訂輸入框
               if (columnCustom) {
                 columnCustom.style.display = "inline-block";
                 columnCustom.focus();
-                const currentColumns = panel.dataset.columns || "3";
+                // 從當前活動的 tab-body 或 panel 取得當前欄數
+                const currentColumns = activeTabBody ? (activeTabBody.dataset.columns || panel.dataset.columns || "3") : (panel.dataset.columns || "3");
                 if (!["2", "3", "4", "5"].includes(currentColumns)) {
                   columnCustom.value = currentColumns;
                 }
@@ -5822,7 +5874,7 @@
               if (columnCustom) {
                 columnCustom.style.display = "none";
               }
-              setPanelColumns(panel, columnSelect.value);
+              setPanelColumns(panel, columnSelect.value, activeTabBody);
             }
           });
         }
@@ -5831,18 +5883,25 @@
           columnCustom.addEventListener("input", () => {
             const customValue = columnCustom.value;
             if (customValue && parseInt(customValue) > 0 && parseInt(customValue) <= 20) {
-              setPanelColumns(panel, customValue);
+              // 對於有頁籤的面板，只應用到當前活動的 tab-body
+              const panelHasTabs = panel.querySelector(".panel-tabs");
+              const activeTabBody = panelHasTabs ? panel.querySelector(".tab-body.active") : null;
+              setPanelColumns(panel, customValue, activeTabBody);
             }
           });
           
           columnCustom.addEventListener("blur", () => {
             const customValue = columnCustom.value;
+            // 對於有頁籤的面板，只應用到當前活動的 tab-body
+            const panelHasTabs = panel.querySelector(".panel-tabs");
+            const activeTabBody = panelHasTabs ? panel.querySelector(".tab-body.active") : null;
+            
             if (!customValue || parseInt(customValue) < 1) {
               columnCustom.value = "3";
-              setPanelColumns(panel, "3");
+              setPanelColumns(panel, "3", activeTabBody);
             } else if (parseInt(customValue) > 20) {
               columnCustom.value = "20";
-              setPanelColumns(panel, "20");
+              setPanelColumns(panel, "20", activeTabBody);
             }
           });
         }
@@ -5964,6 +6023,10 @@
           } else if (config.dbTable) {
             tabBody.dataset.panelDbTable = config.dbTable;
           }
+          // 設置頁籤的欄數（優先使用 tabConfig.columns，否則使用 config.columns，最後使用預設值 "3"）
+          const tabColumns = tabConfig.columns || config.columns || "3";
+          tabBody.dataset.columns = tabColumns;
+          tabBody.style.setProperty("--column-count", tabColumns);
         });
       } else {
         // 無頁籤或 Grid 面板：設置在 panel 上
@@ -6147,6 +6210,8 @@
             // 切換頁籤時，清除選中的欄位，確保顯示區塊屬性
             selectField(null);
             selectGridHeaderCell(null);
+            // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+            updatePanelColumnSelect(panel, activeTabBody);
             // 重新載入該頁籤的區塊屬性
             setActivePanel(activeTabBody);
           });
@@ -6177,6 +6242,8 @@
               // 清除選中的欄位，確保顯示區塊屬性
               selectField(null);
               selectGridHeaderCell(null);
+              // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+              updatePanelColumnSelect(panel, activeTabBody);
               // 顯示該頁籤的區塊屬性
               setActivePanel(activeTabBody);
             } else if (tab && tab.classList.contains("active")) {
@@ -6186,6 +6253,8 @@
               if (activeTabBody) {
                 selectField(null);
                 selectGridHeaderCell(null);
+                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                updatePanelColumnSelect(panel, activeTabBody);
                 setActivePanel(activeTabBody);
               }
             }
@@ -7617,16 +7686,39 @@
     }
 
 
-    function setPanelColumns(panel, columns) {
-      // 應用到所有 tab-body 和 panel-body
-      panel.querySelectorAll(".tab-body, .panel-body").forEach((body) => {
+    function setPanelColumns(panel, columns, targetBody = null) {
+      // 如果指定了 targetBody，只應用到該 body（用於有頁籤的面板）
+      if (targetBody) {
+        targetBody.style.setProperty("--column-count", columns);
+        // 保存到 targetBody 的 dataset
+        targetBody.dataset.columns = columns;
+      } else {
+        // 沒有指定 targetBody，應用到所有 tab-body 和 panel-body（向後兼容）
+        panel.querySelectorAll(".tab-body, .panel-body").forEach((body) => {
       body.style.setProperty("--column-count", columns);
-      });
+          body.dataset.columns = columns;
+        });
       panel.dataset.columns = columns;
+      }
+      
+      // 更新面板上的欄數選擇器
+      updatePanelColumnSelect(panel, targetBody);
+    }
+    
+    function updatePanelColumnSelect(panel, targetBody = null) {
       const select = panel.querySelector(".panel-column-select");
       const customInput = panel.querySelector(".panel-column-custom");
       
-      if (select) {
+      if (!select) return;
+      
+      // 如果有指定 targetBody，從 targetBody 取得欄數；否則從 panel 取得
+      let columns;
+      if (targetBody) {
+        columns = targetBody.dataset.columns || panel.dataset.columns || "3";
+      } else {
+        columns = panel.dataset.columns || "3";
+      }
+      
         const isCustom = !["2", "3", "4", "5"].includes(String(columns));
         if (isCustom) {
           select.value = "custom";
@@ -7638,7 +7730,6 @@
           select.value = String(columns);
           if (customInput) {
             customInput.style.display = "none";
-          }
         }
       }
     }
@@ -8503,7 +8594,7 @@
       ensurePlaceholder();
       
       // 設定標題
-      const title = layout.title || "功能名稱";
+      const title = layout.title || "銷售訂單";
       documentTitleInput.value = title;
       
       // 載入所有面板
