@@ -145,6 +145,17 @@
       opacity: 0.95;
     }
 
+    .version-display {
+      font-size: 0.75rem;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-left: 8px;
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
     button {
       border: 1px solid rgba(255, 255, 255, 0.2);
       background: rgba(255, 255, 255, 0.15);
@@ -2613,6 +2624,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
+      <span id="version-display" class="version-display"></span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3054,6 +3066,7 @@
     const btnPreview = document.getElementById("btn-preview");
     const btnExport = document.getElementById("btn-export");
     const btnClear = document.getElementById("btn-clear");
+    const versionDisplay = document.getElementById("version-display");
     const previewModal = document.getElementById("preview-modal");
     const previewContent = document.getElementById("preview-content");
     const previewModalClose = previewModal.querySelector(".preview-modal-close");
@@ -3332,6 +3345,43 @@
 
     // 初始化按鈕狀態
     updateThemeButtons(savedTheme);
+
+    // 版本號生成功能
+    function generateVersion() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const dateStr = `${year}${month}${day}`;
+      
+      // 從 localStorage 讀取當天的版本記錄
+      const versionKey = `erp-form-builder-version-${dateStr}`;
+      const lastVersion = localStorage.getItem(versionKey);
+      
+      let sequenceNumber = 1;
+      if (lastVersion) {
+        // 解析最後的版本號，提取流水號
+        const match = lastVersion.match(/^(\d{8})-(\d+)$/);
+        if (match && match[1] === dateStr) {
+          // 如果是同一天，流水號遞增
+          sequenceNumber = parseInt(match[2], 10) + 1;
+        }
+      }
+      
+      // 生成新版本號
+      const version = `${dateStr}-${String(sequenceNumber).padStart(3, "0")}`;
+      
+      // 保存到 localStorage
+      localStorage.setItem(versionKey, version);
+      
+      return version;
+    }
+
+    // 初始化版本顯示
+    if (versionDisplay) {
+      const version = generateVersion();
+      versionDisplay.textContent = `v${version}`;
+    }
 
     // 主題按鈕事件監聽
     themeButtons.forEach((btn) => {
