@@ -1,0 +1,410 @@
+{
+  "meta": {
+    "version": 2,
+    "generatedAt": "2025-11-29T13:02:15.746Z"
+  },
+  "layout": {
+    "title": "銷售訂單",
+    "panels": [
+      {
+        "type": "panel-no-tabs",
+        "title": "表頭",
+        "tabs": [],
+        "columns": "3",
+        "collapsed": false,
+        "fields": [
+          {
+            "type": "text",
+            "label": "客戶名稱",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "關聯：部門11012\n取回：名稱DeptName\n",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          },
+          {
+            "type": "number",
+            "label": "數量",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          }
+        ],
+        "dbTable": "X_Customer",
+        "panelTabTitle": "表頭",
+        "panelHeight": "1"
+      },
+      {
+        "type": "panel",
+        "title": "新頁籤",
+        "tabs": [
+          {
+            "title": "基本資料",
+            "active": false
+          },
+          {
+            "title": "GRID 表",
+            "active": false,
+            "tableId": "B",
+            "parentTable": "A"
+          },
+          {
+            "title": "新頁籤",
+            "active": true,
+            "tableId": "A"
+          }
+        ],
+        "columns": "3",
+        "collapsed": false,
+        "fields": [
+          {
+            "type": "text",
+            "label": "客戶名稱",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": "",
+            "tabIndex": 0
+          },
+          {
+            "type": "number",
+            "label": "數量",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": "",
+            "tabIndex": 0
+          },
+          {
+            "type": "grid-tab",
+            "label": "",
+            "dbField": "",
+            "width": "full",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": "",
+            "tabIndex": 1,
+            "gridColumns": [
+              {
+                "title": "欄號",
+                "width": 100,
+                "dbField": "",
+                "widthProp": "small",
+                "rowHeight": "1",
+                "length": "N/A",
+                "fieldType": "real",
+                "selectOptions": "",
+                "tcode": "N/A",
+                "relationField": "",
+                "otherNote": "N/A",
+                "required": false,
+                "readonly": false,
+                "primaryKey": false,
+                "defaultValue": ""
+              },
+              {
+                "title": "欄位2",
+                "width": 100,
+                "dbField": "",
+                "widthProp": "small",
+                "rowHeight": "1",
+                "length": "N/A",
+                "fieldType": "real",
+                "selectOptions": "",
+                "tcode": "N/A",
+                "relationField": "",
+                "otherNote": "N/A",
+                "required": false,
+                "readonly": false,
+                "primaryKey": false,
+                "defaultValue": ""
+              },
+              {
+                "title": "欄位3",
+                "width": 100,
+                "dbField": "",
+                "widthProp": "small",
+                "rowHeight": "1",
+                "length": "N/A",
+                "fieldType": "real",
+                "selectOptions": "",
+                "tcode": "N/A",
+                "relationField": "",
+                "otherNote": "N/A",
+                "required": false,
+                "readonly": false,
+                "primaryKey": false,
+                "defaultValue": ""
+              },
+              {
+                "title": "欄位4",
+                "width": 100,
+                "dbField": "",
+                "widthProp": "small",
+                "rowHeight": "1",
+                "length": "N/A",
+                "fieldType": "real",
+                "selectOptions": "",
+                "tcode": "N/A",
+                "relationField": "",
+                "otherNote": "N/A",
+                "required": false,
+                "readonly": false,
+                "primaryKey": false,
+                "defaultValue": ""
+              }
+            ],
+            "gridRows": [
+              [
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          },
+          {
+            "type": "text",
+            "label": "客戶名稱",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "關聯：部門11012\n取回：名稱DeptName\n",
+            "otherNote": "N/A",
+            "required": true,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": "",
+            "tabIndex": 2
+          },
+          {
+            "type": "number",
+            "label": "數量",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": "",
+            "tabIndex": 2
+          }
+        ],
+        "panelHeight": "6"
+      },
+      {
+        "type": "grid-panel",
+        "title": "區塊",
+        "tabs": [],
+        "columns": "3",
+        "collapsed": false,
+        "fields": [],
+        "tableId": "C",
+        "parentTable": "A",
+        "gridColumns": [
+          {
+            "title": "欄位1",
+            "width": 100,
+            "dbField": "",
+            "widthProp": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": ""
+          },
+          {
+            "title": "欄位2",
+            "width": 100,
+            "dbField": "",
+            "widthProp": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": ""
+          },
+          {
+            "title": "欄位3",
+            "width": 100,
+            "dbField": "",
+            "widthProp": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": ""
+          },
+          {
+            "title": "欄位4",
+            "width": 100,
+            "dbField": "",
+            "widthProp": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": ""
+          }
+        ],
+        "gridRows": [
+          [
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "",
+            "",
+            "",
+            ""
+          ]
+        ]
+      },
+      {
+        "type": "panel-no-tabs",
+        "title": "區塊",
+        "tabs": [],
+        "columns": "5",
+        "collapsed": false,
+        "fields": [
+          {
+            "type": "button",
+            "label": "",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": "按鈕"
+          }
+        ],
+        "panelHeight": "1"
+      }
+    ]
+  }
+}
