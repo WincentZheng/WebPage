@@ -2055,8 +2055,9 @@
     }
 
     /* 預覽模式：數值欄位靠右對齊 */
-    .preview-content .field[data-type="number"] .field-control input {
-      text-align: right;
+    .preview-content .field[data-type="number"] .field-control input,
+    .preview-content .field[data-type="number"] .field-control input.number-input {
+      text-align: right !important;
     }
 
     /* 預覽模式：唯讀狀態標題反灰 */
@@ -2083,6 +2084,12 @@
       border: none !important;
       border-bottom: none !important;
       text-decoration: none !important;
+    }
+
+    /* 預覽模式：GRID 表格內的數值欄位靠右對齊 */
+    .preview-content .field-control .grid-panel-body .grid-data-cell[data-type="number"] input,
+    .preview-content .field-control .grid-panel-body .grid-data-cell input.number-input {
+      text-align: right !important;
     }
 
     /* 預覽模式：所有 textarea 欄位顯示完整邊框 */
@@ -2730,7 +2737,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
-      <span class="version-display">v251204-1</span>
+      <span class="version-display">v251204-2</span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4938,6 +4945,12 @@
           }
           input.readOnly = true;
           input.disabled = false;
+          
+          // 如果是數值欄位，設置靠右對齊
+          const field = input.closest(".field");
+          if (field && field.dataset.type === "number") {
+            input.style.textAlign = "right";
+          }
         }
       });
 
@@ -4950,6 +4963,14 @@
         }
         input.readOnly = true;
         input.disabled = false;
+        
+        // 如果是數值欄位，設置靠右對齊
+        const cell = input.closest(".grid-data-cell");
+        if (cell && cell.dataset.type === "number") {
+          input.style.textAlign = "right";
+        } else if (input.classList.contains("number-input")) {
+          input.style.textAlign = "right";
+        }
       });
 
       // 保留 class="field"、data-width、data-row-height、data-type 和面板的 data-columns 以維持布局，但移除其他 data 屬性
@@ -5012,6 +5033,16 @@
             preview.value = original.value;
             preview.readOnly = true;
             preview.disabled = false;
+            
+            // 如果是數值欄位，設置靠右對齊
+            if (preview.tagName === "INPUT") {
+              const previewField = preview.closest(".field");
+              if (previewField && previewField.dataset.type === "number") {
+                preview.style.textAlign = "right";
+              } else if (preview.classList.contains("number-input")) {
+                preview.style.textAlign = "right";
+              }
+            }
           }
         }
       });
@@ -5026,6 +5057,14 @@
           preview.value = original.value;
           preview.readOnly = true;
           preview.disabled = false;
+          
+          // 如果是數值欄位，設置靠右對齊
+          const previewCell = preview.closest(".grid-data-cell");
+          if (previewCell && previewCell.dataset.type === "number") {
+            preview.style.textAlign = "right";
+          } else if (preview.classList.contains("number-input")) {
+            preview.style.textAlign = "right";
+          }
         }
       });
 
