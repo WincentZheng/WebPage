@@ -5321,13 +5321,9 @@
         
         let files = [];
         
-        // 如果是本地檔案協議，使用 File System Access API
-        if (isLocalFileProtocol()) {
-          if (!templateDirectoryHandle) {
-            templateList.innerHTML = '<p style="text-align: center; color: #999; padding: 32px;">請先選擇範本資料夾</p>';
-            return;
-          }
-          
+        // 如果已經選擇了本機資料夾，優先使用本機資料夾的內容
+        if (templateDirectoryHandle) {
+          // 使用 File System Access API 從已選擇的資料夾載入
           for await (const [name, handle] of templateDirectoryHandle.entries()) {
             if (handle.kind === 'file' && name.toLowerCase().endsWith('.json')) {
               const file = await handle.getFile();
@@ -5339,6 +5335,10 @@
               });
             }
           }
+        } else if (isLocalFileProtocol()) {
+          // 如果是本地檔案協議但沒有選擇資料夾，提示選擇
+          templateList.innerHTML = '<p style="text-align: center; color: #999; padding: 32px;">請先選擇範本資料夾</p>';
+          return;
         } else {
           // 如果是 HTTP/HTTPS 協議，使用 fetch API 從相對路徑載入
           try {
