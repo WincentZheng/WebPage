@@ -2730,7 +2730,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
-      <span id="version-display" class="version-display"></span>
+      <span class="version-display">v251204-0</span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3235,7 +3235,6 @@
     const btnPreview = document.getElementById("btn-preview");
     const btnExport = document.getElementById("btn-export");
     const btnClear = document.getElementById("btn-clear");
-    const versionDisplay = document.getElementById("version-display");
     const previewModal = document.getElementById("preview-modal");
     const previewContent = document.getElementById("preview-content");
     const previewModalClose = previewModal.querySelector(".preview-modal-close");
@@ -3524,42 +3523,6 @@
     // 初始化按鈕狀態
     updateThemeButtons(savedTheme);
 
-    // 版本號生成功能
-    function generateVersion() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, "0");
-      const day = String(now.getDate()).padStart(2, "0");
-      const dateStr = `${year}${month}${day}`;
-      
-      // 從 localStorage 讀取當天的版本記錄
-      const versionKey = `erp-form-builder-version-${dateStr}`;
-      const lastVersion = localStorage.getItem(versionKey);
-      
-      let sequenceNumber = 1;
-      if (lastVersion) {
-        // 解析最後的版本號，提取流水號
-        const match = lastVersion.match(/^(\d{8})-(\d+)$/);
-        if (match && match[1] === dateStr) {
-          // 如果是同一天，流水號遞增
-          sequenceNumber = parseInt(match[2], 10) + 1;
-        }
-      }
-      
-      // 生成新版本號
-      const version = `${dateStr}-${String(sequenceNumber).padStart(3, "0")}`;
-      
-      // 保存到 localStorage
-      localStorage.setItem(versionKey, version);
-      
-      return version;
-    }
-
-    // 初始化版本顯示
-    if (versionDisplay) {
-      const version = generateVersion();
-      versionDisplay.textContent = `v${version}`;
-    }
 
     // 主題按鈕事件監聽
     themeButtons.forEach((btn) => {
@@ -5321,9 +5284,13 @@
         
         let files = [];
         
-        // 如果已經選擇了本機資料夾，優先使用本機資料夾的內容
-        if (templateDirectoryHandle) {
-          // 使用 File System Access API 從已選擇的資料夾載入
+        // 如果是本地檔案協議，使用 File System Access API
+        if (isLocalFileProtocol()) {
+          if (!templateDirectoryHandle) {
+            templateList.innerHTML = '<p style="text-align: center; color: #999; padding: 32px;">請先選擇範本資料夾</p>';
+            return;
+          }
+          
           for await (const [name, handle] of templateDirectoryHandle.entries()) {
             if (handle.kind === 'file' && name.toLowerCase().endsWith('.json')) {
               const file = await handle.getFile();
@@ -5335,10 +5302,6 @@
               });
             }
           }
-        } else if (isLocalFileProtocol()) {
-          // 如果是本地檔案協議但沒有選擇資料夾，提示選擇
-          templateList.innerHTML = '<p style="text-align: center; color: #999; padding: 32px;">請先選擇範本資料夾</p>';
-          return;
         } else {
           // 如果是 HTTP/HTTPS 協議，使用 fetch API 從相對路徑載入
           try {
