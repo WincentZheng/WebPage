@@ -2054,6 +2054,133 @@
       background: transparent;
     }
 
+    /* 登入畫面樣式 */
+    .login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--section-bg-start) 0%, var(--section-bg-end) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .login-container {
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid var(--border);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-icon {
+      width: 64px;
+      height: 64px;
+      color: var(--header);
+      margin-bottom: 16px;
+    }
+
+    .login-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--header);
+      margin: 0;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .login-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .login-field label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--header-dark);
+    }
+
+    .login-field input {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      background: var(--panel);
+      color: var(--header-dark);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-field input:focus {
+      outline: none;
+      border-color: var(--header);
+      box-shadow: 0 0 0 3px rgba(78, 106, 58, 0.1);
+    }
+
+    .login-field input::placeholder {
+      color: #999;
+    }
+
+    .login-error {
+      padding: 12px 16px;
+      background: #fee;
+      border: 1px solid #fcc;
+      border-radius: 6px;
+      color: #c33;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .login-submit-btn {
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 8px;
+    }
+
+    .login-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(78, 106, 58, 0.3);
+    }
+
+    .login-submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-submit-btn .btn-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .main-app {
+      width: 100%;
+      height: 100%;
+    }
+
     /* 預覽模式：數值欄位靠右對齊 */
     .preview-content .field[data-type="number"] .field-control input,
     .preview-content .field[data-type="number"] .field-control input.number-input {
@@ -2727,6 +2854,58 @@
   </script>
 </head>
 <body>
+  <!-- 登入畫面 -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      <div class="login-header">
+        <svg class="login-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 8H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 16H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1>ERP畫面輔助產生器</h1>
+      </div>
+      <form id="login-form" class="login-form">
+        <div class="login-field">
+          <label for="login-username">帳號</label>
+          <input 
+            type="text" 
+            id="login-username" 
+            name="username" 
+            placeholder="員工編號" 
+            required 
+            autocomplete="username"
+          />
+        </div>
+        <div class="login-field">
+          <label for="login-password">密碼</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            name="password" 
+            placeholder="請輸入密碼" 
+            required 
+            autocomplete="current-password"
+          />
+        </div>
+        <div id="login-error" class="login-error" style="display: none;">
+          帳號或密碼錯誤，請重新輸入
+        </div>
+        <button type="submit" class="login-submit-btn">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          登入
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 主畫面容器（初始隱藏） -->
+  <div id="main-app" class="main-app" style="display: none;">
   <header>
     <h1>
       <svg class="header-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2737,7 +2916,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
-      <span class="version-display">v251204-2</span>
+      <span class="version-display">v251204-3</span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2799,6 +2978,14 @@
         <polyline points="10 9 9 9 8 9"></polyline>
       </svg>
       載入範本
+    </button>
+    <button id="btn-logout" style="margin-left: auto;">
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+      登出
     </button>
     <input id="input-load-layout" type="file" accept="application/json" hidden />
     <label class="column-picker">
@@ -9960,7 +10147,74 @@
       toast.classList.add("show");
       setTimeout(() => toast.classList.remove("show"), 2000);
     }
+
+    // 登入驗證邏輯
+    const loginScreen = document.getElementById("login-screen");
+    const mainApp = document.getElementById("main-app");
+    const loginForm = document.getElementById("login-form");
+    const loginError = document.getElementById("login-error");
+    const loginUsername = document.getElementById("login-username");
+    const loginPassword = document.getElementById("login-password");
+
+    // 固定帳號密碼
+    const VALID_USERNAME = "chi";
+    const VALID_PASSWORD = "23736165";
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      
+      const username = loginUsername.value.trim();
+      const password = loginPassword.value;
+
+      // 驗證帳號密碼
+      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        // 登入成功：隱藏登入畫面，顯示主畫面
+        loginScreen.style.display = "none";
+        mainApp.style.display = "block";
+        loginError.style.display = "none";
+        
+        // 清除密碼欄位
+        loginPassword.value = "";
+      } else {
+        // 登入失敗：顯示錯誤訊息
+        loginError.style.display = "block";
+        loginPassword.value = "";
+        loginPassword.focus();
+      }
+    });
+
+    // 按 Enter 鍵提交表單
+    loginUsername.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        loginPassword.focus();
+      }
+    });
+
+    loginPassword.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        loginForm.dispatchEvent(new Event("submit"));
+      }
+    });
+
+    // 登出功能
+    const btnLogout = document.getElementById("btn-logout");
+    btnLogout.addEventListener("click", () => {
+      // 隱藏主畫面
+      mainApp.style.display = "none";
+      
+      // 顯示登入畫面
+      loginScreen.style.display = "flex";
+      
+      // 清空登入表單
+      loginUsername.value = "";
+      loginPassword.value = "";
+      loginError.style.display = "none";
+      
+      // 聚焦到帳號欄位
+      loginUsername.focus();
+    });
   </script>
+  </div>
 </body>
 </html>
 

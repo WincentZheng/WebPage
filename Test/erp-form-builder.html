@@ -1069,6 +1069,104 @@
       color: #b43429;
     }
 
+    /* 核取方塊欄位樣式 */
+    .field-checkbox .field-label {
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .field-checkbox .field-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    /* 複選控件欄位樣式 */
+    .field-checkbox-group .field-control {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      padding: 8px 0;
+      align-items: flex-start;
+    }
+
+    .checkbox-group-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      width: 100%;
+    }
+
+    .checkbox-group-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checkbox-group-option input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .checkbox-group-option label {
+      font-size: 0.875rem;
+      color: #475467;
+      cursor: pointer;
+      user-select: none;
+      margin: 0;
+    }
+
+    /* 單選控件欄位樣式 */
+    .field-radio-group .field-control {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      padding: 8px 0;
+      align-items: flex-start;
+    }
+
+    .radio-group-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      width: 100%;
+    }
+
+    .radio-group-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .radio-group-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .radio-group-option label {
+      font-size: 0.875rem;
+      color: #475467;
+      cursor: pointer;
+      user-select: none;
+      margin: 0;
+    }
+
+    .preview-content .field-radio-group .radio-group-option input[type="radio"] {
+      cursor: default;
+    }
+
     /* 唯讀狀態：標題反灰 */
     .field-label.readonly,
     .field[data-readonly="true"] .field-label {
@@ -1632,6 +1730,23 @@
       font-weight: 600;
       font-size: 0.9rem;
       color: var(--header-dark);
+    }
+
+    /* 欄位型態分類標題樣式 */
+    select option.field-type-category-header {
+      font-weight: 700;
+      font-size: 1.05em;
+      color: var(--header);
+      background-color: var(--section-bg-start);
+      padding: 6px 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* 針對不同瀏覽器的 option 樣式（支援有限，但盡量美化） */
+    select option.field-type-category-header:disabled {
+      font-weight: 700;
+      color: var(--header);
+      opacity: 1;
     }
 
     .properties-section-body {
@@ -2916,7 +3031,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
-      <span class="version-display">v251204-3</span>
+      <span class="version-display">v251212-1</span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3070,6 +3185,18 @@
             <div class="tool-drag-handle" draggable="true"></div>
             固定文字 <span>固定顯示文字</span>
           </div>
+          <div class="tool" draggable="true" data-type="checkbox">
+            <div class="tool-drag-handle" draggable="true"></div>
+            核取方塊 <span>是否選項</span>
+          </div>
+          <div class="tool" draggable="true" data-type="checkbox-group">
+            <div class="tool-drag-handle" draggable="true"></div>
+            複選控件 <span>多選選項</span>
+          </div>
+          <div class="tool" draggable="true" data-type="radio-group">
+            <div class="tool-drag-handle" draggable="true"></div>
+            單選控件 <span>單選選項</span>
+          </div>
         </div>
       </div>
       
@@ -3142,6 +3269,13 @@
                 <option value="virtual">虛欄位</option>
                 <option value="relation">關聯欄位</option>
           </select>
+        </label>
+        <label>
+          欄位型態
+          <select id="prop-field-type-select">
+            <option value="">請選擇欄位型態</option>
+          </select>
+          <input id="prop-field-type-custom" type="text" placeholder="請輸入自定義欄位型態" style="display: none; margin-top: 8px;" />
         </label>
         <label>
           預設值
@@ -3256,6 +3390,15 @@
                 <option value="virtual">虛欄位</option>
                 <option value="relation">關聯欄位</option>
               </select>
+            </label>
+          </div>
+          <div class="field-spec-row">
+            <label>
+              <span class="field-spec-label">欄位型態</span>
+              <select id="modal-prop-field-type-select" style="width: 100%;">
+                <option value="">請選擇欄位型態</option>
+              </select>
+              <input id="modal-prop-field-type-custom" type="text" placeholder="請輸入自定義欄位型態" style="display: none; width: 100%; margin-top: 8px;" />
             </label>
           </div>
           <div class="field-spec-row">
@@ -3376,6 +3519,15 @@
       },
       fixedtext(text = "固定文字") {
         return `<input type="text" value="${text}" />`;
+      },
+      checkbox() {
+        return `<input type="checkbox" />`;
+      },
+      "checkbox-group"() {
+        return `<div class="checkbox-group-container"></div>`;
+      },
+      "radio-group"() {
+        return `<div class="radio-group-container"></div>`;
       }
     };
 
@@ -3389,6 +3541,8 @@
     const propTextColorLabel = document.getElementById("prop-text-color-label");
     const propLength = document.getElementById("prop-length");
     const propFieldType = document.getElementById("prop-field-type");
+    const propFieldTypeSelect = document.getElementById("prop-field-type-select");
+    const propFieldTypeCustom = document.getElementById("prop-field-type-custom");
     const propSelectOptions = document.getElementById("prop-select-options");
     // const propTcode = document.getElementById("prop-tcode"); // 已移除關聯功能(T-Code)屬性
     const propRelationField = document.getElementById("prop-relation-field");
@@ -3407,6 +3561,155 @@
     const panelPropertiesSection = document.getElementById("panel-properties-section");
     const panelProperties = document.getElementById("panel-properties");
     const fieldProperties = document.getElementById("field-properties");
+    // 欄位型態資料
+    const fieldTypeData = {
+      "文字": [
+        { "name": "Text", "description": "單號.編號:非Unicode字符" },
+        { "name": "NTText", "description": "名稱:Unicode字元" },
+        { "name": "ShortMemo", "description": "小備註" },
+        { "name": "LongMemo", "description": "大備註" },
+        { "name": "LargeMemo", "description": "超大備註" },
+        { "name": "XML", "description": "XML文字" },
+        { "name": "GUID", "description": "全局唯一標識符" },
+        { "name": "Unknown", "description": "未定義" }
+      ],
+      "數字": [
+        { "name": "Byte", "description": ":文本選項(下拉):短整數" },
+        { "name": "Int/LongInt/Double/SmallInt", "description": "整數" },
+        { "name": "Numeric", "description": "金額.稅率" },
+        { "name": "Real", "description": "32位浮點型數值" }
+      ],
+      "日期時間": [
+        { "name": "Date", "description": "年月日" },
+        { "name": "DateTime", "description": "創建時間:年月日時分秒" },
+        { "name": "Year", "description": "年" },
+        { "name": "YearMonth", "description": "年月" },
+        { "name": "Day", "description": "日" },
+        { "name": "HourMinute", "description": "時分" },
+        { "name": "Month", "description": "月" },
+        { "name": "Time", "description": "時分秒" }
+      ],
+      "其他": [
+        { "name": "Boolean", "description": "核取方塊.是否:布爾類型" },
+        { "name": "Binary", "description": "二進制大型流類型" },
+        { "name": "Blob", "description": "超大型二進制流類型" }
+      ]
+    };
+
+    // 初始化欄位型態下拉選單
+    function initFieldTypeSelect(selectElement) {
+      if (!selectElement) return;
+      
+      selectElement.innerHTML = '<option value="">請選擇欄位型態</option>';
+      
+      // 添加所有預定義選項
+      for (const [category, options] of Object.entries(fieldTypeData)) {
+        // 添加分類標題（不可選，更醒目的格式）
+        const categoryOpt = document.createElement("option");
+        categoryOpt.value = "";
+        categoryOpt.textContent = `【${category}】`;
+        categoryOpt.disabled = true;
+        categoryOpt.className = "field-type-category-header";
+        selectElement.appendChild(categoryOpt);
+        
+        // 添加該分類下的所有選項
+        options.forEach(option => {
+          const opt = document.createElement("option");
+          opt.value = option.name;
+          opt.textContent = `${option.name} - ${option.description}`;
+          opt.dataset.category = category;
+          selectElement.appendChild(opt);
+        });
+      }
+      
+      // 添加自定義選項
+      const customOpt = document.createElement("option");
+      customOpt.value = "__CUSTOM__";
+      customOpt.textContent = "【自定義】";
+      customOpt.className = "field-type-category-header";
+      selectElement.appendChild(customOpt);
+    }
+
+    // 獲取當前選中的欄位型態值
+    function getFieldTypeValue(selectElement, customInput) {
+      if (!selectElement) return "";
+      
+      const value = selectElement.value;
+      if (value === "__CUSTOM__") {
+        return customInput ? customInput.value.trim() : "";
+      }
+      return value || "";
+    }
+
+    // 設置欄位型態值
+    function setFieldTypeValue(selectElement, customInput, value) {
+      if (!selectElement) return;
+      
+      if (!value) {
+        selectElement.value = "";
+        if (customInput) customInput.style.display = "none";
+        return;
+      }
+
+      // 檢查是否在預定義選項中
+      let found = false;
+      for (const options of Object.values(fieldTypeData)) {
+        const option = options.find(opt => opt.name === value);
+        if (option) {
+          selectElement.value = value;
+          if (customInput) customInput.style.display = "none";
+          found = true;
+          break;
+        }
+      }
+
+      // 如果沒找到，視為自定義
+      if (!found) {
+        selectElement.value = "__CUSTOM__";
+        if (customInput) {
+          customInput.style.display = "block";
+          customInput.value = value;
+        }
+      }
+    }
+
+    // 根據欄位標題自動判斷欄位型態
+    function getAutoFieldDataType(labelText) {
+      if (!labelText) return null;
+      
+      const label = labelText.trim();
+      
+      // 定義標題關鍵字與對應的欄位型態映射
+      const autoFieldTypeRules = [
+        { keywords: ["單號", "編號"], type: "Text" },
+        { keywords: ["名稱"], type: "NTText" },
+        { keywords: ["日期"], type: "Date" },
+        { keywords: ["金額"], type: "Numeric" },
+        { keywords: ["序號", "標識號"], type: "Int/LongInt/Double/SmallInt" },
+        { keywords: ["數量"], type: "Numeric" },
+        { keywords: ["單價"], type: "Numeric" },
+        { keywords: ["%"], type: "Numeric" },
+        { keywords: ["代碼"], type: "Text" },
+        { keywords: ["重量"], type: "Numeric" },
+        { keywords: ["折數"], type: "Numeric" },
+        { keywords: ["比率"], type: "Numeric" },
+        { keywords: ["幣別"], type: "Text" },
+        { keywords: ["備註"], type: "ShortMemo" },
+        { keywords: ["時間"], type: "DateTime" }
+      ];
+      
+      // 檢查標題是否包含關鍵字
+      for (const rule of autoFieldTypeRules) {
+        for (const keyword of rule.keywords) {
+          if (label.includes(keyword)) {
+            return rule.type;
+          }
+        }
+      }
+      
+      return null; // 沒有匹配的規則，返回 null
+    }
+
     const columnCountSelect = document.getElementById("column-count");
     const themeButtons = document.querySelectorAll(".theme-btn");
     const btnSave = document.getElementById("btn-save");
@@ -4590,12 +4893,32 @@
         if (labelText) {
           labelText.textContent = propLabel.value || "未命名欄位";
         }
+        // 根據標題自動填入欄位型態
+        const autoFieldDataType = getAutoFieldDataType(propLabel.value);
+        if (autoFieldDataType && selectedField.dataset.type !== "empty" && selectedField.dataset.type !== "button" && selectedField.dataset.type !== "fixedtext") {
+          // 只有當欄位型態為空或與自動判斷的型態不同時才自動填入
+          const currentFieldDataType = selectedField.dataset.fieldDataType || "";
+          if (!currentFieldDataType || currentFieldDataType !== autoFieldDataType) {
+            setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, autoFieldDataType);
+            selectedField.dataset.fieldDataType = autoFieldDataType;
+          }
+        }
       } else if (selectedGridHeaderCell) {
         const titleEl = selectedGridHeaderCell.querySelector(".header-title");
         if (titleEl) {
           titleEl.textContent = propLabel.value || "未命名欄位";
           updateGridHeaderRequired(selectedGridHeaderCell);
           updateGridHeaderReadonly(selectedGridHeaderCell);
+        }
+        // 根據標題自動填入欄位型態
+        const autoFieldDataType = getAutoFieldDataType(propLabel.value);
+        if (autoFieldDataType) {
+          // 只有當欄位型態為空或與自動判斷的型態不同時才自動填入
+          const currentFieldDataType = selectedGridHeaderCell.dataset.fieldDataType || "";
+          if (!currentFieldDataType || currentFieldDataType !== autoFieldDataType) {
+            setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, autoFieldDataType);
+            selectedGridHeaderCell.dataset.fieldDataType = autoFieldDataType;
+          }
         }
       }
     });
@@ -4660,6 +4983,125 @@
       }
     });
 
+    // 欄位型態選擇事件
+    if (propFieldTypeSelect) {
+      propFieldTypeSelect.addEventListener("change", () => {
+        const value = propFieldTypeSelect.value;
+        if (value === "__CUSTOM__") {
+          propFieldTypeCustom.style.display = "block";
+          propFieldTypeCustom.focus();
+        } else {
+          propFieldTypeCustom.style.display = "none";
+          const fieldDataType = getFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom);
+          if (selectedField && selectedField.dataset.type !== "empty" && selectedField.dataset.type !== "button" && selectedField.dataset.type !== "fixedtext") {
+            selectedField.dataset.fieldDataType = fieldDataType;
+            // 當核取方塊的欄位型態設為 Boolean 時，自動填入「其他說明」
+            if (selectedField.dataset.type === "checkbox" && fieldDataType === "Boolean") {
+              const currentOtherNote = propOtherNote.value || "";
+              const targetText = "控件:CheckEdit-(CheckBox)控件";
+              // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+              if (!currentOtherNote.includes(targetText)) {
+                propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+                // 觸發 input 事件以更新 dataset
+                propOtherNote.dispatchEvent(new Event("input"));
+              }
+            }
+            // 當複選控件的欄位型態設為 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+            if (selectedField.dataset.type === "checkbox-group" && fieldDataType === "Int/LongInt/Double/SmallInt") {
+              const currentOtherNote = propOtherNote.value || "";
+              const targetText = "控件:CheckBoxGroup-複選控件";
+              // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+              if (!currentOtherNote.includes(targetText)) {
+                propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+                // 觸發 input 事件以更新 dataset
+                propOtherNote.dispatchEvent(new Event("input"));
+              }
+            }
+            // 當單選控件的欄位型態設為 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+            if (selectedField.dataset.type === "radio-group" && fieldDataType === "Int/LongInt/Double/SmallInt") {
+              const currentOtherNote = propOtherNote.value || "";
+              const targetText = "控件:RadioGroup-單選控件";
+              // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+              if (!currentOtherNote.includes(targetText)) {
+                propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+                // 觸發 input 事件以更新 dataset
+                propOtherNote.dispatchEvent(new Event("input"));
+              }
+            }
+            // 當下拉選單的欄位型態設為 Byte 時，自動填入「其他說明」
+            if (selectedField.dataset.type === "select" && fieldDataType === "Byte") {
+              const currentOtherNote = propOtherNote.value || "";
+              const targetText = "控件:TextOption-文本選項";
+              // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+              if (!currentOtherNote.includes(targetText)) {
+                propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+                // 觸發 input 事件以更新 dataset
+                propOtherNote.dispatchEvent(new Event("input"));
+              }
+            }
+          } else if (selectedGridHeaderCell) {
+            selectedGridHeaderCell.dataset.fieldDataType = fieldDataType;
+          }
+        }
+      });
+    }
+
+    // 欄位型態自定義輸入事件
+    if (propFieldTypeCustom) {
+      propFieldTypeCustom.addEventListener("input", () => {
+        const value = getFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom);
+        if (selectedField && selectedField.dataset.type !== "empty" && selectedField.dataset.type !== "button" && selectedField.dataset.type !== "fixedtext") {
+          selectedField.dataset.fieldDataType = value;
+          // 當核取方塊的欄位型態設為 Boolean 時，自動填入「其他說明」
+          if (selectedField.dataset.type === "checkbox" && value === "Boolean") {
+            const currentOtherNote = propOtherNote.value || "";
+            const targetText = "控件:CheckEdit-(CheckBox)控件";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote.includes(targetText)) {
+              propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              // 觸發 input 事件以更新 dataset
+              propOtherNote.dispatchEvent(new Event("input"));
+            }
+          }
+          // 當複選控件的欄位型態設為 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+          if (selectedField.dataset.type === "checkbox-group" && value === "Int/LongInt/Double/SmallInt") {
+            const currentOtherNote = propOtherNote.value || "";
+            const targetText = "控件:CheckBoxGroup-複選控件";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote.includes(targetText)) {
+              propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              // 觸發 input 事件以更新 dataset
+              propOtherNote.dispatchEvent(new Event("input"));
+            }
+          }
+          // 當單選控件的欄位型態設為 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+          if (selectedField.dataset.type === "radio-group" && value === "Int/LongInt/Double/SmallInt") {
+            const currentOtherNote = propOtherNote.value || "";
+            const targetText = "控件:RadioGroup-單選控件";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote.includes(targetText)) {
+              propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              // 觸發 input 事件以更新 dataset
+              propOtherNote.dispatchEvent(new Event("input"));
+            }
+          }
+          // 當下拉選單的欄位型態設為 Byte 時，自動填入「其他說明」
+          if (selectedField.dataset.type === "select" && value === "Byte") {
+            const currentOtherNote = propOtherNote.value || "";
+            const targetText = "控件:TextOption-文本選項";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote.includes(targetText)) {
+              propOtherNote.value = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              // 觸發 input 事件以更新 dataset
+              propOtherNote.dispatchEvent(new Event("input"));
+            }
+          }
+        } else if (selectedGridHeaderCell) {
+          selectedGridHeaderCell.dataset.fieldDataType = value;
+        }
+      });
+    }
+
     propLength.addEventListener("input", () => {
       if (selectedField && selectedField.dataset.type !== "empty" && selectedField.dataset.type !== "button") {
         selectedField.dataset.fieldLength = propLength.value || "N/A";
@@ -4692,6 +5134,12 @@
               selectElement.appendChild(option);
             });
           }
+        } else if (selectedField.dataset.type === "checkbox-group") {
+          // 如果是 checkbox-group 類型的欄位，更新核取方塊選項
+          updateCheckboxGroupOptions(selectedField, propSelectOptions.value);
+        } else if (selectedField.dataset.type === "radio-group") {
+          // 如果是 radio-group 類型的欄位，更新單選按鈕選項
+          updateRadioGroupOptions(selectedField, propSelectOptions.value);
         }
       } else if (selectedGridHeaderCell) {
         selectedGridHeaderCell.dataset.selectOptions = propSelectOptions.value || "";
@@ -5096,6 +5544,99 @@
         }
       });
 
+      // 處理 checkbox 欄位的 checked 狀態
+      const originalCheckboxFields = canvas.querySelectorAll(".field-checkbox");
+      const clonedCheckboxFields = clone.querySelectorAll(".field-checkbox");
+      originalCheckboxFields.forEach((originalField, index) => {
+        const clonedField = clonedCheckboxFields[index];
+        if (clonedField) {
+          const originalCheckbox = originalField.querySelector(".field-label input[type='checkbox']");
+          const clonedCheckbox = clonedField.querySelector(".field-label input[type='checkbox']");
+          if (originalCheckbox && clonedCheckbox) {
+            clonedCheckbox.checked = originalCheckbox.checked;
+            if (originalCheckbox.checked) {
+              clonedCheckbox.setAttribute("checked", "checked");
+            } else {
+              clonedCheckbox.removeAttribute("checked");
+            }
+          }
+        }
+      });
+
+      // 處理 checkbox-group 欄位的 checked 狀態
+      const originalCheckboxGroupFields = canvas.querySelectorAll(".field-checkbox-group");
+      const clonedCheckboxGroupFields = clone.querySelectorAll(".field-checkbox-group");
+      originalCheckboxGroupFields.forEach((originalField, fieldIndex) => {
+        const clonedField = clonedCheckboxGroupFields[fieldIndex];
+        if (clonedField) {
+          const originalOptions = originalField.querySelectorAll(".checkbox-group-option input[type='checkbox']");
+          const clonedOptions = clonedField.querySelectorAll(".checkbox-group-option input[type='checkbox']");
+          originalOptions.forEach((originalCheckbox, optionIndex) => {
+            const clonedCheckbox = clonedOptions[optionIndex];
+            if (clonedCheckbox && originalCheckbox) {
+              clonedCheckbox.checked = originalCheckbox.checked;
+              if (originalCheckbox.checked) {
+                clonedCheckbox.setAttribute("checked", "checked");
+              } else {
+                clonedCheckbox.removeAttribute("checked");
+              }
+            }
+          });
+        }
+      });
+
+      // 處理 radio-group 欄位的 checked 狀態
+      const originalRadioGroupFields = canvas.querySelectorAll(".field-radio-group");
+      const clonedRadioGroupFields = clone.querySelectorAll(".field-radio-group");
+      originalRadioGroupFields.forEach((originalField, fieldIndex) => {
+        const clonedField = clonedRadioGroupFields[fieldIndex];
+        if (clonedField) {
+          // 確保 cloned field 的 radioName 與 original 一致
+          const originalRadioName = originalField.dataset.radioName;
+          if (originalRadioName) {
+            clonedField.dataset.radioName = originalRadioName;
+            // 更新所有 cloned radio 的 name 屬性
+            const clonedRadios = clonedField.querySelectorAll(".radio-group-option input[type='radio']");
+            clonedRadios.forEach(radio => {
+              radio.name = originalRadioName;
+            });
+          }
+          
+          const originalOptions = originalField.querySelectorAll(".radio-group-option input[type='radio']");
+          const clonedOptions = clonedField.querySelectorAll(".radio-group-option input[type='radio']");
+          
+          // 先取消所有 cloned radio 的選中狀態
+          clonedOptions.forEach(radio => {
+            radio.checked = false;
+            radio.removeAttribute("checked");
+            radio.defaultChecked = false;
+          });
+          
+          // 找到 original 中選中的 radio 的 value
+          const checkedOriginalRadio = Array.from(originalOptions).find(radio => radio.checked);
+          if (checkedOriginalRadio) {
+            const checkedValue = checkedOriginalRadio.value;
+            // 根據 value 找到對應的 cloned radio
+            const matchingClonedRadio = Array.from(clonedOptions).find(radio => radio.value === checkedValue);
+            if (matchingClonedRadio) {
+              // 確保 name 屬性一致
+              matchingClonedRadio.name = checkedOriginalRadio.name;
+              // 設置選中狀態
+              matchingClonedRadio.checked = true;
+              matchingClonedRadio.setAttribute("checked", "checked");
+              matchingClonedRadio.defaultChecked = true;
+            }
+          }
+          
+          // 確保所有 cloned radio 的 name 屬性一致
+          clonedOptions.forEach(radio => {
+            if (originalRadioName) {
+              radio.name = originalRadioName;
+            }
+          });
+        }
+      });
+
       // 確保所有欄位控件的值都被設置為屬性（這樣在 innerHTML 時會被保留）
       clone.querySelectorAll(".field-control input, .field-control textarea, .field-control select, .field-control button").forEach((input) => {
         if (input.tagName === "BUTTON") {
@@ -5119,6 +5660,28 @@
           // 如果沒有值，移除 placeholder
           if (!input.value || input.value.trim() === "") {
             input.removeAttribute("placeholder");
+          }
+          input.readOnly = true;
+          input.disabled = false;
+        } else if (input.type === "radio") {
+          // radio 的 checked 狀態已經在上面處理過了，這裡只需要確保屬性正確
+          if (input.checked) {
+            input.setAttribute("checked", "checked");
+            input.defaultChecked = true;
+          } else {
+            input.removeAttribute("checked");
+            input.defaultChecked = false;
+          }
+          input.readOnly = true;
+          input.disabled = false;
+        } else if (input.type === "checkbox") {
+          // checkbox 的 checked 狀態需要保留
+          if (input.checked) {
+            input.setAttribute("checked", "checked");
+            input.defaultChecked = true;
+          } else {
+            input.removeAttribute("checked");
+            input.defaultChecked = false;
           }
           input.readOnly = true;
           input.disabled = false;
@@ -5160,6 +5723,22 @@
         }
       });
 
+      // 在轉換為 HTML 之前，再次確保所有 radio 的 checked 狀態正確
+      clone.querySelectorAll(".field-radio-group").forEach((clonedField) => {
+        const clonedRadios = clonedField.querySelectorAll(".radio-group-option input[type='radio']");
+        clonedRadios.forEach(radio => {
+          if (radio.checked) {
+            radio.setAttribute("checked", "checked");
+            radio.defaultChecked = true;
+            radio.checked = true; // 確保 checked 屬性在 HTML 中可見
+          } else {
+            radio.removeAttribute("checked");
+            radio.defaultChecked = false;
+            radio.checked = false;
+          }
+        });
+      });
+      
       // 保留 class="field"、data-width、data-row-height、data-type 和面板的 data-columns 以維持布局，但移除其他 data 屬性
       let html = clone.innerHTML;
       // 先保留 data-columns、data-row-height 和 data-type（用臨時標記）
@@ -5177,130 +5756,370 @@
       return html;
     }
 
+    // 保存主畫布的 radio 狀態（在模組級別，以便在關閉預覽時恢復）
+    let savedMainCanvasRadioStates = null;
+    
     btnPreview.addEventListener("click", () => {
+      // 在生成預覽前，先保存主畫布中所有 radio-group 的選中狀態
+      const savedRadioStates = new Map();
+      const originalRadioGroups = canvas.querySelectorAll(".field-radio-group");
+      originalRadioGroups.forEach((originalField, fieldIndex) => {
+        const originalOptions = Array.from(originalField.querySelectorAll(".radio-group-option input[type='radio']"));
+        const checkedValues = originalOptions
+          .filter(radio => radio.checked)
+          .map(radio => radio.value);
+        savedRadioStates.set(fieldIndex, checkedValues);
+      });
+      
+      // 保存到模組級別變數，以便在關閉預覽時恢復
+      savedMainCanvasRadioStates = savedRadioStates;
+      
       const previewHTML = generatePreviewHTML();
       previewContent.innerHTML = previewHTML;
       
-      // 從原始 canvas 獲取面板欄數並應用到預覽模式
-      const originalPanels = canvas.querySelectorAll(".panel:not(.grid-panel)");
-      const previewPanels = previewContent.querySelectorAll(".panel:not(.grid-panel)");
-      
-      originalPanels.forEach((originalPanel, index) => {
-        const previewPanel = previewPanels[index];
-        if (previewPanel) {
-          // 從原始面板獲取欄數
-          const columns = originalPanel.dataset.columns || "3";
-          const previewBody = previewPanel.querySelector(".panel-body");
-          if (previewBody) {
-            // 設置 CSS 變數
-            previewBody.style.setProperty("--column-count", columns);
-            // 同時設置 data-columns 屬性以確保一致性
-            previewPanel.dataset.columns = columns;
+      // 確保主畫布的 radio 狀態沒有被修改（只在需要恢復時才恢復）
+      // 注意：不要主動清空主畫布的 radio，保持原樣即可
+      originalRadioGroups.forEach((originalField, fieldIndex) => {
+        const savedValues = savedRadioStates.get(fieldIndex);
+        if (savedValues && savedValues.length > 0) {
+          // 檢查當前狀態是否與保存的狀態一致，如果不一致才恢復
+          const originalOptions = Array.from(originalField.querySelectorAll(".radio-group-option input[type='radio']"));
+          const currentChecked = originalOptions
+            .filter(radio => radio.checked)
+            .map(radio => radio.value);
+          // 只有當狀態不一致時才恢復
+          if (currentChecked.length !== savedValues.length || !currentChecked.every(v => savedValues.includes(v))) {
+            originalOptions.forEach(radio => {
+              radio.checked = savedValues.includes(radio.value);
+            });
           }
         }
+        // 如果沒有保存的值，保持原樣，不要修改主畫布
       });
       
-      // 確保所有值都被正確設置（因為 innerHTML 可能不會保留某些值）
-      const originalInputs = canvas.querySelectorAll(".field-control input, .field-control textarea, .field-control select, .field-control button");
-      const previewInputs = previewContent.querySelectorAll(".field-control input, .field-control textarea, .field-control select, .field-control button");
+      // 立即同步 radio-group 的狀態（在 DOM 更新後立即執行）
+      // 先立即同步一次，然後再用延遲確保完全同步
+      const syncRadioGroups = () => {
+        // 重新獲取，因為 DOM 可能已經更新
+        const currentOriginalRadioGroups = canvas.querySelectorAll(".field-radio-group");
+        const currentPreviewRadioGroups = previewContent.querySelectorAll(".field-radio-group");
+        
+        if (currentOriginalRadioGroups.length !== currentPreviewRadioGroups.length) {
+          console.warn("警告：原始和預覽的 radio-group 數量不一致", {
+            original: currentOriginalRadioGroups.length,
+            preview: currentPreviewRadioGroups.length
+          });
+        }
+        
+        currentOriginalRadioGroups.forEach((originalField, fieldIndex) => {
+          const previewField = currentPreviewRadioGroups[fieldIndex];
+          if (previewField) {
+            const originalRadioName = originalField.dataset.radioName;
+            // 使用保存的狀態，而不是讀取當前狀態，避免修改主畫布
+            const savedValues = savedMainCanvasRadioStates ? savedMainCanvasRadioStates.get(fieldIndex) : null;
+            const previewOptions = Array.from(previewField.querySelectorAll(".radio-group-option input[type='radio']"));
+            
+            // 先取消所有 preview radio 的選中狀態
+            previewOptions.forEach(radio => {
+              radio.checked = false;
+              radio.removeAttribute("checked");
+              radio.defaultChecked = false;
+              if (originalRadioName) {
+                radio.name = originalRadioName;
+              }
+            });
+            
+            // 根據保存的狀態設置選中
+            if (savedValues && savedValues.length > 0) {
+              const checkedValue = savedValues[0]; // radio 只能選中一個
+              const matchingPreviewRadio = previewOptions.find(radio => radio.value === checkedValue);
+              if (matchingPreviewRadio) {
+                // 確保 name 屬性一致
+                if (originalRadioName) {
+                  matchingPreviewRadio.name = originalRadioName;
+                }
+                // 設置選中狀態
+                matchingPreviewRadio.checked = true;
+                matchingPreviewRadio.setAttribute("checked", "checked");
+                matchingPreviewRadio.defaultChecked = true;
+                // 強制觸發 change 事件以確保 UI 更新
+                matchingPreviewRadio.dispatchEvent(new Event("change", { bubbles: true }));
+              } else {
+                console.warn("警告：找不到對應的 preview radio", {
+                  fieldIndex,
+                  checkedValue,
+                  previewValues: previewOptions.map(r => r.value)
+                });
+              }
+            }
+          }
+        });
+      };
       
-      originalInputs.forEach((original, index) => {
-        const preview = previewInputs[index];
-        if (preview && original) {
-          if (original.tagName === "BUTTON") {
-            // 按鈕類型：恢復按鈕文字
-            preview.textContent = original.textContent || "按鈕";
-            preview.disabled = false;
-          } else if (original.tagName === "SELECT") {
-            preview.selectedIndex = original.selectedIndex;
-            preview.value = original.value;
-            preview.readOnly = true;
-            preview.disabled = false;
-          } else {
+      // 立即同步一次（不等待任何延遲）
+      syncRadioGroups();
+      
+      // 使用多層延遲確保 DOM 完全更新後再次同步
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            syncRadioGroups();
+            
+            // 再次同步，確保狀態正確
+            setTimeout(() => {
+              syncRadioGroups();
+            }, 50);
+            
+            setTimeout(() => {
+        // 從原始 canvas 獲取面板欄數並應用到預覽模式
+        const originalPanels = canvas.querySelectorAll(".panel:not(.grid-panel)");
+        const previewPanels = previewContent.querySelectorAll(".panel:not(.grid-panel)");
+        
+        originalPanels.forEach((originalPanel, index) => {
+          const previewPanel = previewPanels[index];
+          if (previewPanel) {
+            // 從原始面板獲取欄數
+            const columns = originalPanel.dataset.columns || "3";
+            const previewBody = previewPanel.querySelector(".panel-body");
+            if (previewBody) {
+              // 設置 CSS 變數
+              previewBody.style.setProperty("--column-count", columns);
+              // 同時設置 data-columns 屬性以確保一致性
+              previewPanel.dataset.columns = columns;
+            }
+          }
+        });
+        
+        // 同步 checkbox 欄位的 checked 狀態
+        const originalCheckboxes = canvas.querySelectorAll(".field-checkbox .field-label input[type='checkbox']");
+        const previewCheckboxes = previewContent.querySelectorAll(".field-checkbox .field-label input[type='checkbox']");
+        
+        originalCheckboxes.forEach((original, index) => {
+          const preview = previewCheckboxes[index];
+          if (preview && original) {
+            preview.checked = original.checked;
+          }
+        });
+
+        // 同步 checkbox-group 欄位的 checked 狀態
+        const originalCheckboxGroups = canvas.querySelectorAll(".field-checkbox-group");
+        const previewCheckboxGroups = previewContent.querySelectorAll(".field-checkbox-group");
+        
+        originalCheckboxGroups.forEach((originalField, fieldIndex) => {
+          const previewField = previewCheckboxGroups[fieldIndex];
+          if (previewField) {
+            const originalOptions = originalField.querySelectorAll(".checkbox-group-option input[type='checkbox']");
+            const previewOptions = previewField.querySelectorAll(".checkbox-group-option input[type='checkbox']");
+            originalOptions.forEach((original, optionIndex) => {
+              const preview = previewOptions[optionIndex];
+              if (preview && original) {
+                preview.checked = original.checked;
+              }
+            });
+          }
+        });
+
+        // 同步 radio-group 欄位的 checked 狀態
+        const originalRadioGroups = canvas.querySelectorAll(".field-radio-group");
+        const previewRadioGroups = previewContent.querySelectorAll(".field-radio-group");
+        
+        if (originalRadioGroups.length !== previewRadioGroups.length) {
+          console.warn("警告：原始和預覽的 radio-group 數量不一致", {
+            original: originalRadioGroups.length,
+            preview: previewRadioGroups.length
+          });
+        }
+        
+        originalRadioGroups.forEach((originalField, fieldIndex) => {
+          const previewField = previewRadioGroups[fieldIndex];
+          if (previewField) {
+            // 確保 preview field 的 radioName 與 original 一致
+            const originalRadioName = originalField.dataset.radioName;
+            if (originalRadioName) {
+              previewField.dataset.radioName = originalRadioName;
+              // 更新所有 preview radio 的 name 屬性
+              const previewRadios = previewField.querySelectorAll(".radio-group-option input[type='radio']");
+              previewRadios.forEach(radio => {
+                radio.name = originalRadioName;
+              });
+            }
+            
+            const originalOptions = Array.from(originalField.querySelectorAll(".radio-group-option input[type='radio']"));
+            const previewOptions = Array.from(previewField.querySelectorAll(".radio-group-option input[type='radio']"));
+            
+            if (originalOptions.length !== previewOptions.length) {
+              console.warn("警告：原始和預覽的 radio 選項數量不一致", {
+                fieldIndex,
+                original: originalOptions.length,
+                preview: previewOptions.length
+              });
+            }
+            
+            // 先取消所有 preview radio 的選中狀態
+            previewOptions.forEach(radio => {
+              radio.checked = false;
+              radio.removeAttribute("checked");
+              radio.defaultChecked = false;
+            });
+            
+            // 找到 original 中選中的 radio 的 value
+            const checkedOriginalRadio = originalOptions.find(radio => radio.checked);
+            if (checkedOriginalRadio) {
+              const checkedValue = checkedOriginalRadio.value;
+              // 根據 value 找到對應的 preview radio
+              const matchingPreviewRadio = previewOptions.find(radio => radio.value === checkedValue);
+              if (matchingPreviewRadio) {
+                // 確保 name 屬性一致
+                if (originalRadioName) {
+                  matchingPreviewRadio.name = originalRadioName;
+                } else {
+                  matchingPreviewRadio.name = checkedOriginalRadio.name;
+                }
+                // 設置選中狀態
+                matchingPreviewRadio.checked = true;
+                matchingPreviewRadio.setAttribute("checked", "checked");
+                matchingPreviewRadio.defaultChecked = true;
+              } else {
+                console.warn("警告：找不到對應的 preview radio", {
+                  fieldIndex,
+                  checkedValue,
+                  previewValues: previewOptions.map(r => r.value)
+                });
+              }
+            }
+            
+            // 確保所有 preview radio 的 name 屬性一致
+            previewOptions.forEach(radio => {
+              if (originalRadioName) {
+                radio.name = originalRadioName;
+              }
+            });
+            
+            // 最後再次確認主畫布的狀態沒有被修改（使用模組級別的 savedMainCanvasRadioStates）
+            // 注意：不要主動清空主畫布的 radio，保持原樣即可
+            if (savedMainCanvasRadioStates) {
+              const savedValues = savedMainCanvasRadioStates.get(fieldIndex);
+              if (savedValues && savedValues.length > 0) {
+                const currentChecked = originalOptions
+                  .filter(radio => radio.checked)
+                  .map(radio => radio.value);
+                if (currentChecked.length !== savedValues.length || !currentChecked.every(v => savedValues.includes(v))) {
+                  // 如果狀態被修改了，恢復它
+                  originalOptions.forEach(radio => {
+                    radio.checked = savedValues.includes(radio.value);
+                  });
+                }
+              }
+              // 如果沒有保存的值，保持原樣，不要修改主畫布
+            }
+          }
+        });
+
+        // 確保所有值都被正確設置（因為 innerHTML 可能不會保留某些值）
+        const originalInputs = canvas.querySelectorAll(".field-control input, .field-control textarea, .field-control select, .field-control button");
+        const previewInputs = previewContent.querySelectorAll(".field-control input, .field-control textarea, .field-control select, .field-control button");
+        
+        originalInputs.forEach((original, index) => {
+          const preview = previewInputs[index];
+          if (preview && original) {
+            if (original.tagName === "BUTTON") {
+              // 按鈕類型：恢復按鈕文字
+              preview.textContent = original.textContent || "按鈕";
+              preview.disabled = false;
+            } else if (original.tagName === "SELECT") {
+              preview.selectedIndex = original.selectedIndex;
+              preview.value = original.value;
+              preview.readOnly = true;
+              preview.disabled = false;
+            } else {
+              preview.value = original.value;
+              preview.readOnly = true;
+              preview.disabled = false;
+              
+              // 如果是數值欄位，設置靠右對齊
+              if (preview.tagName === "INPUT") {
+                const previewField = preview.closest(".field");
+                if (previewField && previewField.dataset.type === "number") {
+                  preview.style.textAlign = "right";
+                } else if (preview.classList.contains("number-input")) {
+                  preview.style.textAlign = "right";
+                }
+              }
+            }
+          }
+        });
+
+        // 恢復 GRID 面板的值
+        const originalGridInputs = canvas.querySelectorAll(".grid-data-cell input");
+        const previewGridInputs = previewContent.querySelectorAll(".grid-data-cell input");
+        
+        originalGridInputs.forEach((original, index) => {
+          const preview = previewGridInputs[index];
+          if (preview && original) {
             preview.value = original.value;
             preview.readOnly = true;
             preview.disabled = false;
             
             // 如果是數值欄位，設置靠右對齊
-            if (preview.tagName === "INPUT") {
-              const previewField = preview.closest(".field");
-              if (previewField && previewField.dataset.type === "number") {
-                preview.style.textAlign = "right";
-              } else if (preview.classList.contains("number-input")) {
-                preview.style.textAlign = "right";
-              }
+            const previewCell = preview.closest(".grid-data-cell");
+            if (previewCell && previewCell.dataset.type === "number") {
+              preview.style.textAlign = "right";
+            } else if (preview.classList.contains("number-input")) {
+              preview.style.textAlign = "right";
             }
           }
-        }
-      });
+        });
 
-      // 恢復 GRID 面板的值
-      const originalGridInputs = canvas.querySelectorAll(".grid-data-cell input");
-      const previewGridInputs = previewContent.querySelectorAll(".grid-data-cell input");
-      
-      originalGridInputs.forEach((original, index) => {
-        const preview = previewGridInputs[index];
-        if (preview && original) {
-          preview.value = original.value;
-          preview.readOnly = true;
-          preview.disabled = false;
-          
-          // 如果是數值欄位，設置靠右對齊
-          const previewCell = preview.closest(".grid-data-cell");
-          if (previewCell && previewCell.dataset.type === "number") {
-            preview.style.textAlign = "right";
-          } else if (preview.classList.contains("number-input")) {
-            preview.style.textAlign = "right";
-          }
-        }
-      });
+        // 為預覽模式的 GRID 添加欄寬調整功能
+        previewContent.querySelectorAll(".grid-panel-body, .field-control .grid-panel-body").forEach((gridBody) => {
+          setupGridColumnResizers(gridBody);
+        });
 
-      // 為預覽模式的 GRID 添加欄寬調整功能
-      previewContent.querySelectorAll(".grid-panel-body, .field-control .grid-panel-body").forEach((gridBody) => {
-        setupGridColumnResizers(gridBody);
-      });
-
-      // 為預覽模式的頁籤添加點擊事件，使其可以切換
-      previewContent.querySelectorAll(".panel-tab").forEach((tab) => {
-        tab.style.cursor = "pointer";
-        // 使用事件委派，因為頁籤可能包含文本節點
-        tab.addEventListener("click", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          const panel = tab.closest(".panel");
-          if (panel) {
-            // 移除所有頁籤的 active 類
-            panel.querySelectorAll(".panel-tab").forEach((t) => t.classList.remove("active"));
-            // 添加當前頁籤的 active 類
-            tab.classList.add("active");
+        // 為預覽模式的頁籤添加點擊事件，使其可以切換
+        previewContent.querySelectorAll(".panel-tab").forEach((tab) => {
+          tab.style.cursor = "pointer";
+          // 使用事件委派，因為頁籤可能包含文本節點
+          tab.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             
-            // 獲取頁籤索引
-            const allTabs = Array.from(panel.querySelectorAll(".panel-tab"));
-            const tabIndex = allTabs.indexOf(tab);
-            
-            // 切換對應的 tab-body
-            const tabBodies = panel.querySelectorAll(".tab-body");
-            tabBodies.forEach((body, idx) => {
-              if (idx === tabIndex) {
-                body.classList.add("active");
-                body.style.display = "grid";
-              } else {
-                body.classList.remove("active");
-                body.style.display = "none";
-              }
-            });
+            const panel = tab.closest(".panel");
+            if (panel) {
+              // 移除所有頁籤的 active 類
+              panel.querySelectorAll(".panel-tab").forEach((t) => t.classList.remove("active"));
+              // 添加當前頁籤的 active 類
+              tab.classList.add("active");
+              
+              // 獲取頁籤索引
+              const allTabs = Array.from(panel.querySelectorAll(".panel-tab"));
+              const tabIndex = allTabs.indexOf(tab);
+              
+              // 切換對應的 tab-body
+              const tabBodies = panel.querySelectorAll(".tab-body");
+              tabBodies.forEach((body, idx) => {
+                if (idx === tabIndex) {
+                  body.classList.add("active");
+                  body.style.display = "grid";
+                } else {
+                  body.classList.remove("active");
+                  body.style.display = "none";
+                }
+              });
+            }
+          });
+        });
+        
+        // 確保初始狀態下只有 active 的 tab-body 顯示
+        previewContent.querySelectorAll(".tab-body").forEach((body) => {
+          if (body.classList.contains("active")) {
+            body.style.display = "grid";
+          } else {
+            body.style.display = "none";
           }
         });
-      });
-      
-      // 確保初始狀態下只有 active 的 tab-body 顯示
-      previewContent.querySelectorAll(".tab-body").forEach((body) => {
-        if (body.classList.contains("active")) {
-          body.style.display = "grid";
-        } else {
-          body.style.display = "none";
-        }
+            }, 10);
+          }, 10);
+        });
       });
 
       previewModal.classList.add("show");
@@ -5310,6 +6129,28 @@
     function closePreviewModal() {
       previewModal.classList.remove("show");
       document.body.style.overflow = "";
+      
+      // 恢復主畫布的 radio 狀態
+      if (savedMainCanvasRadioStates) {
+        const originalRadioGroups = canvas.querySelectorAll(".field-radio-group");
+        originalRadioGroups.forEach((originalField, fieldIndex) => {
+          const savedValues = savedMainCanvasRadioStates.get(fieldIndex);
+          if (savedValues && savedValues.length > 0) {
+            const originalOptions = Array.from(originalField.querySelectorAll(".radio-group-option input[type='radio']"));
+            originalOptions.forEach(radio => {
+              radio.checked = savedValues.includes(radio.value);
+            });
+          } else {
+            // 如果沒有保存的值，確保所有 radio 都未選中
+            const originalOptions = Array.from(originalField.querySelectorAll(".radio-group-option input[type='radio']"));
+            originalOptions.forEach(radio => {
+              radio.checked = false;
+            });
+          }
+        });
+        // 清除保存的狀態
+        savedMainCanvasRadioStates = null;
+      }
     }
 
     previewModalClose.addEventListener("click", closePreviewModal);
@@ -6050,7 +6891,36 @@
     const fieldSpecModalSave = document.getElementById("field-spec-modal-save");
     const modalPropLength = document.getElementById("modal-prop-length");
     const modalPropFieldType = document.getElementById("modal-prop-field-type");
+    const modalPropFieldTypeSelect = document.getElementById("modal-prop-field-type-select");
+    const modalPropFieldTypeCustom = document.getElementById("modal-prop-field-type-custom");
     const modalPropDefault = document.getElementById("modal-prop-default");
+    
+    // 初始化欄位型態下拉選單
+    if (propFieldTypeSelect) {
+      initFieldTypeSelect(propFieldTypeSelect);
+    }
+    if (modalPropFieldTypeSelect) {
+      initFieldTypeSelect(modalPropFieldTypeSelect);
+      
+      // Modal 欄位型態選擇事件
+      modalPropFieldTypeSelect.addEventListener("change", () => {
+        const value = modalPropFieldTypeSelect.value;
+        if (value === "__CUSTOM__") {
+          modalPropFieldTypeCustom.style.display = "block";
+          modalPropFieldTypeCustom.focus();
+        } else {
+          modalPropFieldTypeCustom.style.display = "none";
+        }
+      });
+    }
+    
+    // Modal 欄位型態自定義輸入事件
+    if (modalPropFieldTypeCustom) {
+      modalPropFieldTypeCustom.addEventListener("input", () => {
+        // 自定義輸入時不需要立即更新，等保存時再更新
+      });
+    }
+    
     const modalPropRequired = document.getElementById("modal-prop-required");
     const modalPropReadonly = document.getElementById("modal-prop-readonly");
     const modalPropPrimaryKey = document.getElementById("modal-prop-primary-key");
@@ -6095,6 +6965,10 @@
       // 從右側屬性面板載入數據到彈窗
       modalPropLength.value = propLength.value || "N/A";
       modalPropFieldType.value = propFieldType.value || "real";
+      // 載入欄位型態
+      const fieldDataType = selectedField ? (selectedField.dataset.fieldDataType || "") : 
+                           (selectedGridHeaderCell ? (selectedGridHeaderCell.dataset.fieldDataType || "") : "");
+      setFieldTypeValue(modalPropFieldTypeSelect, modalPropFieldTypeCustom, fieldDataType);
       modalPropDefault.value = propDefault.value || "";
       modalPropRequired.checked = propRequired.checked;
       modalPropReadonly.checked = propReadonly.checked;
@@ -6119,6 +6993,9 @@
       // 將彈窗中的數據同步到右側屬性面板
       propLength.value = modalPropLength.value || "N/A";
       propFieldType.value = modalPropFieldType.value || "real";
+      // 同步欄位型態
+      const fieldDataType = getFieldTypeValue(modalPropFieldTypeSelect, modalPropFieldTypeCustom);
+      setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, fieldDataType);
       propDefault.value = modalPropDefault.value || "";
       propRequired.checked = modalPropRequired.checked;
       propReadonly.checked = modalPropReadonly.checked;
@@ -6132,6 +7009,8 @@
       if (selectedField) {
         propLength.dispatchEvent(new Event("input"));
         propFieldType.dispatchEvent(new Event("change"));
+        // 觸發欄位型態更新
+        if (propFieldTypeSelect) propFieldTypeSelect.dispatchEvent(new Event("change"));
         propDefault.dispatchEvent(new Event("input"));
         propRequired.dispatchEvent(new Event("change"));
         propReadonly.dispatchEvent(new Event("change"));
@@ -6143,6 +7022,8 @@
       } else if (selectedGridHeaderCell) {
         propLength.dispatchEvent(new Event("input"));
         propFieldType.dispatchEvent(new Event("change"));
+        // 觸發欄位型態更新
+        if (propFieldTypeSelect) propFieldTypeSelect.dispatchEvent(new Event("change"));
         propDefault.dispatchEvent(new Event("input"));
         propRequired.dispatchEvent(new Event("change"));
         propReadonly.dispatchEvent(new Event("change"));
@@ -6277,6 +7158,23 @@
       return html;
     }
     
+    // 獲取欄位型態的顯示文字（包含名稱和描述）
+    function getFieldDataTypeDisplay(fieldDataType) {
+      if (!fieldDataType) return "";
+      
+      // 在所有分類中查找對應的欄位型態
+      for (const [category, options] of Object.entries(fieldTypeData)) {
+        const found = options.find(opt => opt.name === fieldDataType);
+        if (found) {
+          // 找到對應的選項，返回 "名稱\n描述"
+          return `${found.name}\n${found.description}`;
+        }
+      }
+      
+      // 如果找不到（可能是自定義值），只返回名稱
+      return fieldDataType;
+    }
+
     // 生成單一面板的表格
     function generatePanelTable(tableTitle, fields, panelIndex, tabIndex = null) {
       let html = `<table class="field-spec-preview-table">`;
@@ -6288,12 +7186,14 @@
         html += `<thead>`;
         html += `<tr>`;
         html += `<th>欄位名稱</th>`;
-      html += `<th>長度 (字元)</th>`;
+      html += `<th>DB欄位名稱(Eng)</th>`;
+      html += `<th style="text-align: center;">長度 (字元)</th>`;
         html += `<th>欄位類型</th>`;
+      html += `<th>欄位型態</th>`;
       html += `<th>預設值</th>`;
-      html += `<th>必填</th>`;
-      html += `<th>唯讀</th>`;
-      html += `<th>主鍵</th>`;
+      html += `<th style="text-align: center;">必填</th>`;
+      html += `<th style="text-align: center;">唯讀</th>`;
+      html += `<th style="text-align: center;">主鍵</th>`;
       html += `<th>下拉選項</th>`;
       html += `<th>關聯功能 / 關聯欄位 / 返回欄位</th>`;
       html += `<th>其他說明</th>`;
@@ -6304,7 +7204,7 @@
         html += `<tbody>`;
         
       if (fields.length === 0) {
-        html += `<tr><td colspan="10" style="text-align: center; color: #9ca3af; padding: 32px; font-style: italic; background: #f9fafb;">此區塊無欄位</td></tr>`;
+        html += `<tr><td colspan="12" style="text-align: center; color: #9ca3af; padding: 32px; font-style: italic; background: #f9fafb;">此區塊無欄位</td></tr>`;
       } else {
         fields.forEach((field, fieldIndex) => {
           const fieldName = field.label || field.title || "";
@@ -6318,26 +7218,33 @@
           };
           const fieldTypeDisplay = fieldTypeMap[field.fieldType] || "實欄位";
           
-          const length = field.length || "N/A";
+          // 欄位型態（包含名稱和描述）
+          const fieldDataType = field.fieldDataType || "";
+          const fieldDataTypeDisplay = getFieldDataTypeDisplay(fieldDataType);
+          
+          // 過濾掉 "N/A" 值，顯示為空字串
+          const length = (field.length && field.length !== "N/A") ? field.length : "";
           const defaultValue = field.defaultValue || "";
           const required = field.required ? "Y" : "";
           const readonly = field.readonly ? "Y" : "";
           const primaryKey = field.primaryKey ? "Y" : "";
           const selectOptions = field.selectOptions || "";
           const relationField = field.relationField || "";
-          const otherNote = field.otherNote || "N/A";
+          const otherNote = (field.otherNote && field.otherNote !== "N/A") ? field.otherNote : "";
           
           // 欄位名稱顯示
           const fieldNameDisplay = fieldName || "";
           
           html += `<tr>`;
           html += `<td>${fieldNameDisplay}</td>`;
-          html += `<td>${length}</td>`;
+          html += `<td>${dbField}</td>`;
+          html += `<td style="text-align: center;">${length}</td>`;
           html += `<td>${fieldTypeDisplay}</td>`;
+          html += `<td style="white-space: pre-line;">${fieldDataTypeDisplay}</td>`;
           html += `<td>${defaultValue}</td>`;
-          html += `<td>${required}</td>`;
-          html += `<td>${readonly}</td>`;
-          html += `<td>${primaryKey}</td>`;
+          html += `<td style="text-align: center;">${required}</td>`;
+          html += `<td style="text-align: center;">${readonly}</td>`;
+          html += `<td style="text-align: center;">${primaryKey}</td>`;
           html += `<td>${selectOptions}</td>`;
           html += `<td style="white-space: pre-line;">${relationField}</td>`;
           html += `<td style="white-space: pre-line;">${otherNote}</td>`;
@@ -6527,6 +7434,7 @@
         { wch: 15 }, // 欄位名稱
         { wch: 12 }, // 長度 (字元)
         { wch: 12 }, // 欄位類型
+        { wch: 20 }, // 欄位型態
         { wch: 12 }, // 預設值
         { wch: 8 },  // 必填
         { wch: 8 },  // 唯讀
@@ -6791,8 +7699,10 @@
       // 表頭
       data.push([
         "欄位名稱",
+        "DB欄位名稱(Eng)",
         "長度 (字元)",
         "欄位類型",
+        "欄位型態",
         "預設值",
         "必填",
         "唯讀",
@@ -6804,10 +7714,11 @@
       
       // 資料行
       if (fields.length === 0) {
-        data.push(["此區塊無欄位", "", "", "", "", "", "", "", "", ""]);
+        data.push(["此區塊無欄位", "", "", "", "", "", "", "", "", "", "", ""]);
       } else {
         fields.forEach((field) => {
           const fieldName = field.label || field.title || "";
+          const dbField = field.dbField || "";
           const fieldTypeMap = {
             real: "實欄位",
             virtual: "虛欄位",
@@ -6815,7 +7726,14 @@
           };
           const fieldTypeDisplay = fieldTypeMap[field.fieldType] || "實欄位";
           
-          const length = field.length || "N/A";
+          // 欄位型態（包含名稱和描述，換行顯示）
+          const fieldDataType = field.fieldDataType || "";
+          let fieldDataTypeDisplay = getFieldDataTypeDisplay(fieldDataType);
+          // 確保換行符號正確處理（統一為 \n）
+          fieldDataTypeDisplay = fieldDataTypeDisplay.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          
+          // 過濾掉 "N/A" 值，顯示為空字串
+          const length = (field.length && field.length !== "N/A") ? field.length : "";
           const defaultValue = field.defaultValue || "";
           const required = field.required ? "Y" : "";
           const readonly = field.readonly ? "Y" : "";
@@ -6823,12 +7741,14 @@
           const selectOptions = field.selectOptions || "";
           // 保留換行符號（\n）用於 Excel 顯示
           const relationField = (field.relationField || "").replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-          const otherNote = (field.otherNote || "N/A").replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          const otherNote = ((field.otherNote && field.otherNote !== "N/A") ? field.otherNote : "").replace(/\r\n/g, '\n').replace(/\r/g, '\n');
           
           data.push([
             fieldName,
+            dbField,
             length,
             fieldTypeDisplay,
+            fieldDataTypeDisplay,
             defaultValue,
             required,
             readonly,
@@ -6920,6 +7840,13 @@
               const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
               if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
               
+              // 長度、必填、唯讀、主鍵欄位（col 2, 6, 7, 8）置中對齊
+              const isLength = col === 2; // 長度 (字元)
+              const isRequired = col === 6; // 必填
+              const isReadonly = col === 7; // 唯讀
+              const isPrimaryKey = col === 8; // 主鍵
+              const isCenterAlign = isLength || isRequired || isReadonly || isPrimaryKey;
+              
               ws[cellAddress].s = {
                 fill: { fgColor: { rgb: "DDEBF7" } },
                 font: { bold: true, sz: 11, color: { rgb: "1E3A5F" } },
@@ -6929,7 +7856,11 @@
                   left: { style: "thin", color: { rgb: "000000" } },
                   right: { style: "thin", color: { rgb: "000000" } }
                 },
-                alignment: { horizontal: "left", vertical: "center", wrapText: true }
+                alignment: { 
+                  horizontal: isCenterAlign ? "center" : "left", 
+                  vertical: "center", 
+                  wrapText: true 
+                }
               };
             }
             
@@ -6952,8 +7883,15 @@
                 
                 if (!ws[cellAddress].s) ws[cellAddress].s = {};
                 
-                const isRelationField = col === 8;
-                const isOtherNote = col === 9;
+                const isFieldDataType = col === 4; // 欄位型態（注意：現在是 col 4，因為新增了 DB欄位名稱）
+                const isRelationField = col === 10; // 關聯功能 / 關聯欄位 / 返回欄位
+                const isOtherNote = col === 11; // 其他說明
+                // 長度、必填、唯讀、主鍵欄位（col 2, 6, 7, 8）置中對齊
+                const isLength = col === 2; // 長度 (字元)
+                const isRequired = col === 6; // 必填
+                const isReadonly = col === 7; // 唯讀
+                const isPrimaryKey = col === 8; // 主鍵
+                const isCenterAlign = isLength || isRequired || isReadonly || isPrimaryKey;
                 
                 ws[cellAddress].s = {
                   fill: { fgColor: { rgb: "FFFFFF" } },
@@ -6965,9 +7903,9 @@
                     top: { style: "thin", color: { rgb: "000000" } }
                   },
                   alignment: {
-                    horizontal: "left",
-                    vertical: "top",
-                    wrapText: (isRelationField || isOtherNote) ? true : false
+                    horizontal: isCenterAlign ? "center" : "left",
+                    vertical: isCenterAlign ? "center" : "top",
+                    wrapText: (isFieldDataType || isRelationField || isOtherNote) ? true : false
                   }
                 };
               }
@@ -7046,6 +7984,13 @@
         const cellAddress = XLSX.utils.encode_cell({ r: headerRow, c: col });
         if (!ws[cellAddress]) ws[cellAddress] = { t: 's', v: '' };
         
+        // 長度、必填、唯讀、主鍵欄位（col 2, 6, 7, 8）置中對齊
+        const isLength = col === 2; // 長度 (字元)
+        const isRequired = col === 6; // 必填
+        const isReadonly = col === 7; // 唯讀
+        const isPrimaryKey = col === 8; // 主鍵
+        const isCenterAlign = isLength || isRequired || isReadonly || isPrimaryKey;
+        
         // 表頭：淺藍色背景、深藍色文字、邊框（根據範例檔案）
         const borderStyle = {
           top: { style: "thin", color: { rgb: "000000" } }, // 黑色邊框
@@ -7065,7 +8010,7 @@
           },
           border: borderStyle,
           alignment: {
-            horizontal: "left",
+            horizontal: isCenterAlign ? "center" : "left",
             vertical: "center",
             wrapText: true // 允許文字換行
           }
@@ -7090,9 +8035,15 @@
             top: { style: "thin", color: { rgb: "000000" } }
           };
           
-          // 檢查是否為 "關聯功能 / 關聯欄位 / 返回欄位" 或 "其他說明" 欄位（第9和第10欄，索引8和9）
-          const isRelationField = col === 8; // 關聯功能 / 關聯欄位 / 返回欄位
-          const isOtherNote = col === 9; // 其他說明
+          // 檢查是否為 "關聯功能 / 關聯欄位 / 返回欄位" 或 "其他說明" 欄位
+          const isRelationField = col === 10; // 關聯功能 / 關聯欄位 / 返回欄位
+          const isOtherNote = col === 11; // 其他說明
+          // 長度、必填、唯讀、主鍵欄位（col 2, 6, 7, 8）置中對齊
+          const isLength = col === 2; // 長度 (字元)
+          const isRequired = col === 6; // 必填
+          const isReadonly = col === 7; // 唯讀
+          const isPrimaryKey = col === 8; // 主鍵
+          const isCenterAlign = isLength || isRequired || isReadonly || isPrimaryKey;
           
           ws[cellAddress].s = {
             fill: {
@@ -7104,8 +8055,8 @@
             },
             border: borderStyle,
             alignment: {
-              horizontal: "left",
-              vertical: "top", // 頂部對齊，方便多行顯示
+              horizontal: isCenterAlign ? "center" : "left",
+              vertical: isCenterAlign ? "center" : "top", // 置中對齊的欄位垂直置中，其他頂部對齊
               wrapText: (isRelationField || isOtherNote) ? true : false // 這兩個欄位允許換行
             }
           };
@@ -8163,16 +9114,22 @@
       if (columns.length > 0) {
         columns.forEach((col, idx) => {
           console.log(`添加欄位 ${idx + 1}:`, col.title, col.width);
+          // 向下相容：如果沒有 fieldDataType，使用空字串
+          let colFieldDataType = col.fieldDataType || "";
+          if (!colFieldDataType && col.fieldType) {
+            colFieldDataType = "";
+          }
           addGridColumn(gridBody, col.title || "新欄位", col.width || 100, {
             dbField: col.dbField || "",
             width: col.widthProp || "small",
             rowHeight: col.rowHeight || "1",
-            length: col.length || "N/A",
+            length: (col.length && col.length !== "N/A") ? col.length : "",
             fieldType: col.fieldType || "real",
+            fieldDataType: colFieldDataType,
             selectOptions: col.selectOptions || "",
             tcode: col.tcode || "N/A",
             relationField: (col.relationField && col.relationField !== "N/A") ? col.relationField : "",
-            otherNote: col.otherNote || "N/A",
+            otherNote: (col.otherNote && col.otherNote !== "N/A") ? col.otherNote : "",
             required: col.required || false,
             readonly: col.readonly || false,
             primaryKey: col.primaryKey || false,
@@ -8324,6 +9281,13 @@
       headerCell.dataset.rowHeight = config.rowHeight || "1";
       headerCell.dataset.fieldLength = config.length || "N/A";
       headerCell.dataset.fieldType = config.fieldType || "real";
+      // 向下相容：如果沒有 fieldDataType，使用空字串（讓自動填入功能處理）
+      let gridFieldDataType = config.fieldDataType || "";
+      // 如果舊版本只有 fieldType 而沒有 fieldDataType，則使用空字串
+      if (!gridFieldDataType && config.fieldType) {
+        gridFieldDataType = "";
+      }
+      headerCell.dataset.fieldDataType = gridFieldDataType;
       headerCell.dataset.selectOptions = config.selectOptions || "";
       headerCell.dataset.fieldTcode = config.tcode || "N/A";
       headerCell.dataset.relationField = (config.relationField && config.relationField !== "N/A") ? config.relationField : "";
@@ -8363,6 +9327,19 @@
       });
       titleEl.addEventListener("input", () => {
         updateGridHeaderRequired(headerCell);
+        // 根據標題自動填入欄位型態
+        const autoFieldDataType = getAutoFieldDataType(titleEl.textContent);
+        if (autoFieldDataType) {
+          // 只有當欄位型態為空或與自動判斷的型態不同時才自動填入
+          const currentFieldDataType = headerCell.dataset.fieldDataType || "";
+          if (!currentFieldDataType || currentFieldDataType !== autoFieldDataType) {
+            headerCell.dataset.fieldDataType = autoFieldDataType;
+            // 如果欄位當前被選中，同步更新屬性面板
+            if (selectedGridHeaderCell === headerCell && propFieldTypeSelect && propFieldTypeCustom) {
+              setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, autoFieldDataType);
+            }
+          }
+        }
       });
       titleEl.addEventListener("blur", () => {
         if (!titleEl.textContent.trim()) {
@@ -8370,6 +9347,10 @@
         }
         updateGridHeaderRequired(headerCell);
         updateGridHeaderReadonly(headerCell);
+        // 同步更新屬性面板的標題
+        if (selectedGridHeaderCell === headerCell && propLabel) {
+          propLabel.value = titleEl.textContent.trim() || "未命名欄位";
+        }
       });
       titleEl.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
@@ -8540,6 +9521,10 @@
       const wrapper = document.createElement("div");
       wrapper.className = "field";
       wrapper.dataset.type = type;
+      // 設置 fieldId 以便 radio-group 使用相同的 name
+      if (!wrapper.dataset.fieldId) {
+        wrapper.dataset.fieldId = `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      }
       const width = config.width || "small";
       wrapper.dataset.width = width;
       const rowHeight = config.rowHeight || "1";
@@ -8559,13 +9544,63 @@
       wrapper.dataset.fieldLength = fieldLength;
       const fieldType = config.fieldType || "real";
       wrapper.dataset.fieldType = fieldType;
+      // 下拉選單欄位自動填入欄位型態為 Byte
+      // 核取方塊欄位自動填入欄位型態為 Boolean
+      // 複選控件欄位自動填入欄位型態為 Int/LongInt/Double/SmallInt
+      // 向下相容：如果沒有 fieldDataType，嘗試從 fieldType 轉換或使用空字串
+      let fieldDataType = config.fieldDataType || "";
+      // 如果舊版本只有 fieldType 而沒有 fieldDataType，則使用空字串（讓自動填入功能處理）
+      if (!fieldDataType && config.fieldType) {
+        // 舊版本的 fieldType 是 "real", "virtual", "relation" 等，這些不直接對應到 fieldDataType
+        // 所以我們保持為空，讓後續的自動填入邏輯或預設值處理
+        fieldDataType = "";
+      }
+      if (type === "select" && !fieldDataType) {
+        fieldDataType = "Byte";
+      } else if (type === "checkbox" && !fieldDataType) {
+        fieldDataType = "Boolean";
+      } else if (type === "checkbox-group" && !fieldDataType) {
+        fieldDataType = "Int/LongInt/Double/SmallInt";
+      } else if (type === "radio-group" && !fieldDataType) {
+        fieldDataType = "Int/LongInt/Double/SmallInt";
+      }
+      wrapper.dataset.fieldDataType = fieldDataType;
       const selectOptions = config.selectOptions || "";
       wrapper.dataset.selectOptions = selectOptions;
       const fieldTcode = config.tcode || "N/A";
       wrapper.dataset.fieldTcode = fieldTcode;
       const relationField = (config.relationField && config.relationField !== "N/A") ? config.relationField : "";
       wrapper.dataset.relationField = relationField;
-      const otherNote = config.otherNote || "N/A";
+      // 當下拉選單欄位的欄位型態是 Byte 時，自動填入「其他說明」
+      // 當核取方塊欄位的欄位型態是 Boolean 時，自動填入「其他說明」
+      // 當複選控件欄位的欄位型態是 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+      // 當單選控件欄位的欄位型態是 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+      let otherNote = config.otherNote || "N/A";
+      if (type === "select" && fieldDataType === "Byte") {
+        const targetText = "控件:TextOption-文本選項";
+        // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+        if (!otherNote || otherNote === "N/A" || !otherNote.includes(targetText)) {
+          otherNote = targetText + "\n" + (otherNote && otherNote !== "N/A" ? otherNote : "");
+        }
+      } else if (type === "checkbox" && fieldDataType === "Boolean") {
+        const targetText = "控件:CheckEdit-(CheckBox)控件";
+        // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+        if (!otherNote || otherNote === "N/A" || !otherNote.includes(targetText)) {
+          otherNote = targetText + "\n" + (otherNote && otherNote !== "N/A" ? otherNote : "");
+        }
+      } else if (type === "checkbox-group" && fieldDataType === "Int/LongInt/Double/SmallInt") {
+        const targetText = "控件:CheckBoxGroup-複選控件";
+        // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+        if (!otherNote || otherNote === "N/A" || !otherNote.includes(targetText)) {
+          otherNote = targetText + "\n" + (otherNote && otherNote !== "N/A" ? otherNote : "");
+        }
+      } else if (type === "radio-group" && fieldDataType === "Int/LongInt/Double/SmallInt") {
+        const targetText = "控件:RadioGroup-單選控件";
+        // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+        if (!otherNote || otherNote === "N/A" || !otherNote.includes(targetText)) {
+          otherNote = targetText + "\n" + (otherNote && otherNote !== "N/A" ? otherNote : "");
+        }
+      }
       wrapper.dataset.otherNote = otherNote;
       const textColor = config.textColor || "#233018";
       wrapper.dataset.textColor = textColor;
@@ -8827,6 +9862,12 @@
         wrapper.dataset.dbField = config.dbField || "";
         wrapper.dataset.fieldLength = config.length || "N/A";
         wrapper.dataset.fieldType = config.fieldType || "real";
+        // 向下相容：如果沒有 fieldDataType，使用空字串
+        let gridTabFieldDataType = config.fieldDataType || "";
+        if (!gridTabFieldDataType && config.fieldType) {
+          gridTabFieldDataType = "";
+        }
+        wrapper.dataset.fieldDataType = gridTabFieldDataType;
         wrapper.dataset.selectOptions = config.selectOptions || "";
         wrapper.dataset.fieldTcode = config.tcode || "N/A";
         wrapper.dataset.relationField = (config.relationField && config.relationField !== "N/A") ? config.relationField : "";
@@ -8887,6 +9928,78 @@
         
         // 不需要繼續執行後續的代碼，直接返回
         return;
+      } else if (type === "checkbox") {
+        // 核取方塊類型：checkbox 在標題旁邊
+        const labelClass = isRequired ? "field-label required" : "field-label";
+        const controlHTML = fieldTemplates[type]();
+        wrapper.innerHTML = `
+          <div class="field-delete" title="刪除欄位">×</div>
+          <div class="${labelClass}">
+            ${controlHTML}
+            <span class="label-text" contenteditable="true">${config.label || defaultLabel(type)}</span>
+          </div>
+          <div class="field-control" style="display: none;"></div>
+        `;
+        wrapper.classList.add("field-checkbox");
+      } else if (type === "checkbox") {
+        // 核取方塊類型：checkbox 在標題旁邊
+        const labelClass = isRequired ? "field-label required" : "field-label";
+        const controlHTML = fieldTemplates[type]();
+        wrapper.innerHTML = `
+          <div class="field-delete" title="刪除欄位">×</div>
+          <div class="${labelClass}">
+            ${controlHTML}
+            <span class="label-text" contenteditable="true">${config.label || defaultLabel(type)}</span>
+          </div>
+          <div class="field-control" style="display: none;"></div>
+        `;
+        wrapper.classList.add("field-checkbox");
+      } else if (type === "checkbox-group") {
+        // 複選控件類型：多個核取方塊
+        const labelClass = isRequired ? "field-label required" : "field-label";
+        const controlHTML = fieldTemplates[type]();
+        wrapper.innerHTML = `
+          <div class="field-delete" title="刪除欄位">×</div>
+          <div class="${labelClass}">
+            <span class="label-text" contenteditable="true">${config.label || defaultLabel(type)}</span>
+          </div>
+          <div class="field-control">
+            ${controlHTML}
+          </div>
+        `;
+        wrapper.classList.add("field-checkbox-group");
+        // 從 selectOptions 生成核取方塊選項
+        const selectOptions = config.selectOptions || "";
+        // 如果有值需要恢復，先保存到 dataset，等選項生成後再恢復
+        if (typeof config.value !== "undefined" && config.value !== "") {
+          wrapper.dataset.savedCheckboxValues = String(config.value).trim();
+        }
+        if (selectOptions) {
+          updateCheckboxGroupOptions(wrapper, selectOptions);
+        }
+      } else if (type === "radio-group") {
+        // 單選控件類型：多個單選按鈕
+        const labelClass = isRequired ? "field-label required" : "field-label";
+        const controlHTML = fieldTemplates[type]();
+        wrapper.innerHTML = `
+          <div class="field-delete" title="刪除欄位">×</div>
+          <div class="${labelClass}">
+            <span class="label-text" contenteditable="true">${config.label || defaultLabel(type)}</span>
+          </div>
+          <div class="field-control">
+            ${controlHTML}
+          </div>
+        `;
+        wrapper.classList.add("field-radio-group");
+        // 從 selectOptions 生成單選按鈕選項
+        const selectOptions = config.selectOptions || "";
+        // 如果有值需要恢復，先保存到 dataset，等選項生成後再恢復
+        if (typeof config.value !== "undefined" && config.value !== "") {
+          wrapper.dataset.savedRadioValue = String(config.value).trim();
+        }
+        if (selectOptions) {
+          updateRadioGroupOptions(wrapper, selectOptions);
+        }
       } else {
         const labelClass = isRequired ? "field-label required" : "field-label";
         // 如果是 text 類型且列高 > 1，使用 textarea 而不是 input
@@ -8908,25 +10021,44 @@
 
       // 空欄位不需要處理 control
       if (type !== "empty") {
+        // 先定義 controlInput，以便後續代碼可以使用（即使某些類型可能沒有 control）
         const controlInput = wrapper.querySelector(".field-control input, .field-control textarea, .field-control select, .field-control button");
         const placeholderInput = wrapper.querySelector(".field-control input, .field-control textarea");
-        if (placeholderInput && placeholderInput.placeholder) {
-          placeholderInput.setAttribute("data-placeholder", placeholderInput.placeholder);
-        }
-        // 如果是 select 類型且有下拉選項，更新選項
-        if (type === "select" && selectOptions && controlInput && controlInput.tagName === "SELECT") {
-          const options = selectOptions.split(";").filter(opt => opt.trim());
-          controlInput.innerHTML = '<option value="">請選擇</option>';
-          options.forEach(opt => {
-            const option = document.createElement("option");
-            option.value = opt.trim();
-            option.textContent = opt.trim();
-            controlInput.appendChild(option);
-          });
+        
+        // checkbox 欄位特殊處理
+        if (type === "checkbox") {
+          const checkboxInput = wrapper.querySelector(".field-label input[type='checkbox']");
+          if (checkboxInput) {
+            // 設置預設值
+            if (typeof config.defaultValue !== "undefined") {
+              checkboxInput.checked = config.defaultValue === "true" || config.defaultValue === true || config.defaultValue === "Y";
+            }
+            // 保存預設值到 dataset
+            wrapper.dataset.defaultValue = checkboxInput.checked ? "true" : "false";
+          }
+        } else if (type === "checkbox-group") {
+          // 複選控件欄位已經在創建時處理了選項
+          // 這裡可以處理預設值（如果需要的話）
+        } else {
+          if (placeholderInput && placeholderInput.placeholder) {
+            placeholderInput.setAttribute("data-placeholder", placeholderInput.placeholder);
+          }
+          // 如果是 select 類型且有下拉選項，更新選項
+          if (type === "select" && selectOptions && controlInput && controlInput.tagName === "SELECT") {
+            const options = selectOptions.split(";").filter(opt => opt.trim());
+            controlInput.innerHTML = '<option value="">請選擇</option>';
+            options.forEach(opt => {
+              const option = document.createElement("option");
+              option.value = opt.trim();
+              option.textContent = opt.trim();
+              controlInput.appendChild(option);
+            });
+          }
         }
         
         // 保存預設值到 dataset.defaultValue（欄位規格中的預設值）
-        if (typeof config.defaultValue !== "undefined") {
+        // checkbox 欄位已經在之前處理過了
+        if (type !== "checkbox" && typeof config.defaultValue !== "undefined") {
           wrapper.dataset.defaultValue = config.defaultValue ?? "";
         }
         
@@ -8999,7 +10131,19 @@
         }
         
         // 設置欄位的實際輸入值（如果有的話）
-        if (typeof config.value !== "undefined" && config.value !== "" && controlInput) {
+        if (type === "checkbox" && typeof config.value !== "undefined") {
+          // checkbox 欄位：恢復 checked 狀態
+          const checkboxInput = wrapper.querySelector(".field-label input[type='checkbox']");
+          if (checkboxInput) {
+            checkboxInput.checked = config.value === "true" || config.value === true || config.value === "Y";
+          }
+        } else if (type === "checkbox-group") {
+          // checkbox-group 欄位的值恢復已經在 updateCheckboxGroupOptions 中處理
+          // 這裡不需要額外處理
+        } else if (type === "radio-group") {
+          // radio-group 欄位的值恢復已經在 updateRadioGroupOptions 中處理
+          // 這裡不需要額外處理
+        } else if (typeof config.value !== "undefined" && config.value !== "" && controlInput) {
           if (controlInput.tagName === "SELECT") {
             // 對於 select，嘗試找到匹配的選項
             const options = Array.from(controlInput.options);
@@ -9171,6 +10315,21 @@
           if (selectedField === wrapper && propLabel) {
             propLabel.value = labelText.textContent.trim() || "未命名欄位";
           }
+          // 根據標題自動填入欄位型態
+          if (wrapper.dataset.type !== "empty" && wrapper.dataset.type !== "button" && wrapper.dataset.type !== "fixedtext") {
+            const autoFieldDataType = getAutoFieldDataType(labelText.textContent);
+            if (autoFieldDataType) {
+              // 只有當欄位型態為空或與自動判斷的型態不同時才自動填入
+              const currentFieldDataType = wrapper.dataset.fieldDataType || "";
+              if (!currentFieldDataType || currentFieldDataType !== autoFieldDataType) {
+                wrapper.dataset.fieldDataType = autoFieldDataType;
+                // 如果欄位當前被選中，同步更新屬性面板
+                if (selectedField === wrapper && propFieldTypeSelect && propFieldTypeCustom) {
+                  setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, autoFieldDataType);
+                }
+              }
+            }
+          }
         });
         
         // 當標題失去焦點時，確保有內容
@@ -9234,7 +10393,102 @@
       }
     }
 
+    // 更新複選控件的選項
+    function updateCheckboxGroupOptions(fieldWrapper, selectOptions) {
+      const container = fieldWrapper.querySelector(".checkbox-group-container");
+      if (!container) return;
+      
+      container.innerHTML = "";
+      if (!selectOptions || !selectOptions.trim()) {
+        return;
+      }
+      
+      const options = selectOptions.split(";").filter(opt => opt.trim());
+      options.forEach((optionText, index) => {
+        const optionWrapper = document.createElement("div");
+        optionWrapper.className = "checkbox-group-option";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `checkbox-${fieldWrapper.dataset.fieldId || Date.now()}-${index}`;
+        // 確保值去除首尾空格，與收集時保持一致
+        const trimmedValue = optionText.trim();
+        checkbox.value = trimmedValue;
+        const label = document.createElement("label");
+        label.htmlFor = checkbox.id;
+        label.textContent = trimmedValue;
+        optionWrapper.appendChild(checkbox);
+        optionWrapper.appendChild(label);
+        container.appendChild(optionWrapper);
+      });
+      
+      // 如果 fieldWrapper 有保存的選中值，在選項生成後立即恢復
+      const savedValues = fieldWrapper.dataset.savedCheckboxValues;
+      if (savedValues) {
+        setTimeout(() => {
+          const checkedValues = String(savedValues).split(";").map(v => v.trim()).filter(v => v);
+          const checkboxes = fieldWrapper.querySelectorAll(".checkbox-group-option input[type='checkbox']");
+          checkboxes.forEach(checkbox => {
+            const checkboxValue = String(checkbox.value).trim();
+            checkbox.checked = checkedValues.includes(checkboxValue);
+          });
+          // 清除臨時保存的值
+          delete fieldWrapper.dataset.savedCheckboxValues;
+        }, 0);
+      }
+    }
+
+    function updateRadioGroupOptions(fieldWrapper, selectOptions) {
+      const container = fieldWrapper.querySelector(".radio-group-container");
+      if (!container) return;
+      
+      container.innerHTML = "";
+      if (!selectOptions || !selectOptions.trim()) {
+        return;
+      }
+      
+      // 為同一欄位的所有 radio button 使用相同的 name
+      const radioName = `radio-${fieldWrapper.dataset.fieldId || Date.now()}`;
+      fieldWrapper.dataset.radioName = radioName;
+      
+      const options = selectOptions.split(";").filter(opt => opt.trim());
+      options.forEach((optionText, index) => {
+        const optionWrapper = document.createElement("div");
+        optionWrapper.className = "radio-group-option";
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = radioName;
+        radio.id = `radio-${fieldWrapper.dataset.fieldId || Date.now()}-${index}`;
+        // 確保值去除首尾空格，與收集時保持一致
+        const trimmedValue = optionText.trim();
+        radio.value = trimmedValue;
+        const label = document.createElement("label");
+        label.htmlFor = radio.id;
+        label.textContent = trimmedValue;
+        optionWrapper.appendChild(radio);
+        optionWrapper.appendChild(label);
+        container.appendChild(optionWrapper);
+      });
+      
+      // 如果 fieldWrapper 有保存的選中值，在選項生成後立即恢復
+      const savedValue = fieldWrapper.dataset.savedRadioValue;
+      if (savedValue) {
+        setTimeout(() => {
+          const radios = fieldWrapper.querySelectorAll(".radio-group-option input[type='radio']");
+          radios.forEach(radio => {
+            if (String(radio.value).trim() === String(savedValue).trim()) {
+              radio.checked = true;
+            }
+          });
+          // 清除臨時保存的值
+          delete fieldWrapper.dataset.savedRadioValue;
+        }, 0);
+      }
+    }
+
     function defaultLabel(type) {
+      if (type === "checkbox") return "核取方塊";
+      if (type === "checkbox-group") return "複選控件";
+      if (type === "radio-group") return "單選控件";
       switch (type) {
         case "text":
           return "客戶名稱";
@@ -9267,8 +10521,8 @@
       selectedField = field;
 
       const disabled = !field;
-      [propLabel, propDbField, propWidth, propRowHeight, propLength, propFieldType, propSelectOptions, propRelationField, propOtherNote, propRequired, propReadonly, propPrimaryKey, propDefault].forEach((el) => {
-        el.disabled = disabled;
+      [propLabel, propDbField, propWidth, propRowHeight, propLength, propFieldType, propFieldTypeSelect, propFieldTypeCustom, propSelectOptions, propRelationField, propOtherNote, propRequired, propReadonly, propPrimaryKey, propDefault].forEach((el) => {
+        if (el) el.disabled = disabled;
         if (!field) {
           if (el.type === "checkbox") {
             el.checked = false;
@@ -9383,10 +10637,82 @@
           propDbField.value = field.dataset.dbField || "";
           propLength.value = field.dataset.fieldLength || "N/A";
           propFieldType.value = field.dataset.fieldType || "real";
+          // 設置欄位型態（下拉選單欄位自動填入 Byte，核取方塊欄位自動填入 Boolean，複選控件欄位自動填入 Int/LongInt/Double/SmallInt）
+          let fieldDataType = field.dataset.fieldDataType || "";
+          if (field.dataset.type === "select" && !fieldDataType) {
+            fieldDataType = "Byte";
+            field.dataset.fieldDataType = fieldDataType;
+          } else if (field.dataset.type === "checkbox" && !fieldDataType) {
+            fieldDataType = "Boolean";
+            field.dataset.fieldDataType = fieldDataType;
+          } else if (field.dataset.type === "checkbox-group" && !fieldDataType) {
+            fieldDataType = "Int/LongInt/Double/SmallInt";
+            field.dataset.fieldDataType = fieldDataType;
+          } else if (field.dataset.type === "radio-group" && !fieldDataType) {
+            fieldDataType = "Int/LongInt/Double/SmallInt";
+            field.dataset.fieldDataType = fieldDataType;
+          }
+          setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, fieldDataType);
           propSelectOptions.value = field.dataset.selectOptions || "";
+          // 如果是 checkbox-group 或 radio-group 類型的欄位，更新選項
+          if (field.dataset.type === "checkbox-group") {
+            updateCheckboxGroupOptions(field, field.dataset.selectOptions || "");
+          } else if (field.dataset.type === "radio-group") {
+            updateRadioGroupOptions(field, field.dataset.selectOptions || "");
+          }
           // propTcode 已移除
           propRelationField.value = (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "";
-          propOtherNote.value = field.dataset.otherNote || "N/A";
+          // 當下拉選單的欄位型態是 Byte 時，自動填入「其他說明」
+          // 當核取方塊的欄位型態是 Boolean 時，自動填入「其他說明」
+          // 當複選控件的欄位型態是 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+          // 當單選控件的欄位型態是 Int/LongInt/Double/SmallInt 時，自動填入「其他說明」
+          if (field.dataset.type === "select" && fieldDataType === "Byte") {
+            const currentOtherNote = field.dataset.otherNote || "";
+            const targetText = "控件:TextOption-文本選項";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote || currentOtherNote === "N/A" || !currentOtherNote.includes(targetText)) {
+              const newOtherNote = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              propOtherNote.value = newOtherNote;
+              field.dataset.otherNote = newOtherNote;
+            } else {
+              propOtherNote.value = currentOtherNote;
+            }
+          } else if (field.dataset.type === "checkbox" && fieldDataType === "Boolean") {
+            const currentOtherNote = field.dataset.otherNote || "";
+            const targetText = "控件:CheckEdit-(CheckBox)控件";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote || currentOtherNote === "N/A" || !currentOtherNote.includes(targetText)) {
+              const newOtherNote = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              propOtherNote.value = newOtherNote;
+              field.dataset.otherNote = newOtherNote;
+            } else {
+              propOtherNote.value = currentOtherNote;
+            }
+          } else if (field.dataset.type === "checkbox-group" && fieldDataType === "Int/LongInt/Double/SmallInt") {
+            const currentOtherNote = field.dataset.otherNote || "";
+            const targetText = "控件:CheckBoxGroup-複選控件";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote || currentOtherNote === "N/A" || !currentOtherNote.includes(targetText)) {
+              const newOtherNote = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              propOtherNote.value = newOtherNote;
+              field.dataset.otherNote = newOtherNote;
+            } else {
+              propOtherNote.value = currentOtherNote;
+            }
+          } else if (field.dataset.type === "radio-group" && fieldDataType === "Int/LongInt/Double/SmallInt") {
+            const currentOtherNote = field.dataset.otherNote || "";
+            const targetText = "控件:RadioGroup-單選控件";
+            // 如果「其他說明」中還沒有這個文字，則在第一行填入並換行
+            if (!currentOtherNote || currentOtherNote === "N/A" || !currentOtherNote.includes(targetText)) {
+              const newOtherNote = targetText + "\n" + (currentOtherNote && currentOtherNote !== "N/A" ? currentOtherNote : "");
+              propOtherNote.value = newOtherNote;
+              field.dataset.otherNote = newOtherNote;
+            } else {
+              propOtherNote.value = currentOtherNote;
+            }
+          } else {
+            propOtherNote.value = field.dataset.otherNote || "N/A";
+          }
           propDefault.value = field.dataset.defaultValue || "";
           propRequired.checked = field.dataset.required === "true";
           propReadonly.checked = field.dataset.readonly === "true";
@@ -9474,8 +10800,8 @@
       selectedGridHeaderCell = headerCell;
 
       const disabled = !headerCell;
-      [propLabel, propDbField, propWidth, propRowHeight, propLength, propFieldType, propSelectOptions, propRelationField, propOtherNote, propRequired, propReadonly, propPrimaryKey, propDefault].forEach((el) => {
-        el.disabled = disabled;
+      [propLabel, propDbField, propWidth, propRowHeight, propLength, propFieldType, propFieldTypeSelect, propFieldTypeCustom, propSelectOptions, propRelationField, propOtherNote, propRequired, propReadonly, propPrimaryKey, propDefault].forEach((el) => {
+        if (el) el.disabled = disabled;
         if (!headerCell) {
           if (el.type === "checkbox") {
             el.checked = false;
@@ -9550,6 +10876,9 @@
         propRowHeight.value = headerCell.dataset.rowHeight || "1";
         propLength.value = headerCell.dataset.fieldLength || "N/A";
         propFieldType.value = headerCell.dataset.fieldType || "real";
+        // 設置欄位型態
+        const fieldDataType = headerCell.dataset.fieldDataType || "";
+        setFieldTypeValue(propFieldTypeSelect, propFieldTypeCustom, fieldDataType);
         propSelectOptions.value = headerCell.dataset.selectOptions || "";
         // propTcode 已移除
         propRelationField.value = (headerCell.dataset.relationField && headerCell.dataset.relationField !== "N/A") ? headerCell.dataset.relationField : "";
@@ -9856,24 +11185,45 @@
                     });
                   }
                 } else if (!isEmpty) {
-                  const control = field.querySelector(".field-control");
-                  if (control) {
-                    if (isButton) {
-                      const button = control.querySelector("button");
-                      if (button) {
-                        fieldValue = button.textContent.trim() || "";
-                      }
-                    } else {
-                      const input = control.querySelector("input");
-                      const textarea = control.querySelector("textarea");
-                      const select = control.querySelector("select");
-                      
-                      if (input) {
-                        fieldValue = input.value || "";
-                      } else if (textarea) {
-                        fieldValue = textarea.value || "";
-                      } else if (select) {
-                        fieldValue = select.value || "";
+                  const fieldType = field.dataset.type;
+                  if (fieldType === "checkbox") {
+                    // checkbox 欄位：收集 checked 狀態
+                    const checkbox = field.querySelector(".field-label input[type='checkbox']");
+                    if (checkbox) {
+                      fieldValue = checkbox.checked ? "true" : "false";
+                    }
+                  } else if (fieldType === "checkbox-group") {
+                    // checkbox-group 欄位：收集所有選中的選項（用分號分隔）
+                    const checkedOptions = Array.from(field.querySelectorAll(".checkbox-group-option input[type='checkbox']:checked"))
+                      .map(cb => cb.value)
+                      .filter(v => v);
+                    fieldValue = checkedOptions.join(";");
+                  } else if (fieldType === "radio-group") {
+                    // radio-group 欄位：收集選中的選項（單選，只有一個值）
+                    const checkedRadio = field.querySelector(".radio-group-option input[type='radio']:checked");
+                    if (checkedRadio) {
+                      fieldValue = checkedRadio.value;
+                    }
+                  } else {
+                    const control = field.querySelector(".field-control");
+                    if (control) {
+                      if (isButton) {
+                        const button = control.querySelector("button");
+                        if (button) {
+                          fieldValue = button.textContent.trim() || "";
+                        }
+                      } else {
+                        const input = control.querySelector("input");
+                        const textarea = control.querySelector("textarea");
+                        const select = control.querySelector("select");
+                        
+                        if (input) {
+                          fieldValue = input.value || "";
+                        } else if (textarea) {
+                          fieldValue = textarea.value || "";
+                        } else if (select) {
+                          fieldValue = select.value || "";
+                        }
                       }
                     }
                   }
@@ -9885,12 +11235,13 @@
                   dbField: field.dataset.dbField || "",
                   width: field.dataset.width || "small",
                   rowHeight: field.dataset.rowHeight || "1",
-                  length: field.dataset.fieldLength || "N/A",
+                  length: (field.dataset.fieldLength && field.dataset.fieldLength !== "N/A") ? field.dataset.fieldLength : "",
                   fieldType: field.dataset.fieldType || "real",
+                  fieldDataType: field.dataset.fieldDataType || "",
                   selectOptions: field.dataset.selectOptions || "",
                   tcode: field.dataset.fieldTcode || "N/A",
                   relationField: (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "",
-                  otherNote: field.dataset.otherNote || "N/A",
+                  otherNote: (field.dataset.otherNote && field.dataset.otherNote !== "N/A") ? field.dataset.otherNote : "",
                   required: field.dataset.required === "true",
                   readonly: field.dataset.readonly === "true",
                   primaryKey: field.dataset.primaryKey === "true",
@@ -9928,24 +11279,45 @@
                 
                 let fieldValue = "";
                 if (!isEmpty) {
-                  const control = field.querySelector(".field-control");
-                  if (control) {
-                    if (isButton) {
-                      const button = control.querySelector("button");
-                      if (button) {
-                        fieldValue = button.textContent.trim() || "";
-                      }
-                    } else {
-                      const input = control.querySelector("input");
-                      const textarea = control.querySelector("textarea");
-                      const select = control.querySelector("select");
-                      
-                      if (input) {
-                        fieldValue = input.value || "";
-                      } else if (textarea) {
-                        fieldValue = textarea.value || "";
-                      } else if (select) {
-                        fieldValue = select.value || "";
+                  const fieldType = field.dataset.type;
+                  if (fieldType === "checkbox") {
+                    // checkbox 欄位：收集 checked 狀態
+                    const checkbox = field.querySelector(".field-label input[type='checkbox']");
+                    if (checkbox) {
+                      fieldValue = checkbox.checked ? "true" : "false";
+                    }
+                  } else if (fieldType === "checkbox-group") {
+                    // checkbox-group 欄位：收集所有選中的選項（用分號分隔）
+                    const checkedOptions = Array.from(field.querySelectorAll(".checkbox-group-option input[type='checkbox']:checked"))
+                      .map(cb => cb.value)
+                      .filter(v => v);
+                    fieldValue = checkedOptions.join(";");
+                  } else if (fieldType === "radio-group") {
+                    // radio-group 欄位：收集選中的選項（單選，只有一個值）
+                    const checkedRadio = field.querySelector(".radio-group-option input[type='radio']:checked");
+                    if (checkedRadio) {
+                      fieldValue = checkedRadio.value;
+                    }
+                  } else {
+                    const control = field.querySelector(".field-control");
+                    if (control) {
+                      if (isButton) {
+                        const button = control.querySelector("button");
+                        if (button) {
+                          fieldValue = button.textContent.trim() || "";
+                        }
+                      } else {
+                        const input = control.querySelector("input");
+                        const textarea = control.querySelector("textarea");
+                        const select = control.querySelector("select");
+                        
+                        if (input) {
+                          fieldValue = input.value || "";
+                        } else if (textarea) {
+                          fieldValue = textarea.value || "";
+                        } else if (select) {
+                          fieldValue = select.value || "";
+                        }
                       }
                     }
                   }
@@ -9957,12 +11329,13 @@
             dbField: field.dataset.dbField || "",
             width: field.dataset.width || "small",
             rowHeight: field.dataset.rowHeight || "1",
-            length: field.dataset.fieldLength || "N/A",
+            length: (field.dataset.fieldLength && field.dataset.fieldLength !== "N/A") ? field.dataset.fieldLength : "",
             fieldType: field.dataset.fieldType || "real",
+            fieldDataType: field.dataset.fieldDataType || "",
             selectOptions: field.dataset.selectOptions || "",
             tcode: field.dataset.fieldTcode || "N/A",
                   relationField: (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "",
-            otherNote: field.dataset.otherNote || "N/A",
+            otherNote: (field.dataset.otherNote && field.dataset.otherNote !== "N/A") ? field.dataset.otherNote : "",
             required: field.dataset.required === "true",
             readonly: field.dataset.readonly === "true",
             primaryKey: field.dataset.primaryKey === "true",
@@ -10041,12 +11414,13 @@
             dbField: cell.dataset.dbField || "",
             widthProp: cell.dataset.width || "small",
             rowHeight: cell.dataset.rowHeight || "1",
-            length: cell.dataset.fieldLength || "N/A",
+            length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
             fieldType: cell.dataset.fieldType || "real",
+            fieldDataType: cell.dataset.fieldDataType || "",
             selectOptions: cell.dataset.selectOptions || "",
             tcode: cell.dataset.fieldTcode || "N/A",
             relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
-            otherNote: cell.dataset.otherNote || "N/A",
+            otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
             required: cell.dataset.required === "true",
             readonly: cell.dataset.readonly === "true",
             primaryKey: cell.dataset.primaryKey === "true",
@@ -10199,6 +11573,22 @@
     // 登出功能
     const btnLogout = document.getElementById("btn-logout");
     btnLogout.addEventListener("click", () => {
+      // 清空畫布
+      canvas.querySelectorAll(".panel").forEach((panel) => panel.remove());
+      selectField(null);
+      selectGridHeaderCell(null);
+      setActivePanel(null);
+      ensurePlaceholder();
+      // 清空功能標題並設置預設值
+      const documentTitleInput = document.getElementById("document-title");
+      if (documentTitleInput) {
+        documentTitleInput.value = "功能名稱";
+      }
+      // 清除當前檔案 handle
+      currentFileHandle = null;
+      // 更新存檔按鈕狀態（禁用）
+      updateSaveButtonState();
+      
       // 隱藏主畫面
       mainApp.style.display = "none";
       
