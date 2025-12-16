@@ -457,13 +457,22 @@
       position: relative;
       min-height: 56px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--header-dark);
       line-height: 1.6;
       letter-spacing: 0.3px;
+    }
+    
+    .tool-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--header-dark);
+      opacity: 0.8;
     }
 
     .tool:hover {
@@ -584,6 +593,29 @@
       outline: none;
     }
 
+    .panel-tab-copy {
+      margin-left: 6px;
+      cursor: grab;
+      color: #6c7a57;
+      font-size: 14px;
+      opacity: 0.8;
+      transition: opacity 0.2s, color 0.2s;
+      user-select: none;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    
+    .panel-tab-copy:hover {
+      opacity: 1;
+      color: var(--accent);
+    }
+    
+    .panel-tab-copy:active {
+      cursor: grabbing;
+      opacity: 1;
+    }
+    
     .panel-tab-remove {
       margin-left: 6px;
       cursor: pointer;
@@ -606,6 +638,13 @@
       font-size: 0.85rem;
       color: #6c7a57;
       margin-left: 4px;
+      transition: background 0.2s, border 0.2s;
+    }
+    
+    .panel-tab-add.drag-over {
+      background: rgba(108, 122, 87, 0.2);
+      border: 1px dashed var(--accent);
+      border-radius: 4px;
     }
 
     .panel-tab-add:hover {
@@ -1621,21 +1660,30 @@
     }
 
     /* 描述文字樣式 - 預設同一行 */
-    .tool > span {
-      display: inline;
-      font-size: 0.75rem;
+    .tool > div > span,
+    .tool span {
+      display: block;
+      font-size: 0.7rem;
       color: #8a9a6f;
-      margin-left: 8px;
+      margin-top: 4px;
+      line-height: 1.4;
       font-weight: 400;
       letter-spacing: 0.1px;
+    }
+    
+    .tool > div > strong {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--header-dark);
     }
 
     /* 描述文字樣式 - 換行後（在 br 之後） */
     .tool br + span {
       display: block;
       margin-left: 0;
-      margin-top: 6px;
-      line-height: 1.5;
+      margin-top: 4px;
+      line-height: 1.4;
+      font-size: 0.7rem;
     }
 
     .palette-section {
@@ -3031,7 +3079,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
-      <span class="version-display">v251212-1</span>
+      <span class="version-display">v251216-1</span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3133,15 +3181,37 @@
         <div class="palette-section-body" id="palette-panels">
           <div class="tool" draggable="true" data-type="panel-no-tabs">
             <div class="tool-drag-handle" draggable="true"></div>
-            區塊面板(無頁籤)<br><span>無頁籤的容器</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+            </svg>
+            <div>
+              <strong>區塊面板(無頁籤)</strong><br><span>無頁籤的容器</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="panel">
             <div class="tool-drag-handle" draggable="true"></div>
-            區塊面板(有頁籤)<br><span>建立容器後才能放欄位</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+            </svg>
+            <div>
+              <strong>區塊面板(有頁籤)</strong><br><span>建立容器後才能放欄位</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="grid-panel">
             <div class="tool-drag-handle" draggable="true"></div>
-            GRID 面板<br><span>表格容器，預設4列</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+            </svg>
+            <div>
+              <strong>GRID 面板</strong><br><span>表格容器，預設4列</span>
+            </div>
           </div>
         </div>
       </div>
@@ -3155,47 +3225,115 @@
         <div class="palette-section-body" id="palette-fields">
           <div class="tool" draggable="true" data-type="text">
             <div class="tool-drag-handle" draggable="true"></div>
-            單行文字 <span>客戶、單號</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 7h16M4 12h16M4 17h10"/>
+            </svg>
+            <div>
+              單行文字<br><span>客戶、單號</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="number">
             <div class="tool-drag-handle" draggable="true"></div>
-            數值欄位 <span>數量、金額</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 20V4M17 20V4M3 7h8M13 7h8M3 12h8M13 12h8M3 17h8M13 17h8"/>
+            </svg>
+            <div>
+              數值欄位<br><span>數量、金額</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="date">
             <div class="tool-drag-handle" draggable="true"></div>
-            日期欄位 <span>下單日</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <div>
+              日期欄位<br><span>下單日</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="select">
             <div class="tool-drag-handle" draggable="true"></div>
-            下拉選單 <span>狀態</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+            <div>
+              下拉選單<br><span>狀態</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="textarea">
             <div class="tool-drag-handle" draggable="true"></div>
-            多行備註 <span>備註說明</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <div>
+              多行備註<br><span>備註說明</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="empty">
             <div class="tool-drag-handle" draggable="true"></div>
-            空欄位 <span>空白佔位</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="4 4"/>
+            </svg>
+            <div>
+              空欄位<br><span>空白佔位</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="button">
             <div class="tool-drag-handle" draggable="true"></div>
-            按鈕 <span>按鈕控件</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="8" width="18" height="8" rx="2"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            <div>
+              按鈕<br><span>按鈕控件</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="fixedtext">
             <div class="tool-drag-handle" draggable="true"></div>
-            固定文字 <span>固定顯示文字</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <div>
+              固定文字<br><span>固定顯示文字</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="checkbox">
             <div class="tool-drag-handle" draggable="true"></div>
-            核取方塊 <span>是否選項</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 11 12 14 22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <div>
+              核取方塊<br><span>是否選項</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="checkbox-group">
             <div class="tool-drag-handle" draggable="true"></div>
-            複選控件 <span>多選選項</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 6 12 9 21 0"/>
+              <path d="M21 6v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              <polyline points="9 13 12 16 21 7"/>
+            </svg>
+            <div>
+              複選控件<br><span>多選選項</span>
+            </div>
           </div>
           <div class="tool" draggable="true" data-type="radio-group">
             <div class="tool-drag-handle" draggable="true"></div>
-            單選控件 <span>單選選項</span>
+            <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="3" fill="currentColor"/>
+            </svg>
+            <div>
+              單選控件<br><span>單選選項</span>
+            </div>
           </div>
         </div>
       </div>
@@ -4391,13 +4529,661 @@
 
       canvas.addEventListener("drop", (event) => {
         event.preventDefault();
+        event.stopPropagation();
         const type = event.dataTransfer.getData("field-type");
         const movePanel = event.dataTransfer.getData("move-panel");
         
+        console.log("Canvas drop 事件觸發：", {
+          type: type,
+          movePanel: movePanel,
+          hasDraggedPanel: !!window._draggedPanel,
+          draggedPanelClass: window._draggedPanel ? window._draggedPanel.className : "null",
+          targetElement: event.target ? event.target.className : "null"
+        });
+        
         // 處理面板排序
         if (movePanel === "true" && window._draggedPanel) {
-          const panels = Array.from(canvas.querySelectorAll(".panel"));
           const draggedPanel = window._draggedPanel;
+          
+          // 檢查是否拖曳 GRID 面板到「區塊面板(有頁籤)」上
+          // 使用 event.target 或 event.currentTarget 來找到目標面板
+          let targetPanel = event.target.closest(".panel");
+          // 如果從面板內部元素觸發，可能需要向上查找
+          if (!targetPanel || targetPanel === draggedPanel) {
+            // 嘗試從拖曳位置找到目標面板
+            const panels = Array.from(canvas.querySelectorAll(".panel"));
+            targetPanel = panels.find(p => 
+              p !== draggedPanel && 
+              p.querySelector(".panel-tabs") &&
+              p.getBoundingClientRect().top <= event.clientY &&
+              p.getBoundingClientRect().bottom >= event.clientY &&
+              p.getBoundingClientRect().left <= event.clientX &&
+              p.getBoundingClientRect().right >= event.clientX
+            );
+          }
+          
+          console.log("面板拖曳檢測：", {
+            isGridPanel: draggedPanel.classList.contains("grid-panel"),
+            hasTargetPanel: !!targetPanel,
+            isDifferentPanel: targetPanel !== draggedPanel,
+            hasTabs: targetPanel ? !!targetPanel.querySelector(".panel-tabs") : false,
+            targetPanel: targetPanel ? targetPanel.className : "null",
+            draggedPanel: draggedPanel.className,
+            clientX: event.clientX,
+            clientY: event.clientY
+          });
+          
+          if (draggedPanel.classList.contains("grid-panel") && 
+              targetPanel && 
+              targetPanel !== draggedPanel && 
+              targetPanel.querySelector(".panel-tabs")) {
+            console.log("條件滿足，開始複製 GRID 面板資料");
+            console.log("開始複製 GRID 面板資料到新頁籤");
+            // 收集 GRID 面板的資料
+            const gridBody = draggedPanel.querySelector(".grid-panel-body");
+            if (gridBody) {
+              const headerCells = gridBody.querySelectorAll(".grid-header-cell");
+              const dataRows = gridBody.querySelectorAll(".grid-data-row");
+              
+              // 收集表頭欄位
+              const gridColumns = Array.from(headerCells).map((cell) => {
+                let title = cell.querySelector(".header-title")?.textContent.trim() || "新欄位";
+                // 如果標題有括號（唯讀狀態），提取實際標題
+                if (title.startsWith("(") && title.endsWith(")")) {
+                  title = title.slice(1, -1).trim();
+                }
+                return {
+                  title,
+                  width: parseInt(cell.style.width) || 100,
+                  dbField: cell.dataset.dbField || "",
+                  widthProp: cell.dataset.width || "small",
+                  rowHeight: cell.dataset.rowHeight || "1",
+                  length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
+                  fieldType: cell.dataset.fieldType || "real",
+                  fieldDataType: cell.dataset.fieldDataType || "",
+                  selectOptions: cell.dataset.selectOptions || "",
+                  tcode: cell.dataset.fieldTcode || "N/A",
+                  relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
+                  otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
+                  required: cell.dataset.required === "true",
+                  readonly: cell.dataset.readonly === "true",
+                  primaryKey: cell.dataset.primaryKey === "true",
+                  defaultValue: cell.dataset.defaultValue || ""
+                };
+              });
+              
+              // 收集資料行
+              const gridRows = Array.from(dataRows).map(row => {
+                const cells = row.querySelectorAll(".grid-data-cell input");
+                return Array.from(cells).map(input => input.value || "");
+              });
+              
+              // 在目標區塊面板中創建新頁籤並添加 GRID 頁籤欄位
+              const tabsContainer = targetPanel.querySelector(".panel-tabs");
+              if (tabsContainer) {
+                // 創建新頁籤
+                const newTab = document.createElement("div");
+                newTab.className = "panel-tab active";
+                newTab.draggable = true;
+                newTab.innerHTML = `
+                  <input type="text" class="panel-tab-input" value="新頁籤" />
+                  <span class="panel-tab-copy" title="複製頁籤">📋</span>
+                  <span class="panel-tab-remove">×</span>
+                `;
+                targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                const tabAdd = tabsContainer.querySelector(".panel-tab-add");
+                if (tabAdd) {
+                  tabsContainer.insertBefore(newTab, tabAdd);
+                } else {
+                  tabsContainer.appendChild(newTab);
+                }
+                
+                // 創建對應的新 tab-body
+                const newTabBody = document.createElement("div");
+                newTabBody.className = "tab-body active";
+                const columns = targetPanel.dataset.columns || "3";
+                newTabBody.style.setProperty("--column-count", columns);
+                newTabBody.dataset.columns = columns;
+                
+                // 獲取當前面板的列高
+                const currentHeight = parseInt(targetPanel.dataset.panelHeight) || 3;
+                const minHeight = (currentHeight * 36) + 12;
+                newTabBody.style.minHeight = `${minHeight}px`;
+                newTabBody.dataset.panelHeight = String(currentHeight);
+                
+                // 初始化新頁籤的區塊屬性（使用預設值）
+                newTabBody.dataset.panelTableId = "A";
+                newTabBody.dataset.panelParentTable = "";
+                newTabBody.dataset.panelDbTable = "";
+                
+                targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                targetPanel.appendChild(newTabBody);
+                
+                // 在新頁籤中添加 GRID 頁籤欄位
+                console.log("準備添加 grid-tab 欄位，gridColumns:", gridColumns.length, "gridRows:", gridRows.length);
+                addField("grid-tab", {
+                  gridColumns: gridColumns,
+                  gridRows: gridRows
+                }, newTabBody);
+                console.log("grid-tab 欄位已添加完成");
+                
+                // 為新頁籤綁定事件（重用現有邏輯）
+                const newInput = newTab.querySelector(".panel-tab-input");
+                newInput.focus();
+                newInput.select();
+                targetPanel.dataset.title = newInput.value;
+                
+                // 設置 activePanelBody 為新的 tab-body
+                setActivePanel(newTabBody);
+                
+                // 為新頁籤的 input 綁定 focus 事件
+                newInput.addEventListener("focus", () => {
+                  // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
+                  if (!newTab.classList.contains("active")) {
+                    // 切換頁籤 active 狀態
+                    targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                    newTab.classList.add("active");
+                    
+                    // 切換對應的 tab-body
+                    targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                    newTabBody.classList.add("active");
+                    
+                    // 清除選中的欄位，確保顯示區塊屬性
+                    selectField(null);
+                    selectGridHeaderCell(null);
+                    // 顯示該頁籤的區塊屬性
+                    setActivePanel(newTabBody);
+                  } else {
+                    // 如果已經是 active 頁籤，確保顯示區塊屬性
+                    selectField(null);
+                    selectGridHeaderCell(null);
+                    setActivePanel(newTabBody);
+                  }
+                });
+                
+                newInput.addEventListener("input", () => {
+                  if (newTab.classList.contains("active")) {
+                    targetPanel.dataset.title = newInput.value;
+                  }
+                });
+                
+                newInput.addEventListener("blur", () => {
+                  if (!newInput.value.trim()) {
+                    newInput.value = "頁籤";
+                  }
+                });
+                
+                // 為新頁籤綁定點擊事件
+                newTab.addEventListener("click", (e) => {
+                  if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input") || e.target.classList.contains("panel-tab-copy")) {
+                    return;
+                  }
+                  if (newTab.classList.contains("active")) {
+                    return;
+                  }
+                  targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                  newTab.classList.add("active");
+                  
+                  targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                  newTabBody.classList.add("active");
+                  
+                  selectField(null);
+                  selectGridHeaderCell(null);
+                  setActivePanel(newTabBody);
+                });
+                
+                // 為新頁籤的複製按鈕綁定拖曳事件（重用上面的複製邏輯）
+                const newTabCopy = newTab.querySelector(".panel-tab-copy");
+                if (newTabCopy) {
+                  // 設置為可拖曳
+                  newTabCopy.draggable = true;
+                  
+                  // 拖曳開始：收集頁籤資料
+                  newTabCopy.addEventListener("dragstart", (e) => {
+                    e.stopPropagation();
+                    const tabIndex = Array.from(targetPanel.querySelectorAll(".panel-tab")).indexOf(newTab);
+                    const tabBody = targetPanel.querySelectorAll(".tab-body")[tabIndex];
+                    
+                    if (tabBody) {
+                      e.dataTransfer.setData("copy-tab", "true");
+                      e.dataTransfer.effectAllowed = "copy";
+                      
+                      // 收集頁籤資料（重用上面的邏輯）
+                      const tabTitle = newTab.querySelector(".panel-tab-input").value || "頁籤";
+                      const tabFields = Array.from(tabBody.querySelectorAll(".field")).map((field) => {
+                        // 重用上面的欄位收集邏輯
+                        const isEmpty = field.dataset.type === "empty";
+                        const isButton = field.dataset.type === "button";
+                        const isFixedText = field.dataset.type === "fixedtext";
+                        const isGridTab = field.dataset.type === "grid-tab";
+                        const labelText = (isEmpty || isButton || isFixedText || isGridTab) ? null : field.querySelector(".label-text");
+                        const defaultValue = field.dataset.defaultValue || "";
+                        
+                        let fieldValue = "";
+                        let gridColumns = [];
+                        let gridRows = [];
+                        
+                        if (isGridTab) {
+                          const gridBody = field.querySelector(".grid-panel-body");
+                          if (gridBody) {
+                            const headerCells = gridBody.querySelectorAll(".grid-header-cell");
+                            gridColumns = Array.from(headerCells).map((cell) => {
+                              let title = cell.querySelector(".header-title")?.textContent.trim() || "新欄位";
+                              if (title.startsWith("(") && title.endsWith(")")) {
+                                title = title.slice(1, -1).trim();
+                              }
+                              return {
+                                title,
+                                width: parseInt(cell.style.width) || 100,
+                                dbField: cell.dataset.dbField || "",
+                                widthProp: cell.dataset.width || "small",
+                                rowHeight: cell.dataset.rowHeight || "1",
+                                length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
+                                fieldType: cell.dataset.fieldType || "real",
+                                fieldDataType: cell.dataset.fieldDataType || "",
+                                selectOptions: cell.dataset.selectOptions || "",
+                                tcode: cell.dataset.fieldTcode || "N/A",
+                                relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
+                                otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
+                                required: cell.dataset.required === "true",
+                                readonly: cell.dataset.readonly === "true",
+                                primaryKey: cell.dataset.primaryKey === "true",
+                                defaultValue: cell.dataset.defaultValue || ""
+                              };
+                            });
+                            
+                            const dataRows = gridBody.querySelectorAll(".grid-data-row");
+                            gridRows = Array.from(dataRows).map((row) => {
+                              const cells = row.querySelectorAll(".grid-data-cell input");
+                              return Array.from(cells).map((input) => input.value || "");
+                            });
+                          }
+                        } else if (!isEmpty) {
+                          const fieldType = field.dataset.type;
+                          if (fieldType === "checkbox") {
+                            const checkbox = field.querySelector(".field-label input[type='checkbox']");
+                            if (checkbox) {
+                              fieldValue = checkbox.checked ? "true" : "false";
+                            }
+                          } else if (fieldType === "checkbox-group") {
+                            const checkedOptions = Array.from(field.querySelectorAll(".checkbox-group-option input[type='checkbox']:checked"))
+                              .map(cb => cb.value)
+                              .filter(v => v);
+                            fieldValue = checkedOptions.join(";");
+                          } else if (fieldType === "radio-group") {
+                            const checkedRadio = field.querySelector(".radio-group-option input[type='radio']:checked");
+                            if (checkedRadio) {
+                              fieldValue = checkedRadio.value;
+                            }
+                          } else {
+                            const control = field.querySelector(".field-control");
+                            if (control) {
+                              if (isButton) {
+                                const button = control.querySelector("button");
+                                if (button) {
+                                  fieldValue = button.textContent.trim() || "";
+                                }
+                              } else {
+                                const input = control.querySelector("input");
+                                const textarea = control.querySelector("textarea");
+                                const select = control.querySelector("select");
+                                
+                                if (input) {
+                                  fieldValue = input.value || "";
+                                } else if (textarea) {
+                                  fieldValue = textarea.value || "";
+                                } else if (select) {
+                                  fieldValue = select.value || "";
+                                }
+                              }
+                            }
+                          }
+                        }
+                        
+                        const result = {
+                          type: field.dataset.type,
+                          label: labelText ? labelText.textContent.trim() : "",
+                          dbField: field.dataset.dbField || "",
+                          width: field.dataset.width || "small",
+                          rowHeight: field.dataset.rowHeight || "1",
+                          length: (field.dataset.fieldLength && field.dataset.fieldLength !== "N/A") ? field.dataset.fieldLength : "",
+                          fieldType: field.dataset.fieldType || "real",
+                          fieldDataType: field.dataset.fieldDataType || "",
+                          selectOptions: field.dataset.selectOptions || "",
+                          tcode: field.dataset.fieldTcode || "N/A",
+                          relationField: (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "",
+                          otherNote: (field.dataset.otherNote && field.dataset.otherNote !== "N/A") ? field.dataset.otherNote : "",
+                          required: field.dataset.required === "true",
+                          readonly: field.dataset.readonly === "true",
+                          primaryKey: field.dataset.primaryKey === "true",
+                          defaultValue,
+                          value: fieldValue
+                        };
+                        
+                        if (isGridTab) {
+                          result.gridColumns = gridColumns;
+                          result.gridRows = gridRows;
+                        }
+                        
+                        if (isFixedText && field.dataset.textColor) {
+                          result.textColor = field.dataset.textColor;
+                        }
+                        if (isButton && field.dataset.buttonWidth) {
+                          result.buttonWidth = field.dataset.buttonWidth;
+                        }
+                        return result;
+                      });
+                      
+                      const tabTableId = tabBody.dataset.panelTableId || "A";
+                      const tabTableIdCustom = tabBody.dataset.panelTableIdCustom || "";
+                      const tabParentTable = tabBody.dataset.panelParentTable || "";
+                      const tabParentTableCustom = tabBody.dataset.panelParentTableCustom || "";
+                      const tabDbTable = tabBody.dataset.panelDbTable || "";
+                      const tabColumns = tabBody.dataset.columns || "3";
+                      const tabPanelHeight = tabBody.dataset.panelHeight || "3";
+                      
+                      window._copiedTab = {
+                        title: tabTitle,
+                        fields: tabFields,
+                        tableId: tabTableId,
+                        tableIdCustom: tabTableIdCustom,
+                        parentTable: tabParentTable,
+                        parentTableCustom: tabParentTableCustom,
+                        dbTable: tabDbTable,
+                        columns: tabColumns,
+                        panelHeight: tabPanelHeight
+                      };
+                      
+                      showToast("頁籤已複製，可拖曳到「新增頁籤」處貼上");
+                      window._draggedCopyButton = newTabCopy;
+                    }
+                  });
+                  
+                  // 拖曳結束
+                  newTabCopy.addEventListener("dragend", (e) => {
+                    window._draggedCopyButton = null;
+                  });
+                }
+                
+                // 為新頁籤的刪除按鈕綁定事件
+                const newTabRemove = newTab.querySelector(".panel-tab-remove");
+                newTabRemove.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  if (targetPanel.querySelectorAll(".panel-tab").length <= 1) {
+                    showToast("至少需要一個頁籤");
+                    return;
+                  }
+                  newTabBody.remove();
+                  newTab.remove();
+                  
+                  const firstTab = targetPanel.querySelector(".panel-tab");
+                  if (firstTab) {
+                    firstTab.classList.add("active");
+                    targetPanel.dataset.title = firstTab.querySelector(".panel-tab-input").value;
+                    const firstTabBody = targetPanel.querySelector(".tab-body");
+                    if (firstTabBody) {
+                      targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                      firstTabBody.classList.add("active");
+                      setActivePanel(firstTabBody);
+                    }
+                  }
+                });
+                
+                // 為新頁籤綁定拖曳事件（重用現有邏輯，參考 addPanel 中的頁籤拖曳處理）
+                // tabsContainer 已在上面定義，這裡不需要重新定義
+                let draggedTab = null;
+                let isDragging = false;
+                
+                // tabsContainer 已在上面定義，直接使用
+                if (tabsContainer) {
+                  // 拖曳開始
+                  newTab.addEventListener("dragstart", (e) => {
+                    draggedTab = newTab;
+                    isDragging = true;
+                    newTab.classList.add("dragging");
+                    e.dataTransfer.effectAllowed = "move";
+                  });
+                  
+                  // 拖曳結束
+                  newTab.addEventListener("dragend", (e) => {
+                    newTab.classList.remove("dragging");
+                    tabsContainer.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                    setTimeout(() => {
+                      isDragging = false;
+                      draggedTab = null;
+                    }, 100);
+                  });
+                  
+                  // 拖曳懸停
+                  newTab.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    if (draggedTab && draggedTab !== newTab) {
+                      tabsContainer.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                      newTab.classList.add("drag-over");
+                    }
+                  });
+                  
+                  // 拖曳進入
+                  newTab.addEventListener("dragenter", (e) => {
+                    e.preventDefault();
+                    if (draggedTab && draggedTab !== newTab) {
+                      newTab.classList.add("drag-over");
+                    }
+                  });
+                  
+                  // 拖曳離開
+                  newTab.addEventListener("dragleave", (e) => {
+                    newTab.classList.remove("drag-over");
+                  });
+                  
+                  // 放置
+                  newTab.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (draggedTab && draggedTab !== newTab) {
+                      const tabs = Array.from(tabsContainer.querySelectorAll(".panel-tab"));
+                      const tabBodies = Array.from(targetPanel.querySelectorAll(".tab-body"));
+                      const draggedIndex = tabs.indexOf(draggedTab);
+                      const targetIndex = tabs.indexOf(newTab);
+                      
+                      // 移動頁籤
+                      if (draggedIndex < targetIndex) {
+                        tabsContainer.insertBefore(draggedTab, newTab.nextSibling);
+                      } else {
+                        tabsContainer.insertBefore(draggedTab, newTab);
+                      }
+                      
+                      // 移動對應的 tab-body
+                      const draggedTabBody = tabBodies[draggedIndex];
+                      const targetTabBody = tabBodies[targetIndex];
+                      if (draggedTabBody && targetTabBody) {
+                        if (draggedIndex < targetIndex) {
+                          targetTabBody.parentNode.insertBefore(draggedTabBody, targetTabBody.nextSibling);
+                        } else {
+                          targetTabBody.parentNode.insertBefore(draggedTabBody, targetTabBody);
+                        }
+                      }
+                      
+                      // 更新所有頁籤和 tab-body 的 data-tab-index
+                      const updatedTabs = Array.from(tabsContainer.querySelectorAll(".panel-tab"));
+                      const updatedTabBodies = Array.from(targetPanel.querySelectorAll(".tab-body"));
+                      updatedTabs.forEach((t, newIdx) => {
+                        t.dataset.tabIndex = String(newIdx);
+                        if (updatedTabBodies[newIdx]) {
+                          updatedTabBodies[newIdx].dataset.tabIndex = String(newIdx);
+                        }
+                      });
+                      
+                      tabsContainer.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                    }
+                  });
+                  
+                  // 為所有現有頁籤也綁定拖曳事件（確保一致性，避免重複綁定）
+                  targetPanel.querySelectorAll(".panel-tab").forEach((tab) => {
+                    if (tab !== newTab && !tab.hasAttribute("data-drag-bound")) {
+                      tab.setAttribute("data-drag-bound", "true");
+                      // 拖曳開始
+                      tab.addEventListener("dragstart", (e) => {
+                        draggedTab = tab;
+                        isDragging = true;
+                        tab.classList.add("dragging");
+                        e.dataTransfer.effectAllowed = "move";
+                      });
+                      
+                      // 拖曳結束
+                      tab.addEventListener("dragend", (e) => {
+                        tab.classList.remove("dragging");
+                        tabsContainer.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                        setTimeout(() => {
+                          isDragging = false;
+                          draggedTab = null;
+                        }, 100);
+                      });
+                      
+                      // 拖曳懸停
+                      tab.addEventListener("dragover", (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                        if (draggedTab && draggedTab !== tab) {
+                          tabsContainer.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                          tab.classList.add("drag-over");
+                        }
+                      });
+                      
+                      // 拖曳進入
+                      tab.addEventListener("dragenter", (e) => {
+                        e.preventDefault();
+                        if (draggedTab && draggedTab !== tab) {
+                          tab.classList.add("drag-over");
+                        }
+                      });
+                      
+                      // 拖曳離開
+                      tab.addEventListener("dragleave", (e) => {
+                        tab.classList.remove("drag-over");
+                      });
+                      
+                      // 放置
+                      tab.addEventListener("drop", (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (draggedTab && draggedTab !== tab) {
+                          const tabs = Array.from(tabsContainer.querySelectorAll(".panel-tab"));
+                          const tabBodies = Array.from(targetPanel.querySelectorAll(".tab-body"));
+                          const draggedIndex = tabs.indexOf(draggedTab);
+                          const targetIndex = tabs.indexOf(tab);
+                          
+                          // 移動頁籤
+                          if (draggedIndex < targetIndex) {
+                            tabsContainer.insertBefore(draggedTab, tab.nextSibling);
+                          } else {
+                            tabsContainer.insertBefore(draggedTab, tab);
+                          }
+                          
+                          // 移動對應的 tab-body
+                          const draggedTabBody = tabBodies[draggedIndex];
+                          const targetTabBody = tabBodies[targetIndex];
+                          if (draggedTabBody && targetTabBody) {
+                            if (draggedIndex < targetIndex) {
+                              targetTabBody.parentNode.insertBefore(draggedTabBody, targetTabBody.nextSibling);
+                            } else {
+                              targetTabBody.parentNode.insertBefore(draggedTabBody, targetTabBody);
+                            }
+                          }
+                          
+                          // 更新所有頁籤和 tab-body 的 data-tab-index
+                          const updatedTabs = Array.from(tabsContainer.querySelectorAll(".panel-tab"));
+                          const updatedTabBodies = Array.from(targetPanel.querySelectorAll(".tab-body"));
+                          updatedTabs.forEach((t, newIdx) => {
+                            t.dataset.tabIndex = String(newIdx);
+                            if (updatedTabBodies[newIdx]) {
+                              updatedTabBodies[newIdx].dataset.tabIndex = String(newIdx);
+                            }
+                          });
+                          
+                          tabsContainer.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                        }
+                      });
+                    }
+                  });
+                }
+                
+                // 為新頁籤的輸入框綁定事件
+                newInput.addEventListener("input", () => {
+                  if (newTab.classList.contains("active")) {
+                    targetPanel.dataset.title = newInput.value;
+                  }
+                });
+                
+                newInput.addEventListener("blur", () => {
+                  if (!newInput.value.trim()) {
+                    newInput.value = "頁籤";
+                  }
+                });
+                
+                newInput.addEventListener("focus", () => {
+                  // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
+                  if (!newTab.classList.contains("active")) {
+                    targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                    newTab.classList.add("active");
+                    
+                    targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                    newTabBody.classList.add("active");
+                    
+                    selectField(null);
+                    selectGridHeaderCell(null);
+                    setActivePanel(newTabBody);
+                  } else {
+                    selectField(null);
+                    selectGridHeaderCell(null);
+                    setActivePanel(newTabBody);
+                  }
+                });
+                
+                // 為新的 tab-body 綁定拖曳事件
+                newTabBody.addEventListener("dragover", (event) => {
+                  event.preventDefault();
+                  const moving = event.dataTransfer.getData("move-field");
+                  if (moving && window._draggedField) {
+                    event.dataTransfer.dropEffect = "move";
+                  } else {
+                    event.dataTransfer.dropEffect = "copy";
+                  }
+                });
+
+                newTabBody.addEventListener("drop", (event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  const moving = event.dataTransfer.getData("move-field");
+                  if (moving && window._draggedField) {
+                    const draggedField = window._draggedField;
+                    newTabBody.appendChild(draggedField);
+                    draggedField.classList.remove("dragging");
+                    window._draggedField = null;
+                    isDraggingField = false;
+                    selectField(draggedField);
+                    setActivePanel(newTabBody);
+                    return;
+                  }
+                  const type = event.dataTransfer.getData("field-type");
+                  if (!type || type === "panel" || type === "panel-no-tabs" || type === "grid-panel") {
+                    return;
+                  }
+                  addField(type, {}, newTabBody);
+                });
+                
+                // 清除拖曳狀態
+                draggedPanel.classList.remove("dragging");
+                canvas.querySelectorAll(".panel").forEach(p => p.classList.remove("drag-over"));
+                window._draggedPanel = null;
+                return;
+              }
+            }
+          }
+          
+          // 正常的面板排序
+          const panels = Array.from(canvas.querySelectorAll(".panel"));
           const afterElement = getDragAfterElement(canvas, event.clientY);
           
           if (afterElement == null) {
@@ -4428,6 +5214,7 @@
               newTab.draggable = true;
               newTab.innerHTML = `
                 <input type="text" class="panel-tab-input" value="新頁籤" />
+                <span class="panel-tab-copy" title="複製頁籤">📋</span>
                 <span class="panel-tab-remove">×</span>
               `;
               targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
@@ -4436,6 +5223,274 @@
                 tabsContainer.insertBefore(newTab, tabAdd);
               } else {
                 tabsContainer.appendChild(newTab);
+              }
+              
+              // 為新頁籤的複製按鈕綁定拖曳事件（重用上面的複製邏輯）
+              const newTabCopy = newTab.querySelector(".panel-tab-copy");
+              if (newTabCopy) {
+                // 設置為可拖曳
+                newTabCopy.draggable = true;
+                
+                // 拖曳開始：收集頁籤資料
+                newTabCopy.addEventListener("dragstart", (e) => {
+                  e.stopPropagation();
+                  const tabIndex = Array.from(targetPanel.querySelectorAll(".panel-tab")).indexOf(newTab);
+                  const tabBody = targetPanel.querySelectorAll(".tab-body")[tabIndex];
+                  
+                  if (tabBody) {
+                    e.dataTransfer.setData("copy-tab", "true");
+                    e.dataTransfer.effectAllowed = "copy";
+                    
+                    // 收集頁籤資料（重用上面的邏輯）
+                    const tabTitle = newTab.querySelector(".panel-tab-input").value || "頁籤";
+                    const tabFields = Array.from(tabBody.querySelectorAll(".field")).map((field) => {
+                      // 重用上面的欄位收集邏輯
+                      const isEmpty = field.dataset.type === "empty";
+                      const isButton = field.dataset.type === "button";
+                      const isFixedText = field.dataset.type === "fixedtext";
+                      const isGridTab = field.dataset.type === "grid-tab";
+                      const labelText = (isEmpty || isButton || isFixedText || isGridTab) ? null : field.querySelector(".label-text");
+                      const defaultValue = field.dataset.defaultValue || "";
+                      
+                      let fieldValue = "";
+                      let gridColumns = [];
+                      let gridRows = [];
+                      
+                      if (isGridTab) {
+                        const gridBody = field.querySelector(".grid-panel-body");
+                        if (gridBody) {
+                          const headerCells = gridBody.querySelectorAll(".grid-header-cell");
+                          gridColumns = Array.from(headerCells).map((cell) => {
+                            let title = cell.querySelector(".header-title")?.textContent.trim() || "新欄位";
+                            if (title.startsWith("(") && title.endsWith(")")) {
+                              title = title.slice(1, -1).trim();
+                            }
+                            return {
+                              title,
+                              width: parseInt(cell.style.width) || 100,
+                              dbField: cell.dataset.dbField || "",
+                              widthProp: cell.dataset.width || "small",
+                              rowHeight: cell.dataset.rowHeight || "1",
+                              length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
+                              fieldType: cell.dataset.fieldType || "real",
+                              fieldDataType: cell.dataset.fieldDataType || "",
+                              selectOptions: cell.dataset.selectOptions || "",
+                              tcode: cell.dataset.fieldTcode || "N/A",
+                              relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
+                              otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
+                              required: cell.dataset.required === "true",
+                              readonly: cell.dataset.readonly === "true",
+                              primaryKey: cell.dataset.primaryKey === "true",
+                              defaultValue: cell.dataset.defaultValue || ""
+                            };
+                          });
+                          
+                          const dataRows = gridBody.querySelectorAll(".grid-data-row");
+                          gridRows = Array.from(dataRows).map((row) => {
+                            const cells = row.querySelectorAll(".grid-data-cell input");
+                            return Array.from(cells).map((input) => input.value || "");
+                          });
+                        }
+                      } else if (!isEmpty) {
+                        const fieldType = field.dataset.type;
+                        if (fieldType === "checkbox") {
+                          const checkbox = field.querySelector(".field-label input[type='checkbox']");
+                          if (checkbox) {
+                            fieldValue = checkbox.checked ? "true" : "false";
+                          }
+                        } else if (fieldType === "checkbox-group") {
+                          const checkedOptions = Array.from(field.querySelectorAll(".checkbox-group-option input[type='checkbox']:checked"))
+                            .map(cb => cb.value)
+                            .filter(v => v);
+                          fieldValue = checkedOptions.join(";");
+                        } else if (fieldType === "radio-group") {
+                          const checkedRadio = field.querySelector(".radio-group-option input[type='radio']:checked");
+                          if (checkedRadio) {
+                            fieldValue = checkedRadio.value;
+                          }
+                        } else {
+                          const control = field.querySelector(".field-control");
+                          if (control) {
+                            if (isButton) {
+                              const button = control.querySelector("button");
+                              if (button) {
+                                fieldValue = button.textContent.trim() || "";
+                              }
+                            } else {
+                              const input = control.querySelector("input");
+                              const textarea = control.querySelector("textarea");
+                              const select = control.querySelector("select");
+                              
+                              if (input) {
+                                fieldValue = input.value || "";
+                              } else if (textarea) {
+                                fieldValue = textarea.value || "";
+                              } else if (select) {
+                                fieldValue = select.value || "";
+                              }
+                            }
+                          }
+                        }
+                      }
+                      
+                      const result = {
+                        type: field.dataset.type,
+                        label: labelText ? labelText.textContent.trim() : "",
+                        dbField: field.dataset.dbField || "",
+                        width: field.dataset.width || "small",
+                        rowHeight: field.dataset.rowHeight || "1",
+                        length: (field.dataset.fieldLength && field.dataset.fieldLength !== "N/A") ? field.dataset.fieldLength : "",
+                        fieldType: field.dataset.fieldType || "real",
+                        fieldDataType: field.dataset.fieldDataType || "",
+                        selectOptions: field.dataset.selectOptions || "",
+                        tcode: field.dataset.fieldTcode || "N/A",
+                        relationField: (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "",
+                        otherNote: (field.dataset.otherNote && field.dataset.otherNote !== "N/A") ? field.dataset.otherNote : "",
+                        required: field.dataset.required === "true",
+                        readonly: field.dataset.readonly === "true",
+                        primaryKey: field.dataset.primaryKey === "true",
+                        defaultValue,
+                        value: fieldValue
+                      };
+                      
+                      if (isGridTab) {
+                        result.gridColumns = gridColumns;
+                        result.gridRows = gridRows;
+                      }
+                      
+                      if (isFixedText && field.dataset.textColor) {
+                        result.textColor = field.dataset.textColor;
+                      }
+                      if (isButton && field.dataset.buttonWidth) {
+                        result.buttonWidth = field.dataset.buttonWidth;
+                      }
+                      return result;
+                    });
+                    
+                    const tabTableId = tabBody.dataset.panelTableId || "A";
+                    const tabTableIdCustom = tabBody.dataset.panelTableIdCustom || "";
+                    const tabParentTable = tabBody.dataset.panelParentTable || "";
+                    const tabParentTableCustom = tabBody.dataset.panelParentTableCustom || "";
+                    const tabDbTable = tabBody.dataset.panelDbTable || "";
+                    const tabColumns = tabBody.dataset.columns || "3";
+                    const tabPanelHeight = tabBody.dataset.panelHeight || "3";
+                    
+                    window._copiedTab = {
+                      title: tabTitle,
+                      fields: tabFields,
+                      tableId: tabTableId,
+                      tableIdCustom: tabTableIdCustom,
+                      parentTable: tabParentTable,
+                      parentTableCustom: tabParentTableCustom,
+                      dbTable: tabDbTable,
+                      columns: tabColumns,
+                      panelHeight: tabPanelHeight
+                    };
+                    
+                    showToast("頁籤已複製，可拖曳到「新增頁籤」處貼上");
+                    window._draggedCopyButton = newTabCopy;
+                  }
+                });
+                
+                // 拖曳結束
+                newTabCopy.addEventListener("dragend", (e) => {
+                  window._draggedCopyButton = null;
+                });
+              }
+              
+              // 為新頁籤的 input 綁定 focus 事件
+              const newInput = newTab.querySelector(".panel-tab-input");
+              if (newInput) {
+                newInput.addEventListener("focus", () => {
+                  // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
+                  const tabIndex = Array.from(targetPanel.querySelectorAll(".panel-tab")).indexOf(newTab);
+                  const tabBody = targetPanel.querySelectorAll(".tab-body")[tabIndex];
+                  
+                  if (tabBody && !newTab.classList.contains("active")) {
+                    // 切換頁籤 active 狀態
+                    targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                    newTab.classList.add("active");
+                    
+                    // 切換對應的 tab-body
+                    targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                    tabBody.classList.add("active");
+                    
+                    // 清除選中的欄位，確保顯示區塊屬性
+                    selectField(null);
+                    selectGridHeaderCell(null);
+                    // 顯示該頁籤的區塊屬性
+                    setActivePanel(tabBody);
+                  } else if (tabBody && newTab.classList.contains("active")) {
+                    // 如果已經是 active 頁籤，確保顯示區塊屬性
+                    selectField(null);
+                    selectGridHeaderCell(null);
+                    setActivePanel(tabBody);
+                  }
+                });
+                
+                newInput.addEventListener("input", () => {
+                  if (newTab.classList.contains("active")) {
+                    targetPanel.dataset.title = newInput.value;
+                  }
+                });
+                
+                newInput.addEventListener("blur", () => {
+                  if (!newInput.value.trim()) {
+                    newInput.value = "頁籤";
+                  }
+                });
+              }
+              
+              // 為新頁籤綁定點擊事件
+              newTab.addEventListener("click", (e) => {
+                if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input") || e.target.classList.contains("panel-tab-copy")) {
+                  return;
+                }
+                if (newTab.classList.contains("active")) {
+                  return;
+                }
+                targetPanel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                newTab.classList.add("active");
+                
+                targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                const tabIndex = Array.from(targetPanel.querySelectorAll(".panel-tab")).indexOf(newTab);
+                const tabBody = targetPanel.querySelectorAll(".tab-body")[tabIndex];
+                if (tabBody) {
+                  tabBody.classList.add("active");
+                  selectField(null);
+                  selectGridHeaderCell(null);
+                  setActivePanel(tabBody);
+                }
+              });
+              
+              // 為新頁籤的刪除按鈕綁定事件
+              const newTabRemove = newTab.querySelector(".panel-tab-remove");
+              if (newTabRemove) {
+                newTabRemove.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  if (targetPanel.querySelectorAll(".panel-tab").length <= 1) {
+                    showToast("至少需要一個頁籤");
+                    return;
+                  }
+                  const tabIndex = Array.from(targetPanel.querySelectorAll(".panel-tab")).indexOf(newTab);
+                  const tabBody = targetPanel.querySelectorAll(".tab-body")[tabIndex];
+                  if (tabBody) {
+                    tabBody.remove();
+                  }
+                  newTab.remove();
+                  
+                  const firstTab = targetPanel.querySelector(".panel-tab");
+                  if (firstTab) {
+                    firstTab.classList.add("active");
+                    targetPanel.dataset.title = firstTab.querySelector(".panel-tab-input").value;
+                    const firstTabBody = targetPanel.querySelector(".tab-body");
+                    if (firstTabBody) {
+                      targetPanel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                      firstTabBody.classList.add("active");
+                      setActivePanel(firstTabBody);
+                    }
+                  }
+                });
               }
               
               // 為新頁籤綁定拖曳事件（使用與 addPanel 相同的邏輯）
@@ -4793,14 +5848,48 @@
         event.preventDefault();
         const movePanel = event.dataTransfer.getData("move-panel");
         if (movePanel === "true" && window._draggedPanel) {
-          const afterElement = getDragAfterElement(canvas, event.clientY);
-          const panels = canvas.querySelectorAll(".panel");
-          panels.forEach(panel => {
-            if (panel === window._draggedPanel) return;
-            panel.classList.remove("drag-over");
-          });
-          if (afterElement && afterElement !== window._draggedPanel) {
-            afterElement.classList.add("drag-over");
+          const draggedPanel = window._draggedPanel;
+          
+          // 檢查是否拖曳 GRID 面板到「區塊面板(有頁籤)」上
+          let targetPanel = event.target.closest(".panel");
+          // 如果從面板內部元素觸發，可能需要向上查找
+          if (!targetPanel || targetPanel === draggedPanel) {
+            // 嘗試從拖曳位置找到目標面板
+            const panels = Array.from(canvas.querySelectorAll(".panel"));
+            targetPanel = panels.find(p => 
+              p !== draggedPanel && 
+              p.querySelector(".panel-tabs") &&
+              p.getBoundingClientRect().top <= event.clientY &&
+              p.getBoundingClientRect().bottom >= event.clientY &&
+              p.getBoundingClientRect().left <= event.clientX &&
+              p.getBoundingClientRect().right >= event.clientX
+            );
+          }
+          
+          if (draggedPanel.classList.contains("grid-panel") && 
+              targetPanel && 
+              targetPanel !== draggedPanel && 
+              targetPanel.querySelector(".panel-tabs")) {
+            // 顯示視覺反饋：將目標面板標記為可放置
+            event.dataTransfer.dropEffect = "copy";
+            canvas.querySelectorAll(".panel").forEach(p => {
+              if (p === targetPanel) {
+                p.classList.add("drag-over");
+              } else {
+                p.classList.remove("drag-over");
+              }
+            });
+          } else {
+            // 正常的面板排序視覺反饋
+            const afterElement = getDragAfterElement(canvas, event.clientY);
+            const panels = canvas.querySelectorAll(".panel");
+            panels.forEach(panel => {
+              if (panel === window._draggedPanel) return;
+              panel.classList.remove("drag-over");
+            });
+            if (afterElement && afterElement !== window._draggedPanel) {
+              afterElement.classList.add("drag-over");
+            }
           }
         }
       });
@@ -5510,7 +6599,7 @@
         input.replaceWith(text);
       });
 
-      clone.querySelectorAll(".panel-columns, .panel-height, .panel-toggle, .panel-delete, .field-delete, .grid-add-header-btn, .grid-add-row-btn, .header-delete, .panel-tab-add, .panel-tab-remove, .panel-drag-handle, .panel-column-custom, .panel-height-custom, .button-width-resizer, .grid-data-row-delete").forEach((node) => node.remove());
+      clone.querySelectorAll(".panel-columns, .panel-height, .panel-toggle, .panel-delete, .field-delete, .grid-add-header-btn, .grid-add-row-btn, .header-delete, .panel-tab-add, .panel-tab-remove, .panel-tab-copy, .panel-drag-handle, .panel-column-custom, .panel-height-custom, .button-width-resizer, .grid-data-row-delete").forEach((node) => node.remove());
       // 保留 .grid-col-resizer 以便在預覽模式中調整欄寬
 
       // 移除 GRID 面板的編輯功能
@@ -7120,9 +8209,36 @@
             tableTitle = tableTitle.trim();
             
             // 獲取該頁籤的欄位（根據 tabIndex 過濾）
-            const tabFields = (panel.fields || []).filter(field => field.tabIndex === tabIndex);
+            let tabFields = (panel.fields || []).filter(field => field.tabIndex === tabIndex);
             
-            html += generatePanelTable(tableTitle, tabFields, panelIndex, tabIndex);
+            // 展開 grid-tab 欄位的 gridColumns 為多個欄位
+            const expandedFields = [];
+            tabFields.forEach(field => {
+              if (field.type === "grid-tab" && field.gridColumns && field.gridColumns.length > 0) {
+                // 將 gridColumns 展開為多個欄位
+                field.gridColumns.forEach(gridColumn => {
+                  expandedFields.push({
+                    label: gridColumn.title,
+                    dbField: gridColumn.dbField || "",
+                    length: (gridColumn.length && gridColumn.length !== "N/A") ? gridColumn.length : "",
+                    fieldType: gridColumn.fieldType || "real",
+                    fieldDataType: gridColumn.fieldDataType || "",
+                    defaultValue: gridColumn.defaultValue || "",
+                    required: gridColumn.required || false,
+                    readonly: gridColumn.readonly || false,
+                    primaryKey: gridColumn.primaryKey || false,
+                    selectOptions: gridColumn.selectOptions || "",
+                    relationField: (gridColumn.relationField && gridColumn.relationField !== "N/A") ? gridColumn.relationField : "",
+                    otherNote: (gridColumn.otherNote && gridColumn.otherNote !== "N/A") ? gridColumn.otherNote : ""
+                  });
+                });
+              } else {
+                // 非 grid-tab 欄位，直接添加
+                expandedFields.push(field);
+              }
+            });
+            
+            html += generatePanelTable(tableTitle, expandedFields, panelIndex, tabIndex);
           });
         } else {
           // 無頁籤的面板或 GRID 面板
@@ -8102,6 +9218,7 @@
         tabsHTML = tabs.map((tab, idx) => `
           <div class="panel-tab ${idx === activeTabIndex ? "active" : ""}" data-tab-index="${idx}" draggable="true">
             <input type="text" class="panel-tab-input" value="${tab.title || "頁籤"}" />
+            <span class="panel-tab-copy" title="複製頁籤">📋</span>
             <span class="panel-tab-remove">×</span>
           </div>
         `).join("");
@@ -8533,7 +9650,7 @@
             if (isDragging) {
               return;
             }
-            if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input")) {
+            if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input") || e.target.classList.contains("panel-tab-copy")) {
               return;
             }
             // 如果點擊的是當前 active 頁籤，不處理
@@ -8581,17 +9698,24 @@
           input.addEventListener("focus", () => {
             // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
             const tab = input.closest(".panel-tab");
-            if (tab && !tab.classList.contains("active")) {
+            if (!tab) return;
+            
+            // 動態獲取頁籤索引，而不是使用 forEach 的 idx（因為頁籤可能被重新排序）
+            const tabs = Array.from(panel.querySelectorAll(".panel-tab"));
+            const tabIndex = tabs.indexOf(tab);
+            const tabBodies = Array.from(panel.querySelectorAll(".tab-body"));
+            const activeTabBody = tabBodies[tabIndex];
+            
+            if (!activeTabBody) return;
+            
+            if (!tab.classList.contains("active")) {
               // 切換頁籤 active 狀態
               panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
               tab.classList.add("active");
               
               // 切換對應的 tab-body
-              const tabBodies = panel.querySelectorAll(".tab-body");
-              const activeTabBody = tabBodies[idx];
-              
               tabBodies.forEach((tabBody, bodyIdx) => {
-                if (bodyIdx === idx) {
+                if (bodyIdx === tabIndex) {
                   tabBody.classList.add("active");
                 } else {
                   tabBody.classList.remove("active");
@@ -8605,17 +9729,13 @@
               updatePanelColumnSelect(panel, activeTabBody);
               // 顯示該頁籤的區塊屬性
               setActivePanel(activeTabBody);
-            } else if (tab && tab.classList.contains("active")) {
+            } else {
               // 如果已經是 active 頁籤，確保顯示區塊屬性
-              const tabBodies = panel.querySelectorAll(".tab-body");
-              const activeTabBody = tabBodies[idx];
-              if (activeTabBody) {
-                selectField(null);
-                selectGridHeaderCell(null);
-                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
-                updatePanelColumnSelect(panel, activeTabBody);
-                setActivePanel(activeTabBody);
-              }
+              selectField(null);
+              selectGridHeaderCell(null);
+              // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+              updatePanelColumnSelect(panel, activeTabBody);
+              setActivePanel(activeTabBody);
             }
           });
           
@@ -8628,6 +9748,182 @@
             if (!input.value.trim()) {
               input.value = "頁籤";
             }
+          });
+        });
+
+        // 複製頁籤（拖曳方式）
+        const tabCopies = panel.querySelectorAll(".panel-tab-copy");
+        tabCopies.forEach((copy, idx) => {
+          // 設置為可拖曳
+          copy.draggable = true;
+          
+          // 拖曳開始：收集頁籤資料
+          copy.addEventListener("dragstart", (e) => {
+            e.stopPropagation();
+            const tab = copy.closest(".panel-tab");
+            const tabIndex = Array.from(panel.querySelectorAll(".panel-tab")).indexOf(tab);
+            const tabBody = panel.querySelectorAll(".tab-body")[tabIndex];
+            
+            if (tabBody) {
+              e.dataTransfer.setData("copy-tab", "true");
+              e.dataTransfer.effectAllowed = "copy";
+              
+              // 收集頁籤資料
+              const tabTitle = tab.querySelector(".panel-tab-input").value || "頁籤";
+              const tabFields = Array.from(tabBody.querySelectorAll(".field")).map((field) => {
+                const isEmpty = field.dataset.type === "empty";
+                const isButton = field.dataset.type === "button";
+                const isFixedText = field.dataset.type === "fixedtext";
+                const isGridTab = field.dataset.type === "grid-tab";
+                const labelText = (isEmpty || isButton || isFixedText || isGridTab) ? null : field.querySelector(".label-text");
+                const defaultValue = field.dataset.defaultValue || "";
+                
+                let fieldValue = "";
+                let gridColumns = [];
+                let gridRows = [];
+                
+                if (isGridTab) {
+                  // GRID 頁籤：收集 GRID 結構
+                  const gridBody = field.querySelector(".grid-panel-body");
+                  if (gridBody) {
+                    const headerCells = gridBody.querySelectorAll(".grid-header-cell");
+                    gridColumns = Array.from(headerCells).map((cell) => {
+                      let title = cell.querySelector(".header-title")?.textContent.trim() || "新欄位";
+                      if (title.startsWith("(") && title.endsWith(")")) {
+                        title = title.slice(1, -1).trim();
+                      }
+                      return {
+                        title,
+                        width: parseInt(cell.style.width) || 100,
+                        dbField: cell.dataset.dbField || "",
+                        widthProp: cell.dataset.width || "small",
+                        rowHeight: cell.dataset.rowHeight || "1",
+                        length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
+                        fieldType: cell.dataset.fieldType || "real",
+                        fieldDataType: cell.dataset.fieldDataType || "",
+                        selectOptions: cell.dataset.selectOptions || "",
+                        tcode: cell.dataset.fieldTcode || "N/A",
+                        relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
+                        otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
+                        required: cell.dataset.required === "true",
+                        readonly: cell.dataset.readonly === "true",
+                        primaryKey: cell.dataset.primaryKey === "true",
+                        defaultValue: cell.dataset.defaultValue || ""
+                      };
+                    });
+                    
+                    const dataRows = gridBody.querySelectorAll(".grid-data-row");
+                    gridRows = Array.from(dataRows).map((row) => {
+                      const cells = row.querySelectorAll(".grid-data-cell input");
+                      return Array.from(cells).map((input) => input.value || "");
+                    });
+                  }
+                } else if (!isEmpty) {
+                  const fieldType = field.dataset.type;
+                  if (fieldType === "checkbox") {
+                    const checkbox = field.querySelector(".field-label input[type='checkbox']");
+                    if (checkbox) {
+                      fieldValue = checkbox.checked ? "true" : "false";
+                    }
+                  } else if (fieldType === "checkbox-group") {
+                    const checkedOptions = Array.from(field.querySelectorAll(".checkbox-group-option input[type='checkbox']:checked"))
+                      .map(cb => cb.value)
+                      .filter(v => v);
+                    fieldValue = checkedOptions.join(";");
+                  } else if (fieldType === "radio-group") {
+                    const checkedRadio = field.querySelector(".radio-group-option input[type='radio']:checked");
+                    if (checkedRadio) {
+                      fieldValue = checkedRadio.value;
+                    }
+                  } else {
+                    const control = field.querySelector(".field-control");
+                    if (control) {
+                      if (isButton) {
+                        const button = control.querySelector("button");
+                        if (button) {
+                          fieldValue = button.textContent.trim() || "";
+                        }
+                      } else {
+                        const input = control.querySelector("input");
+                        const textarea = control.querySelector("textarea");
+                        const select = control.querySelector("select");
+                        
+                        if (input) {
+                          fieldValue = input.value || "";
+                        } else if (textarea) {
+                          fieldValue = textarea.value || "";
+                        } else if (select) {
+                          fieldValue = select.value || "";
+                        }
+                      }
+                    }
+                  }
+                }
+                
+                const result = {
+                  type: field.dataset.type,
+                  label: labelText ? labelText.textContent.trim() : "",
+                  dbField: field.dataset.dbField || "",
+                  width: field.dataset.width || "small",
+                  rowHeight: field.dataset.rowHeight || "1",
+                  length: (field.dataset.fieldLength && field.dataset.fieldLength !== "N/A") ? field.dataset.fieldLength : "",
+                  fieldType: field.dataset.fieldType || "real",
+                  fieldDataType: field.dataset.fieldDataType || "",
+                  selectOptions: field.dataset.selectOptions || "",
+                  tcode: field.dataset.fieldTcode || "N/A",
+                  relationField: (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "",
+                  otherNote: (field.dataset.otherNote && field.dataset.otherNote !== "N/A") ? field.dataset.otherNote : "",
+                  required: field.dataset.required === "true",
+                  readonly: field.dataset.readonly === "true",
+                  primaryKey: field.dataset.primaryKey === "true",
+                  defaultValue,
+                  value: fieldValue
+                };
+                
+                if (isGridTab) {
+                  result.gridColumns = gridColumns;
+                  result.gridRows = gridRows;
+                }
+                
+                if (isFixedText && field.dataset.textColor) {
+                  result.textColor = field.dataset.textColor;
+                }
+                if (isButton && field.dataset.buttonWidth) {
+                  result.buttonWidth = field.dataset.buttonWidth;
+                }
+                return result;
+              });
+              
+              // 收集頁籤的區塊屬性
+              const tabTableId = tabBody.dataset.panelTableId || "A";
+              const tabTableIdCustom = tabBody.dataset.panelTableIdCustom || "";
+              const tabParentTable = tabBody.dataset.panelParentTable || "";
+              const tabParentTableCustom = tabBody.dataset.panelParentTableCustom || "";
+              const tabDbTable = tabBody.dataset.panelDbTable || "";
+              const tabColumns = tabBody.dataset.columns || "3";
+              const tabPanelHeight = tabBody.dataset.panelHeight || "3";
+              
+              // 存儲到全局變量
+              window._copiedTab = {
+                title: tabTitle,
+                fields: tabFields,
+                tableId: tabTableId,
+                tableIdCustom: tabTableIdCustom,
+                parentTable: tabParentTable,
+                parentTableCustom: tabParentTableCustom,
+                dbTable: tabDbTable,
+                columns: tabColumns,
+                panelHeight: tabPanelHeight
+              };
+              
+              showToast("頁籤已複製，可拖曳到「新增頁籤」處貼上");
+              window._draggedCopyButton = copy;
+            }
+          });
+          
+          // 拖曳結束
+          copy.addEventListener("dragend", (e) => {
+            window._draggedCopyButton = null;
           });
         });
 
@@ -8672,6 +9968,474 @@
 
         // 新增頁籤
         if (tabAdd) {
+          // 為「新增頁籤」按鈕添加拖放處理（用於貼上頁籤）
+          tabAdd.addEventListener("dragover", (e) => {
+            // 在 dragover 中無法讀取 getData，需要檢查全局變量
+            if (window._copiedTab) {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "copy";
+              tabAdd.classList.add("drag-over");
+            }
+          });
+          
+          tabAdd.addEventListener("dragleave", (e) => {
+            tabAdd.classList.remove("drag-over");
+          });
+          
+          tabAdd.addEventListener("drop", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            // 檢查是否有複製的頁籤
+            if (window._copiedTab) {
+              tabAdd.classList.remove("drag-over");
+              
+              const copiedTab = window._copiedTab;
+              const tabsContainer = panel.querySelector(".panel-tabs");
+              if (!tabsContainer) {
+                return;
+              }
+              
+              // 創建新頁籤
+              const newTab = document.createElement("div");
+              newTab.className = "panel-tab active";
+              newTab.draggable = true;
+              newTab.innerHTML = `
+                <input type="text" class="panel-tab-input" value="${copiedTab.title} (複製)" />
+                <span class="panel-tab-copy" title="複製頁籤">📋</span>
+                <span class="panel-tab-remove">×</span>
+              `;
+              panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+              tabsContainer.insertBefore(newTab, tabAdd);
+              
+              // 創建對應的新 tab-body
+              const newTabBody = document.createElement("div");
+              newTabBody.className = "tab-body active";
+              newTabBody.style.setProperty("--column-count", copiedTab.columns || "3");
+              newTabBody.dataset.columns = copiedTab.columns || "3";
+              
+              const minHeight = (parseInt(copiedTab.panelHeight || "3") * 36) + 12;
+              newTabBody.style.minHeight = `${minHeight}px`;
+              newTabBody.dataset.panelHeight = copiedTab.panelHeight || "3";
+              
+              // 設置區塊屬性
+              newTabBody.dataset.panelTableId = copiedTab.tableId || "A";
+              if (copiedTab.tableId === "custom" && copiedTab.tableIdCustom) {
+                newTabBody.dataset.panelTableIdCustom = copiedTab.tableIdCustom;
+              }
+              newTabBody.dataset.panelParentTable = copiedTab.parentTable || "";
+              if (copiedTab.parentTable === "custom" && copiedTab.parentTableCustom) {
+                newTabBody.dataset.panelParentTableCustom = copiedTab.parentTableCustom;
+              }
+              newTabBody.dataset.panelDbTable = copiedTab.dbTable || "";
+              
+              panel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+              panel.appendChild(newTabBody);
+              
+              // 添加欄位
+              if (copiedTab.fields && copiedTab.fields.length > 0) {
+                copiedTab.fields.forEach(fieldConfig => {
+                  addField(fieldConfig.type, fieldConfig, newTabBody);
+                });
+              }
+              
+              // 為新頁籤綁定事件（重用現有邏輯）
+              const newInput = newTab.querySelector(".panel-tab-input");
+              
+              // 為新頁籤的 input 綁定 focus 事件
+              newInput.addEventListener("focus", () => {
+                // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
+                // 動態獲取頁籤索引
+                const tabs = Array.from(panel.querySelectorAll(".panel-tab"));
+                const tabIndex = tabs.indexOf(newTab);
+                const tabBodies = Array.from(panel.querySelectorAll(".tab-body"));
+                const activeTabBody = tabBodies[tabIndex];
+                
+                if (!activeTabBody) return;
+                
+                if (!newTab.classList.contains("active")) {
+                  // 切換頁籤 active 狀態
+                  panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                  newTab.classList.add("active");
+                  
+                  // 切換對應的 tab-body
+                  tabBodies.forEach((tabBody, bodyIdx) => {
+                    if (bodyIdx === tabIndex) {
+                      tabBody.classList.add("active");
+                    } else {
+                      tabBody.classList.remove("active");
+                    }
+                  });
+                  
+                  // 清除選中的欄位，確保顯示區塊屬性
+                  selectField(null);
+                  selectGridHeaderCell(null);
+                  // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                  updatePanelColumnSelect(panel, activeTabBody);
+                  // 顯示該頁籤的區塊屬性
+                  setActivePanel(activeTabBody);
+                } else {
+                  // 如果已經是 active 頁籤，確保顯示區塊屬性
+                  selectField(null);
+                  selectGridHeaderCell(null);
+                  // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                  updatePanelColumnSelect(panel, activeTabBody);
+                  setActivePanel(activeTabBody);
+                }
+              });
+              
+              newInput.addEventListener("input", () => {
+                if (newTab.classList.contains("active")) {
+                  panel.dataset.title = newInput.value;
+                }
+              });
+              
+              newInput.addEventListener("blur", () => {
+                if (!newInput.value.trim()) {
+                  newInput.value = "頁籤";
+                }
+              });
+              
+              newInput.focus();
+              newInput.select();
+              panel.dataset.title = newInput.value;
+              
+              // 設置 activePanelBody 為新的 tab-body
+              setActivePanel(newTabBody);
+              
+              // 為新頁籤綁定點擊事件
+              newTab.addEventListener("click", (e) => {
+                if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input") || e.target.classList.contains("panel-tab-copy")) {
+                  return;
+                }
+                if (newTab.classList.contains("active")) {
+                  return;
+                }
+                panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                newTab.classList.add("active");
+                
+                panel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                newTabBody.classList.add("active");
+                
+                selectField(null);
+                selectGridHeaderCell(null);
+                setActivePanel(newTabBody);
+              });
+              
+              // 為新頁籤的複製按鈕綁定拖曳事件（重用上面的複製邏輯）
+              const newTabCopy = newTab.querySelector(".panel-tab-copy");
+              if (newTabCopy) {
+                newTabCopy.draggable = true;
+                newTabCopy.addEventListener("dragstart", (e) => {
+                  e.stopPropagation();
+                  const tabIndex = Array.from(panel.querySelectorAll(".panel-tab")).indexOf(newTab);
+                  const tabBody = panel.querySelectorAll(".tab-body")[tabIndex];
+                  
+                  if (tabBody) {
+                    // 收集頁籤資料（重用上面的邏輯）
+                    const tabTitle = newTab.querySelector(".panel-tab-input").value || "頁籤";
+                    const tabFields = Array.from(tabBody.querySelectorAll(".field")).map((field) => {
+                      // 重用上面的欄位收集邏輯
+                      const isEmpty = field.dataset.type === "empty";
+                      const isButton = field.dataset.type === "button";
+                      const isFixedText = field.dataset.type === "fixedtext";
+                      const isGridTab = field.dataset.type === "grid-tab";
+                      const labelText = (isEmpty || isButton || isFixedText || isGridTab) ? null : field.querySelector(".label-text");
+                      const defaultValue = field.dataset.defaultValue || "";
+                      
+                      let fieldValue = "";
+                      let gridColumns = [];
+                      let gridRows = [];
+                      
+                      if (isGridTab) {
+                        const gridBody = field.querySelector(".grid-panel-body");
+                        if (gridBody) {
+                          const headerCells = gridBody.querySelectorAll(".grid-header-cell");
+                          gridColumns = Array.from(headerCells).map((cell) => {
+                            let title = cell.querySelector(".header-title")?.textContent.trim() || "新欄位";
+                            if (title.startsWith("(") && title.endsWith(")")) {
+                              title = title.slice(1, -1).trim();
+                            }
+                            return {
+                              title,
+                              width: parseInt(cell.style.width) || 100,
+                              dbField: cell.dataset.dbField || "",
+                              widthProp: cell.dataset.width || "small",
+                              rowHeight: cell.dataset.rowHeight || "1",
+                              length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
+                              fieldType: cell.dataset.fieldType || "real",
+                              fieldDataType: cell.dataset.fieldDataType || "",
+                              selectOptions: cell.dataset.selectOptions || "",
+                              tcode: cell.dataset.fieldTcode || "N/A",
+                              relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
+                              otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
+                              required: cell.dataset.required === "true",
+                              readonly: cell.dataset.readonly === "true",
+                              primaryKey: cell.dataset.primaryKey === "true",
+                              defaultValue: cell.dataset.defaultValue || ""
+                            };
+                          });
+                          
+                          const dataRows = gridBody.querySelectorAll(".grid-data-row");
+                          gridRows = Array.from(dataRows).map((row) => {
+                            const cells = row.querySelectorAll(".grid-data-cell input");
+                            return Array.from(cells).map((input) => input.value || "");
+                          });
+                        }
+                      } else if (!isEmpty) {
+                        const fieldType = field.dataset.type;
+                        if (fieldType === "checkbox") {
+                          const checkbox = field.querySelector(".field-label input[type='checkbox']");
+                          if (checkbox) {
+                            fieldValue = checkbox.checked ? "true" : "false";
+                          }
+                        } else if (fieldType === "checkbox-group") {
+                          const checkedOptions = Array.from(field.querySelectorAll(".checkbox-group-option input[type='checkbox']:checked"))
+                            .map(cb => cb.value)
+                            .filter(v => v);
+                          fieldValue = checkedOptions.join(";");
+                        } else if (fieldType === "radio-group") {
+                          const checkedRadio = field.querySelector(".radio-group-option input[type='radio']:checked");
+                          if (checkedRadio) {
+                            fieldValue = checkedRadio.value;
+                          }
+                        } else {
+                          const control = field.querySelector(".field-control");
+                          if (control) {
+                            if (isButton) {
+                              const button = control.querySelector("button");
+                              if (button) {
+                                fieldValue = button.textContent.trim() || "";
+                              }
+                            } else {
+                              const input = control.querySelector("input");
+                              const textarea = control.querySelector("textarea");
+                              const select = control.querySelector("select");
+                              
+                              if (input) {
+                                fieldValue = input.value || "";
+                              } else if (textarea) {
+                                fieldValue = textarea.value || "";
+                              } else if (select) {
+                                fieldValue = select.value || "";
+                              }
+                            }
+                          }
+                        }
+                      }
+                      
+                      const result = {
+                        type: field.dataset.type,
+                        label: labelText ? labelText.textContent.trim() : "",
+                        dbField: field.dataset.dbField || "",
+                        width: field.dataset.width || "small",
+                        rowHeight: field.dataset.rowHeight || "1",
+                        length: (field.dataset.fieldLength && field.dataset.fieldLength !== "N/A") ? field.dataset.fieldLength : "",
+                        fieldType: field.dataset.fieldType || "real",
+                        fieldDataType: field.dataset.fieldDataType || "",
+                        selectOptions: field.dataset.selectOptions || "",
+                        tcode: field.dataset.fieldTcode || "N/A",
+                        relationField: (field.dataset.relationField && field.dataset.relationField !== "N/A") ? field.dataset.relationField : "",
+                        otherNote: (field.dataset.otherNote && field.dataset.otherNote !== "N/A") ? field.dataset.otherNote : "",
+                        required: field.dataset.required === "true",
+                        readonly: field.dataset.readonly === "true",
+                        primaryKey: field.dataset.primaryKey === "true",
+                        defaultValue,
+                        value: fieldValue
+                      };
+                      
+                      if (isGridTab) {
+                        result.gridColumns = gridColumns;
+                        result.gridRows = gridRows;
+                      }
+                      
+                      if (isFixedText && field.dataset.textColor) {
+                        result.textColor = field.dataset.textColor;
+                      }
+                      if (isButton && field.dataset.buttonWidth) {
+                        result.buttonWidth = field.dataset.buttonWidth;
+                      }
+                      return result;
+                    });
+                    
+                    const tabTableId = tabBody.dataset.panelTableId || "A";
+                    const tabTableIdCustom = tabBody.dataset.panelTableIdCustom || "";
+                    const tabParentTable = tabBody.dataset.panelParentTable || "";
+                    const tabParentTableCustom = tabBody.dataset.panelParentTableCustom || "";
+                    const tabDbTable = tabBody.dataset.panelDbTable || "";
+                    const tabColumns = tabBody.dataset.columns || "3";
+                    const tabPanelHeight = tabBody.dataset.panelHeight || "3";
+                    
+                    window._copiedTab = {
+                      title: tabTitle,
+                      fields: tabFields,
+                      tableId: tabTableId,
+                      tableIdCustom: tabTableIdCustom,
+                      parentTable: tabParentTable,
+                      parentTableCustom: tabParentTableCustom,
+                      dbTable: tabDbTable,
+                      columns: tabColumns,
+                      panelHeight: tabPanelHeight
+                    };
+                    
+                    e.dataTransfer.setData("copy-tab", "true");
+                    e.dataTransfer.effectAllowed = "copy";
+                    window._draggedCopyButton = newTabCopy;
+                  }
+                });
+                
+                newTabCopy.addEventListener("dragend", (e) => {
+                  window._draggedCopyButton = null;
+                });
+              }
+              
+              // 為新頁籤的刪除按鈕綁定事件
+              const newTabRemove = newTab.querySelector(".panel-tab-remove");
+              if (newTabRemove) {
+                newTabRemove.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  if (panel.querySelectorAll(".panel-tab").length <= 1) {
+                    showToast("至少需要一個頁籤");
+                    return;
+                  }
+                  newTabBody.remove();
+                  newTab.remove();
+                  
+                  const firstTab = panel.querySelector(".panel-tab");
+                  if (firstTab) {
+                    firstTab.classList.add("active");
+                    panel.dataset.title = firstTab.querySelector(".panel-tab-input").value;
+                    const firstTabBody = panel.querySelector(".tab-body");
+                    if (firstTabBody) {
+                      panel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
+                      firstTabBody.classList.add("active");
+                      setActivePanel(firstTabBody);
+                    }
+                  }
+                });
+              }
+              
+              // 為新頁籤綁定拖曳事件（重用現有邏輯）
+              const tabsContainerForDrag = panel.querySelector(".panel-tabs");
+              let draggedTab = null;
+              let isDragging = false;
+              
+              if (tabsContainerForDrag) {
+                newTab.addEventListener("dragstart", (e) => {
+                  // 只有當拖曳的是頁籤本身（不是複製按鈕）時才處理
+                  if (e.target === newTab) {
+                    draggedTab = newTab;
+                    isDragging = true;
+                    newTab.classList.add("dragging");
+                    e.dataTransfer.effectAllowed = "move";
+                  }
+                });
+                
+                newTab.addEventListener("dragend", (e) => {
+                  if (e.target === newTab) {
+                    newTab.classList.remove("dragging");
+                    tabsContainerForDrag.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                    setTimeout(() => {
+                      isDragging = false;
+                      draggedTab = null;
+                    }, 100);
+                  }
+                });
+                
+                newTab.addEventListener("dragover", (e) => {
+                  if (e.target === newTab && draggedTab && draggedTab !== newTab) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    tabsContainerForDrag.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                    newTab.classList.add("drag-over");
+                  }
+                });
+                
+                newTab.addEventListener("dragenter", (e) => {
+                  if (e.target === newTab && draggedTab && draggedTab !== newTab) {
+                    e.preventDefault();
+                    newTab.classList.add("drag-over");
+                  }
+                });
+                
+                newTab.addEventListener("dragleave", (e) => {
+                  newTab.classList.remove("drag-over");
+                });
+                
+                newTab.addEventListener("drop", (e) => {
+                  if (e.target === newTab && draggedTab && draggedTab !== newTab) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const tabs = Array.from(tabsContainerForDrag.querySelectorAll(".panel-tab"));
+                    const tabBodies = Array.from(panel.querySelectorAll(".tab-body"));
+                    const draggedIndex = tabs.indexOf(draggedTab);
+                    const targetIndex = tabs.indexOf(newTab);
+                    
+                    if (draggedIndex < targetIndex) {
+                      tabsContainerForDrag.insertBefore(draggedTab, newTab.nextSibling);
+                    } else {
+                      tabsContainerForDrag.insertBefore(draggedTab, newTab);
+                    }
+                    
+                    const draggedTabBody = tabBodies[draggedIndex];
+                    const targetTabBody = tabBodies[targetIndex];
+                    if (draggedTabBody && targetTabBody) {
+                      if (draggedIndex < targetIndex) {
+                        targetTabBody.parentNode.insertBefore(draggedTabBody, targetTabBody.nextSibling);
+                      } else {
+                        targetTabBody.parentNode.insertBefore(draggedTabBody, targetTabBody);
+                      }
+                    }
+                    
+                    const updatedTabs = Array.from(tabsContainerForDrag.querySelectorAll(".panel-tab"));
+                    const updatedTabBodies = Array.from(panel.querySelectorAll(".tab-body"));
+                    updatedTabs.forEach((t, newIdx) => {
+                      t.dataset.tabIndex = String(newIdx);
+                      if (updatedTabBodies[newIdx]) {
+                        updatedTabBodies[newIdx].dataset.tabIndex = String(newIdx);
+                      }
+                    });
+                    
+                    tabsContainerForDrag.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("drag-over"));
+                  }
+                });
+              }
+              
+              // 為新的 tab-body 綁定拖曳事件
+              newTabBody.addEventListener("dragover", (event) => {
+                event.preventDefault();
+                const moving = event.dataTransfer.getData("move-field");
+                if (moving && window._draggedField) {
+                  event.dataTransfer.dropEffect = "move";
+                } else {
+                  event.dataTransfer.dropEffect = "copy";
+                }
+              });
+
+              newTabBody.addEventListener("drop", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const moving = event.dataTransfer.getData("move-field");
+                if (moving && window._draggedField) {
+                  const draggedField = window._draggedField;
+                  newTabBody.appendChild(draggedField);
+                  draggedField.classList.remove("dragging");
+                  window._draggedField = null;
+                  isDraggingField = false;
+                  selectField(draggedField);
+                  setActivePanel(newTabBody);
+                  return;
+                }
+                const type = event.dataTransfer.getData("field-type");
+                if (!type || type === "panel" || type === "panel-no-tabs" || type === "grid-panel") {
+                  return;
+                }
+                addField(type, {}, newTabBody);
+              });
+              
+              showToast("頁籤已貼上");
+            }
+          });
+          
           tabAdd.addEventListener("click", () => {
             // 創建新頁籤
             const newTab = document.createElement("div");
@@ -8679,6 +10443,7 @@
             newTab.draggable = true;
             newTab.innerHTML = `
               <input type="text" class="panel-tab-input" value="新頁籤" />
+              <span class="panel-tab-copy" title="複製頁籤">📋</span>
               <span class="panel-tab-remove">×</span>
             `;
             panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
@@ -8837,6 +10602,61 @@
             });
             
             const newInput = newTab.querySelector(".panel-tab-input");
+            
+            // 為新頁籤的 input 綁定 focus 事件
+            newInput.addEventListener("focus", () => {
+              // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
+              // 動態獲取頁籤索引
+              const tabs = Array.from(panel.querySelectorAll(".panel-tab"));
+              const tabIndex = tabs.indexOf(newTab);
+              const tabBodies = Array.from(panel.querySelectorAll(".tab-body"));
+              const activeTabBody = tabBodies[tabIndex];
+              
+              if (!activeTabBody) return;
+              
+              if (!newTab.classList.contains("active")) {
+                // 切換頁籤 active 狀態
+                panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
+                newTab.classList.add("active");
+                
+                // 切換對應的 tab-body
+                tabBodies.forEach((tabBody, bodyIdx) => {
+                  if (bodyIdx === tabIndex) {
+                    tabBody.classList.add("active");
+                  } else {
+                    tabBody.classList.remove("active");
+                  }
+                });
+                
+                // 清除選中的欄位，確保顯示區塊屬性
+                selectField(null);
+                selectGridHeaderCell(null);
+                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                updatePanelColumnSelect(panel, activeTabBody);
+                // 顯示該頁籤的區塊屬性
+                setActivePanel(activeTabBody);
+              } else {
+                // 如果已經是 active 頁籤，確保顯示區塊屬性
+                selectField(null);
+                selectGridHeaderCell(null);
+                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                updatePanelColumnSelect(panel, activeTabBody);
+                setActivePanel(activeTabBody);
+              }
+            });
+            
+            newInput.addEventListener("input", () => {
+              if (newTab.classList.contains("active")) {
+                panel.dataset.title = newInput.value;
+              }
+            });
+            
+            newInput.addEventListener("blur", () => {
+              if (!newInput.value.trim()) {
+                newInput.value = "新頁籤";
+              }
+            });
+            
             newInput.focus();
             newInput.select();
             panel.dataset.title = newInput.value;
@@ -8850,7 +10670,7 @@
               if (isDragging) {
                 return;
               }
-              if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input")) {
+              if (e.target.classList.contains("panel-tab-remove") || e.target.classList.contains("panel-tab-input") || e.target.classList.contains("panel-tab-copy")) {
                 return;
               }
               if (newTab.classList.contains("active")) {
@@ -8871,25 +10691,42 @@
             
             newInput.addEventListener("focus", () => {
               // 當 focus 在頁籤標題輸入框時，切換到該頁籤並顯示區塊屬性
+              // 動態獲取頁籤索引，而不是使用直接引用（因為頁籤可能被重新排序）
+              const tabs = Array.from(panel.querySelectorAll(".panel-tab"));
+              const tabIndex = tabs.indexOf(newTab);
+              const tabBodies = Array.from(panel.querySelectorAll(".tab-body"));
+              const activeTabBody = tabBodies[tabIndex];
+              
+              if (!activeTabBody) return;
+              
               if (!newTab.classList.contains("active")) {
                 // 切換頁籤 active 狀態
                 panel.querySelectorAll(".panel-tab").forEach(t => t.classList.remove("active"));
                 newTab.classList.add("active");
                 
                 // 切換對應的 tab-body
-                panel.querySelectorAll(".tab-body").forEach(tb => tb.classList.remove("active"));
-                newTabBody.classList.add("active");
+                tabBodies.forEach((tabBody, bodyIdx) => {
+                  if (bodyIdx === tabIndex) {
+                    tabBody.classList.add("active");
+                  } else {
+                    tabBody.classList.remove("active");
+                  }
+                });
                 
                 // 清除選中的欄位，確保顯示區塊屬性
                 selectField(null);
                 selectGridHeaderCell(null);
+                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                updatePanelColumnSelect(panel, activeTabBody);
                 // 顯示該頁籤的區塊屬性
-                setActivePanel(newTabBody);
+                setActivePanel(activeTabBody);
               } else {
                 // 如果已經是 active 頁籤，確保顯示區塊屬性
                 selectField(null);
                 selectGridHeaderCell(null);
-                setActivePanel(newTabBody);
+                // 更新面板上的欄數選擇器，顯示當前活動頁籤的欄數
+                updatePanelColumnSelect(panel, activeTabBody);
+                setActivePanel(activeTabBody);
               }
             });
             
@@ -11164,12 +13001,13 @@
                         dbField: cell.dataset.dbField || "",
                         widthProp: cell.dataset.width || "small",
                         rowHeight: cell.dataset.rowHeight || "1",
-                        length: cell.dataset.fieldLength || "N/A",
+                        length: (cell.dataset.fieldLength && cell.dataset.fieldLength !== "N/A") ? cell.dataset.fieldLength : "",
                         fieldType: cell.dataset.fieldType || "real",
+                        fieldDataType: cell.dataset.fieldDataType || "",
                         selectOptions: cell.dataset.selectOptions || "",
                         tcode: cell.dataset.fieldTcode || "N/A",
                         relationField: (cell.dataset.relationField && cell.dataset.relationField !== "N/A") ? cell.dataset.relationField : "",
-                        otherNote: cell.dataset.otherNote || "N/A",
+                        otherNote: (cell.dataset.otherNote && cell.dataset.otherNote !== "N/A") ? cell.dataset.otherNote : "",
                         required: cell.dataset.required === "true",
                         readonly: cell.dataset.readonly === "true",
                         primaryKey: cell.dataset.primaryKey === "true",
