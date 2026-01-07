@@ -1,0 +1,102 @@
+{
+  "文字": [
+    {
+      "name": "Text",
+      "description": "單號.編號:非Unicode字符"
+    },
+    {
+      "name": "NTText",
+      "description": "名稱:Unicode字元"
+    },
+    {
+      "name": "ShortMemo",
+      "description": "小備註"
+    },
+    {
+      "name": "LongMemo",
+      "description": "大備註"
+    },
+    {
+      "name": "LargeMemo",
+      "description": "超大備註"
+    },
+    {
+      "name": "XML",
+      "description": "XML文字"
+    },
+    {
+      "name": "GUID",
+      "description": "全局唯一標識符"
+    },
+    {
+      "name": "Unknown",
+      "description": "未定義"
+    }
+  ],
+  "數字": [
+    {
+      "name": "Byte",
+      "description": ":文本選項(下拉):短整數"
+    },
+    {
+      "name": "Int/LongInt/Double/SmallInt",
+      "description": "整數"
+    },
+    {
+      "name": "Numeric",
+      "description": "金額.稅率"
+    },
+    {
+      "name": "Real",
+      "description": "32位浮點型數值"
+    }
+  ],
+  "日期時間": [
+    {
+      "name": "Date",
+      "description": "年月日"
+    },
+    {
+      "name": "DateTime",
+      "description": "創建時間:年月日時分秒"
+    },
+    {
+      "name": "Year",
+      "description": "年"
+    },
+    {
+      "name": "YearMonth",
+      "description": "年月"
+    },    
+    {
+      "name": "Day",
+      "description": "日"
+    },
+    {
+      "name": "HourMinute",
+      "description": "時分"
+    },
+    {
+      "name": "Month",
+      "description": "月"
+    },
+    {
+      "name": "Time",
+      "description": "時分秒"
+    }
+  ],
+  "其他": [
+    {
+      "name": "Boolean",
+      "description": "核取方塊.是否:布爾類型"
+    },
+    {
+      "name": "Binary",
+      "description": "二進制大型流類型"
+    },
+    {
+      "name": "Blob",
+      "description": "超大型二進制流類型"
+    }
+  ]
+}
