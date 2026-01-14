@@ -1996,6 +1996,27 @@
       padding: 24px;
       border-radius: 8px;
       min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 畫面預覽浮水印 */
+    .preview-content::after {
+      content: "正航資訊 .版權所有";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      font-size: 80px;
+      font-weight: bold;
+      color: rgba(150, 150, 150, 0.25);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 9999;
+      user-select: none;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      opacity: 1;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     }
 
     /* 預覽模式：功能標題樣式（一致且粗體） */
@@ -2307,6 +2328,33 @@
       color: #c33;
       font-size: 14px;
       text-align: center;
+    }
+
+    .login-remember {
+      margin-top: -8px;
+      margin-bottom: 8px;
+    }
+
+    .remember-password-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--header-dark);
+      user-select: none;
+    }
+
+    .remember-password-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .remember-password-label span {
+      font-weight: 500;
     }
 
     .login-submit-btn {
@@ -2927,6 +2975,25 @@
       overflow: auto;
       flex: 1;
       background: #f9fafb;
+      position: relative;
+    }
+
+    /* 規格預覽浮水印樣式 */
+    .watermark {
+      position: absolute;
+      font-size: 80px;
+      font-weight: bold;
+      color: rgba(150, 150, 150, 0.25);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+      user-select: none;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      transform-origin: center center;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      opacity: 1;
+      display: block;
+      visibility: visible;
     }
 
     /* 表格樣式 */
@@ -2940,6 +3007,14 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 確保規格預覽內容在浮水印之下 */
+    .field-spec-preview-modal-body > div {
+      position: relative;
+      z-index: 1;
     }
 
     .field-spec-preview-table caption {
@@ -3053,6 +3128,16 @@
             autocomplete="current-password"
           />
         </div>
+        <div class="login-field login-remember">
+          <label class="remember-password-label">
+            <input 
+              type="checkbox" 
+              id="remember-password" 
+              name="remember-password"
+            />
+            <span>記憶密碼</span>
+          </label>
+        </div>
         <div id="login-error" class="login-error" style="display: none;">
           帳號或密碼錯誤，請重新輸入
         </div>
@@ -3080,7 +3165,7 @@
         <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       畫面輔助產生器
-      <span class="version-display">v251216-1</span>
+      <span class="version-display">v260107-1</span>
     </h1>
     <button id="btn-preview" class="primary">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -8375,6 +8460,61 @@
       return html;
     }
 
+    // 添加重複的浮水印到規格預覽
+    function addWatermarks(container) {
+      // 清除現有的浮水印
+      const existingWatermarks = container.querySelectorAll(".watermark");
+      existingWatermarks.forEach(wm => wm.remove());
+      
+      // 使用 requestAnimationFrame 和 setTimeout 確保內容已渲染
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          // 獲取容器尺寸（使用多種方法確保獲取到正確尺寸）
+          const rect = container.getBoundingClientRect();
+          const containerHeight = Math.max(
+            container.scrollHeight || 0,
+            container.offsetHeight || 0,
+            rect.height || 0,
+            1000
+          );
+          const containerWidth = Math.max(
+            container.offsetWidth || 0,
+            container.clientWidth || 0,
+            rect.width || 0,
+            800
+          );
+          
+          // 浮水印垂直間距（每 800px 一個，不要太密集）
+          const verticalSpacing = 800;
+          
+          // 計算需要多少個浮水印（只在垂直方向重複）
+          const verticalCount = Math.max(1, Math.ceil(containerHeight / verticalSpacing) + 1);
+          
+          // 創建浮水印（水平居中，垂直方向重複）
+          let watermarkCount = 0;
+          for (let i = 0; i < verticalCount; i++) {
+            const watermark = document.createElement("div");
+            watermark.className = "watermark";
+            watermark.textContent = "正航資訊 .版權所有";
+            // 水平居中，垂直方向每隔一段距離（每個浮水印在其位置居中）
+            const topPosition = i * verticalSpacing;
+            watermark.style.top = `${topPosition}px`;
+            watermark.style.left = "50%";
+            watermark.style.transform = "translate(-50%, -50%) rotate(-45deg)";
+            watermark.style.position = "absolute";
+            container.appendChild(watermark);
+            watermarkCount++;
+          }
+          
+          console.log("浮水印已添加:", {
+            容器尺寸: `${containerWidth}x${containerHeight}`,
+            浮水印數量: verticalCount,
+            垂直間距: verticalSpacing
+          });
+        }, 300);
+      });
+    }
+
     // 打開欄位規格預覽彈窗
     function openFieldSpecPreviewModal() {
       const panels = canvas.querySelectorAll(".panel");
@@ -8388,6 +8528,11 @@
       
       fieldSpecPreviewModal.classList.add("show");
       document.body.style.overflow = "hidden";
+      
+      // 在模態框顯示後添加重複的浮水印
+      setTimeout(() => {
+        addWatermarks(fieldSpecPreviewContent);
+      }, 300);
     }
 
     // 關閉欄位規格預覽彈窗
@@ -13368,10 +13513,154 @@
     const loginError = document.getElementById("login-error");
     const loginUsername = document.getElementById("login-username");
     const loginPassword = document.getElementById("login-password");
+    const rememberPassword = document.getElementById("remember-password");
+
+    // 簡單的加密/解密函數（使用 base64 編碼加上簡單混淆）
+    function encryptPassword(password) {
+      if (!password) return "";
+      // 簡單的混淆：反轉字串 + base64 編碼
+      const reversed = password.split("").reverse().join("");
+      return btoa(unescape(encodeURIComponent(reversed + "_ERP")));
+    }
+
+    function decryptPassword(encrypted) {
+      if (!encrypted) return "";
+      try {
+        const decoded = decodeURIComponent(escape(atob(encrypted)));
+        // 移除混淆並反轉回來
+        if (decoded.endsWith("_ERP")) {
+          const original = decoded.slice(0, -4);
+          return original.split("").reverse().join("");
+        }
+        return "";
+      } catch (e) {
+        console.error("解密錯誤:", e);
+        return "";
+      }
+    }
+
+    // 檢查密碼是否超過使用時間（7天）
+    function isPasswordExpired() {
+      try {
+        const savedTimestamp = localStorage.getItem("login_password_timestamp");
+        if (!savedTimestamp) {
+          return true; // 沒有時間戳，視為逾時
+        }
+        
+        const savedTime = parseInt(savedTimestamp, 10);
+        const currentTime = Date.now();
+        const timeDiff = currentTime - savedTime; // 毫秒
+        const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 天 = 604,800,000 毫秒
+        
+        return timeDiff > sevenDays;
+      } catch (e) {
+        console.error("檢查密碼時限錯誤:", e);
+        return true; // 發生錯誤時視為逾時
+      }
+    }
+
+    // 清除記憶的密碼
+    function clearRememberedPassword() {
+      try {
+        localStorage.removeItem("login_password_encrypted");
+        localStorage.removeItem("login_password_timestamp");
+        loginPassword.value = "";
+        rememberPassword.checked = false;
+        localStorage.setItem("login_remember_password", "false");
+      } catch (e) {
+        console.error("清除記憶密碼錯誤:", e);
+      }
+    }
+
+    // 追蹤密碼是否被手動修改（用於區分記憶的密碼和手動輸入）
+    let isPasswordManuallyChanged = false;
+    let initialPasswordValue = "";
+
+    // 讀取保存的登入資訊
+    function loadSavedLoginInfo() {
+      try {
+        // 重置標記
+        isPasswordManuallyChanged = false;
+        initialPasswordValue = "";
+        
+        // 讀取帳號（總是保存）
+        const savedUsername = localStorage.getItem("login_username");
+        if (savedUsername) {
+          loginUsername.value = savedUsername;
+        }
+
+        // 讀取「記憶密碼」設定
+        const savedRemember = localStorage.getItem("login_remember_password");
+        if (savedRemember === "true") {
+          rememberPassword.checked = true;
+          
+          // 檢查密碼是否超過使用時間
+          if (isPasswordExpired()) {
+            // 逾時，清除記憶的密碼
+            clearRememberedPassword();
+            // 顯示提示訊息
+            loginError.textContent = "為了帳戶安全，記憶的密碼已超過使用時間，請重新輸入密碼。";
+            loginError.style.display = "block";
+            loginPassword.focus();
+          } else {
+            // 如果勾選了「記憶密碼」且未逾時，讀取並解密密碼
+            const savedEncryptedPassword = localStorage.getItem("login_password_encrypted");
+            if (savedEncryptedPassword) {
+              const decryptedPassword = decryptPassword(savedEncryptedPassword);
+              if (decryptedPassword) {
+                loginPassword.value = decryptedPassword;
+                initialPasswordValue = decryptedPassword; // 記錄初始值
+                isPasswordManuallyChanged = false; // 重置標記
+              }
+            }
+          }
+        } else {
+          rememberPassword.checked = false;
+        }
+      } catch (e) {
+        console.error("讀取保存的登入資訊錯誤:", e);
+      }
+    }
+
+    // 監聽密碼欄位變化，追蹤是否被手動修改
+    loginPassword.addEventListener("input", () => {
+      if (loginPassword.value !== initialPasswordValue) {
+        isPasswordManuallyChanged = true;
+      }
+    });
+
+    // 保存登入資訊
+    function saveLoginInfo(username, password, remember) {
+      try {
+        // 總是保存帳號
+        if (username) {
+          localStorage.setItem("login_username", username);
+        }
+
+        // 保存「記憶密碼」設定
+        localStorage.setItem("login_remember_password", remember ? "true" : "false");
+
+        if (remember && password) {
+          // 如果勾選了「記憶密碼」，加密並保存密碼，同時保存時間戳
+          const encryptedPassword = encryptPassword(password);
+          localStorage.setItem("login_password_encrypted", encryptedPassword);
+          localStorage.setItem("login_password_timestamp", Date.now().toString());
+        } else {
+          // 如果不勾選，清除保存的密碼和時間戳
+          localStorage.removeItem("login_password_encrypted");
+          localStorage.removeItem("login_password_timestamp");
+        }
+      } catch (e) {
+        console.error("保存登入資訊錯誤:", e);
+      }
+    }
+
+    // 頁面載入時自動填入保存的資訊
+    loadSavedLoginInfo();
 
     // WebAPI 驗證函數
     async function validateUser(userId, password) {
-      const apiUrl = "http://nbsdemo.chi.com.tw:880/twWebAPI/login/token";
+      const apiUrl = "https://chinbs.chi.com.tw:760/twWebAPI/login/token";
       
       // 構建請求 Body
       const requestBody = {
@@ -13437,6 +13726,17 @@
       // 隱藏錯誤訊息
       loginError.style.display = "none";
       
+      // 檢查記憶的密碼是否逾時（如果使用的是記憶的密碼且未手動修改）
+      if (!isPasswordManuallyChanged && rememberPassword.checked && isPasswordExpired()) {
+        // 清除記憶的密碼
+        clearRememberedPassword();
+        // 顯示提示訊息
+        loginError.textContent = "為了帳戶安全，記憶的密碼已超過使用時間，請重新輸入密碼。";
+        loginError.style.display = "block";
+        loginPassword.focus();
+        return;
+      }
+      
       // 禁用提交按鈕，顯示載入狀態
       const submitBtn = loginForm.querySelector("button[type='submit']");
       const originalBtnText = submitBtn.innerHTML;
@@ -13448,14 +13748,33 @@
         const result = await validateUser(username, password);
 
         if (result.success) {
+          // 登入成功：保存登入資訊
+          const remember = rememberPassword.checked;
+          saveLoginInfo(username, password, remember);
+          
+          // 重置密碼修改標記
+          if (remember && password) {
+            initialPasswordValue = password;
+            isPasswordManuallyChanged = false;
+          }
+          
           // 登入成功：隱藏登入畫面，顯示主畫面
           loginScreen.style.display = "none";
           mainApp.style.display = "block";
           loginError.style.display = "none";
           
-          // 清除密碼欄位
-          loginPassword.value = "";
+          // 如果沒有勾選「記憶密碼」，清除密碼欄位
+          if (!remember) {
+            loginPassword.value = "";
+            initialPasswordValue = "";
+            isPasswordManuallyChanged = false;
+          }
         } else {
+          // 登入失敗：如果使用的是記憶的密碼，清除它
+          if (!isPasswordManuallyChanged && rememberPassword.checked) {
+            clearRememberedPassword();
+          }
+          
           // 登入失敗：直接顯示 API 返回的 ErrorMsg
           // 只有真正的技術性錯誤（如連線失敗）才顯示技術錯誤訊息
           const isTechnicalError = result.error && (
@@ -13475,6 +13794,8 @@
           }
           loginError.style.display = "block";
           loginPassword.value = "";
+          initialPasswordValue = "";
+          isPasswordManuallyChanged = false;
           loginPassword.focus();
         }
       } catch (error) {
@@ -13529,13 +13850,18 @@
       // 顯示登入畫面
       loginScreen.style.display = "flex";
       
-      // 清空登入表單
-      loginUsername.value = "";
-      loginPassword.value = "";
+      // 清空登入表單（但保留錯誤訊息隱藏）
       loginError.style.display = "none";
       
-      // 聚焦到帳號欄位
-      loginUsername.focus();
+      // 重新載入保存的登入資訊（就像頁面剛載入時一樣）
+      loadSavedLoginInfo();
+      
+      // 聚焦到帳號欄位（如果沒有自動填入帳號，則聚焦；如果有，聚焦到密碼欄位）
+      if (loginUsername.value) {
+        loginPassword.focus();
+      } else {
+        loginUsername.focus();
+      }
     });
   </script>
   </div>
