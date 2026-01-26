@@ -1,0 +1,160 @@
+{
+  "meta": {
+    "version": 2,
+    "generatedAt": "2025-12-04T01:39:43.761Z"
+  },
+  "layout": {
+    "title": "單據類型",
+    "panels": [
+      {
+        "type": "panel-no-tabs",
+        "title": "區塊",
+        "tabs": [],
+        "columns": "2",
+        "collapsed": false,
+        "fields": [
+          {
+            "type": "text",
+            "label": "代碼",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          },
+          {
+            "type": "text",
+            "label": "註記碼",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          },
+          {
+            "type": "text",
+            "label": "名稱",
+            "dbField": "",
+            "width": "medium",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          },
+          {
+            "type": "date",
+            "label": "有效期",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          },
+          {
+            "type": "date",
+            "label": "至",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "",
+            "value": ""
+          }
+        ],
+        "panelHeight": "4"
+      },
+      {
+        "type": "panel",
+        "title": "資訊",
+        "tabs": [
+          {
+            "title": "資訊",
+            "active": true,
+            "columns": "3"
+          },
+          {
+            "title": "管理數據",
+            "active": false,
+            "tableId": "A",
+            "columns": "3",
+            "panelHeight": "3"
+          },
+          {
+            "title": "備註",
+            "active": false,
+            "tableId": "A",
+            "columns": "3",
+            "panelHeight": "3"
+          }
+        ],
+        "columns": "3",
+        "collapsed": false,
+        "fields": [
+          {
+            "type": "select",
+            "label": "功能屬性",
+            "dbField": "",
+            "width": "small",
+            "rowHeight": "1",
+            "length": "N/A",
+            "fieldType": "real",
+            "selectOptions": "是;否",
+            "tcode": "N/A",
+            "relationField": "",
+            "otherNote": "N/A",
+            "required": false,
+            "readonly": false,
+            "primaryKey": false,
+            "defaultValue": "是",
+            "value": "",
+            "tabIndex": 0
+          }
+        ],
+        "panelHeight": "3"
+      }
+    ]
+  }
+}
