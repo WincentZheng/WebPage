@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>四人義大利冒險 Web App</title>
+    <!-- 引入 FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* 活潑豐富的色彩計畫 */
+            --primary: #E05A47; /* 活力橘紅 */
+            --secondary: #2A9D8F; /* 清新海灣綠 */
+            --accent: #E9C46A; /* 暖陽黃 */
+            --bg: #F8F9FA;
+            --text: #2C3E50;
+            --light-gray: #E9ECEF;
+            
+            /* 四人專屬代表色 */
+            --color-chunde: #4A90E2; 
+            --color-daxiong: #50E3C2; 
+            --color-jiancheng: #F5A623; 
+            --color-mika: #9B51E0; 
+        }
+
+        * { box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, '微軟正黑體', sans-serif; }
+
+        body { 
+            margin: 0; 
+            padding: 0; 
+            background-color: #333; 
+            color: var(--text);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #app {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: var(--bg);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 80px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #FF8A65);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(224, 90, 71, 0.3);
+        }
+
+        header h1 { margin: 0; font-size: 20px; font-weight: bold; letter-spacing: 1px; }
+        header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.9; }
+
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 頁籤主題可愛圖示 */
+        .tab-icon {
+            text-align: center;
+            font-size: 45px;
+            margin: 5px 0 15px 0;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        /* 卡片設計 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border-top: 4px solid var(--secondary);
+        }
+        
+        .card.accent { border-top-color: var(--accent); }
+        .card.primary { border-top-color: var(--primary); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .card-header h3 { margin: 0; font-size: 16px; color: var(--text); }
+        .card-header span { font-size: 11px; color: white; font-weight: bold; background: var(--secondary); padding: 4px 10px; border-radius: 12px; }
+
+        /* 行程時間軸 */
+        .timeline-item {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 15px;
+            border-left: 2px dashed #ddd;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+        .timeline-time { font-weight: bold; color: var(--primary); font-size: 14px; display: block; margin-bottom: 2px; }
+        .timeline-title { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
+        .timeline-desc { font-size: 13px; color: #666; margin-bottom: 8px; }
+
+        .btn-map {
+            display: inline-flex;
+            align-items: center;
+            background-color: #fff;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+            transition: 0.2s;
+            margin-top: 2px;
+            margin-right: 5px;
+        }
+        .btn-map i { margin-right: 5px; }
+
+        /* 底部導覽列 (4個按鈕) */
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 15px 0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+            z-index: 100;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #A0AAB5;
+            font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            width: 25%;
+            transition: all 0.2s;
+        }
+
+        nav button i { font-size: 20px; margin-bottom: 4px; transition: 0.2s; }
+        nav button.active { color: var(--primary); font-weight: bold; }
+        nav button.active i { transform: translateY(-3px) scale(1.15); color: var(--primary); }
+
+        /* 表單與分帳元素 */
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: bold; }
+        .input-group input, .input-group select { 
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: #fafafa;
+        }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--secondary); background: white; }
+        
+        .btn-submit {
+            width: 100%; background: var(--secondary); color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 5px; box-shadow: 0 2px 8px rgba(42, 157, 143, 0.4); transition: 0.2s;
+        }
+        .btn-submit:active { transform: scale(0.98); }
+
+        .expense-list { list-style: none; padding: 0; margin: 0; }
+        .expense-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
+        .expense-info { display: flex; flex-direction: column; flex-grow: 1; }
+        .expense-title { font-weight: bold; font-size: 15px; }
+        .expense-meta { font-size: 12px; color: #888; margin-top: 3px; }
+        
+        /* 編輯與刪除按鈕區塊 */
+        .expense-right { display: flex; align-items: center; gap: 10px; }
+        .expense-amount { font-weight: bold; font-size: 16px; color: var(--primary); }
+        .expense-actions { display: flex; gap: 5px; }
+        .expense-actions button { 
+            background: #f1f3f5; border: none; color: #666; width: 28px; height: 28px; 
+            border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .expense-actions button:active { transform: scale(0.9); }
+        .expense-actions .btn-edit { color: var(--secondary); }
+        .expense-actions .btn-del { color: var(--primary); }
+
+        .tag { font-size: 11px; padding: 2px 6px; border-radius: 4px; color: white; display: inline-block; margin-right: 5px;}
+        .tag.chunde { background-color: var(--color-chunde); }
+        .tag.daxiong { background-color: var(--color-daxiong); }
+        .tag.jiancheng { background-color: var(--color-jiancheng); }
+        .tag.mika { background-color: var(--color-mika); }
+
+        .settlement-box { background: #fdf2e9; border: 1px solid #fae5d3; border-radius: 8px; padding: 12px; margin-top: 10px; }
+        .settlement-item { font-size: 15px; padding: 6px 0; border-bottom: 1px solid #f5cba7; display: flex; justify-content: space-between; font-weight: bold; color: #d35400; }
+        .settlement-item:last-child { border-bottom: none; }
+
+        .exchange-row { display: flex; gap: 10px; align-items: center; }
+        .exchange-row > div { flex: 1; }
+        .exchange-result { text-align: center; font-size: 20px; font-weight: bold; color: var(--primary); padding: 10px; background: #ffebee; border-radius: 8px; margin-top: 10px;}
+
+        ul.general-list { padding-left: 20px; font-size: 14px; line-height: 1.6; color: #555; }
+        .highlight { color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <h1>🇮🇹 四人義大利冒險</h1>
+        <p>2026.05.16 - 05.25 | 純德 · 大雄 · 建成 · MIKA</p>
+    </header>
+
+    <!-- 1. 行程 Tab -->
+    <div id="tab-itinerary" class="tab-content active">
+        <div class="tab-icon">🗺️✨</div>
+        
+        <!-- Day 1 -->
+        <div class="card primary">
+            <div class="card-header">
+                <h3>5/16 (六) Day 1 羅馬漫步</h3>
+                <span style="background: var(--primary);">抵達市區</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">10:00</span>
+                <div class="timeline-title">抵達羅馬 & 飯店 Check-in</div>
+                <div class="timeline-desc">搭乘機場包車直達市區住宿。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Via+Milazzo+22+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 住宿導航</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">11:30</span>
+                <div class="timeline-title">西班牙廣場 & 特雷維噴泉</div>
+                <div class="timeline-desc">點心：Pompi Trevi 提拉米蘇。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Piazza+di+Spagna+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 廣場</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Trevi+Fountain+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 噴泉</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pompi+Trevi+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 提拉米蘇</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">12:30</span>
+                <div class="timeline-title">午餐：Osteria Barberini</div>
+                <div class="timeline-desc">人氣松露麵，建議預先訂位。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Osteria+Barberini+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">14:30</span>
+                <div class="timeline-title">萬神殿 & 納沃納廣場</div>
+                <div class="timeline-desc">點心：All'Antico Vinaio 佛卡夏。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pantheon+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 萬神殿</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Piazza+Navona+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 納沃納廣場</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">18:30</span>
+                <div class="timeline-title">晚餐：Pizzeria da Baffetto</div>
+                <div class="timeline-desc">搭巴士回程，必吃經典 Pizza。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pizzeria+da+Baffetto+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="card accent">
+            <div class="card-header">
+                <h3>5/17 (日) Day 2 龐貝古城</h3>
+                <span style="background: var(--accent); color: #333;">跟團一日遊</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">07:00</span>
+                <div class="timeline-title">早餐：Regoli Pasticceria</div>
+                <div class="timeline-desc">買生乳包外帶車上吃。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Regoli+Pasticceria+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 烘焙坊</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">07:30</span>
+                <div class="timeline-title">龐貝古城一日遊</div>
+                <div class="timeline-desc">搭乘遊覽車，午餐依旅行團安排。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Pompeii+Archaeological+Park" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 龐貝古城</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:30</span>
+                <div class="timeline-title">晚餐慶功宴：Ornelli Black Angus</div>
+                <div class="timeline-desc">回到 Termini 吃牛排，務必訂位。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Ornelli+Black+Angus+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+        </div>
+
+        <!-- Day 3 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>5/18 (一) Day 3 梵蒂岡神聖之旅</h3>
+                <span>大眾運輸</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">09:00</span>
+                <div class="timeline-title">梵蒂岡博物館 & 西斯汀禮拜堂</div>
+                <div class="timeline-desc">地鐵A線至Ottaviano站。(門票已付)</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Vatican+Museums+Entrance" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 博物館入口</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">13:00</span>
+                <div class="timeline-title">聖彼得大教堂登頂</div>
+                <div class="timeline-desc">點心：Gelateria Old Bridge 冰淇淋。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=St.+Peter's+Basilica" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 大教堂</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Gelateria+Old+Bridge+Rome" target="_blank" class="btn-map"><i class="fas fa-ice-cream"></i> 冰淇淋</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">16:30</span>
+                <div class="timeline-title">聖天使城堡 & 協和大道</div>
+                <div class="timeline-desc">適合看日落，周邊隨意輕食。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Castel+Sant'Angelo+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 聖天使城堡</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:00</span>
+                <div class="timeline-title">晚餐：Borghiciana Pastificio</div>
+                <div class="timeline-desc">現場候位手工麵。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Borghiciana+Pastificio+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+        </div>
+
+        <!-- Day 4 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>5/19 (二) Day 4 古羅馬穿越</h3>
+                <span>大眾運輸</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">09:30</span>
+                <div class="timeline-title">羅馬競技場 (Colosseum)</div>
+                <div class="timeline-desc">地鐵B線至Colosseo站。(門票已付)</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Colosseum+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 競技場</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">12:30</span>
+                <div class="timeline-title">午餐：Trattoria Luzzi & 羅馬廣場</div>
+                <div class="timeline-desc">吃道地羅馬菜，吃飽逛帕拉提諾之丘。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Trattoria+Luzzi+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Roman+Forum" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 古羅馬廣場</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">15:00</span>
+                <div class="timeline-title">威尼斯廣場 & 圖拉真市集</div>
+                <div class="timeline-desc">周邊逛逛後搭巴士回飯店。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Piazza+Venezia+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 威尼斯廣場</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">18:30</span>
+                <div class="timeline-title">晚餐：Seoul Restaurant</div>
+                <div class="timeline-desc">換口味吃韓式料理。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Seoul+Restaurant+Via+Filippo+Turati+49+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+        </div>
+
+        <!-- Day 5 -->
+        <div class="card primary">
+            <div class="card-header">
+                <h3>5/20 (三) Day 5 托斯卡尼啟程</h3>
+                <span style="background: var(--primary);">開始自駕 🚗</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">09:30</span>
+                <div class="timeline-title">Termini 車站取車</div>
+                <div class="timeline-desc">車程約1.5-2小時，出發往北。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Via+Giovanni+Giolitti+16+Rome" target="_blank" class="btn-map"><i class="fas fa-car"></i> 取車點</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">12:30</span>
+                <div class="timeline-title">天空之城 (Civita)</div>
+                <div class="timeline-desc">需轉乘接駁車。午餐吃 Alma Civita 洞穴餐廳。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Civita+di+Bagnoregio" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 天空之城</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Alma+Civita+Bagnoregio" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">16:30</span>
+                <div class="timeline-title">奧爾維耶托 (Orvieto)</div>
+                <div class="timeline-desc">自駕10分鐘，搭電梯進城觀光。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Duomo+di+Orvieto" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 奧爾維耶托教堂</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:30</span>
+                <div class="timeline-title">晚餐 & 回農莊住宿</div>
+                <div class="timeline-desc">晚餐：Trattoria del Moro Aronne。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Trattoria+del+Moro+Aronne+Orvieto" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Strada+della+Stazione+11+Orvieto" target="_blank" class="btn-map"><i class="fas fa-bed"></i> 農莊導航</a>
+            </div>
+        </div>
+
+        <!-- Day 6 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>5/21 (四) Day 6 絲柏之路與西恩納</h3>
+                <span>自駕 🚗</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">11:00</span>
+                <div class="timeline-title">皮耶扎 (Pienza) 古城</div>
+                <div class="timeline-desc">開車欣賞托斯卡尼奧爾恰山谷風光。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Piazza+Pio+II+Pienza" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 皮耶扎古城</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">12:30</span>
+                <div class="timeline-title">午餐：Trattoria La Buca delle Fate</div>
+                <div class="timeline-desc">品嚐當地托斯卡尼風味。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Trattoria+La+Buca+delle+Fate+Pienza" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">16:30</span>
+                <div class="timeline-title">西恩納 (Siena) 觀光 & 入住</div>
+                <div class="timeline-desc">先至飯店停車避開 ZTL 管制，再步行進古城。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Best+Western+San+Marco+Siena" target="_blank" class="btn-map"><i class="fas fa-bed"></i> 飯店停車</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Piazza+del+Campo+Siena" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 康波廣場</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:30</span>
+                <div class="timeline-title">晚餐：Antica Osteria da Divo</div>
+                <div class="timeline-desc">體驗著名的中世紀古墓穴餐廳。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Antica+Osteria+da+Divo+Siena" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+        </div>
+
+        <!-- Day 7 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>5/22 (五) Day 7 迷你堡壘與還車</h3>
+                <span>自駕結束 🚗</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">10:00</span>
+                <div class="timeline-title">蒙特里久尼 (Monteriggioni)</div>
+                <div class="timeline-desc">漫步保存完整的迷你堡壘。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Piazza+Roma+Monteriggioni" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 迷你堡壘</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">14:00</span>
+                <div class="timeline-title">返回羅馬 Termini 還車</div>
+                <div class="timeline-desc">還車前請記得加滿油。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Via+Giovanni+Giolitti+16+Rome" target="_blank" class="btn-map"><i class="fas fa-car"></i> 還車點</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">15:00</span>
+                <div class="timeline-title">飯店 Check-in & 休息</div>
+                <div class="timeline-desc">換到車站南側新住宿，走路2分鐘。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Via+Giovanni+Giolitti+101+Rome" target="_blank" class="btn-map"><i class="fas fa-bed"></i> 新住宿</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:00</span>
+                <div class="timeline-title">晚餐：Mercato Centrale Roma</div>
+                <div class="timeline-desc">車站內中央市場美食街，選擇超多。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mercato+Centrale+Roma" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 中央市場</a>
+            </div>
+        </div>
+
+        <!-- Day 8 -->
+        <div class="card accent">
+            <div class="card-header">
+                <h3>5/23 (六) Day 8 暢快血拚</h3>
+                <span style="background: var(--accent); color: #333;">Outlet 一日遊</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">10:00</span>
+                <div class="timeline-title">Castel Romano Outlet</div>
+                <div class="timeline-desc">搭乘接駁車前往瘋狂購物，午餐園區內自理。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Via+Giovanni+Giolitti+48+Rome" target="_blank" class="btn-map"><i class="fas fa-bus"></i> 接駁車乘車點</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Castel+Romano+Designer+Outlet" target="_blank" class="btn-map"><i class="fas fa-shopping-bag"></i> Outlet</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:00</span>
+                <div class="timeline-title">晚餐：市區自由覓食</div>
+                <div class="timeline-desc">補吃第一天沒吃到的清單。</div>
+            </div>
+        </div>
+
+        <!-- Day 9 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>5/24 (日) Day 9 老城區慢活</h3>
+                <span>大眾運輸</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">10:00</span>
+                <div class="timeline-title">真理之口 & 阿文提諾山</div>
+                <div class="timeline-desc">地鐵 B 線出發，看橘子園跟騎士團鑰匙孔。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mouth+of+Truth+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 真理之口</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Knights+of+Malta+Keyhole+Rome" target="_blank" class="btn-map"><i class="fas fa-key"></i> 鑰匙孔</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">12:30</span>
+                <div class="timeline-title">午餐：Flavio al Velavevodetto</div>
+                <div class="timeline-desc">陶罐山旁特色餐廳，務必訂位。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Flavio+al+Velavevodetto+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">15:00</span>
+                <div class="timeline-title">特拉斯提弗列 (Trastevere)</div>
+                <div class="timeline-desc">漫步羅馬最具風情的老城區，跨越台伯河。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Trastevere+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> 老城區</a>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">19:00</span>
+                <div class="timeline-title">最後晚餐：Tonnarello</div>
+                <div class="timeline-desc">不可訂位需現場排隊，手工麵超讚。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Tonnarello+Rome" target="_blank" class="btn-map"><i class="fas fa-utensils"></i> 餐廳導航</a>
+            </div>
+        </div>
+
+        <!-- Day 10 -->
+        <div class="card primary">
+            <div class="card-header">
+                <h3>5/25 (一) Day 10 滿載而歸</h3>
+                <span style="background: var(--primary);">準備登機</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-time">07:00</span>
+                <div class="timeline-title">前往 FCO 機場</div>
+                <div class="timeline-desc">搭乘預約的機場包車，提早 3 小時抵達。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Rome+Fiumicino+Airport" target="_blank" class="btn-map"><i class="fas fa-plane"></i> 機場導航</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 交通住宿 Tab -->
+    <div id="tab-info" class="tab-content">
+        <div class="tab-icon">🏨🚗</div>
+        <div class="card primary">
+            <div class="card-header"><h3>羅馬住宿 (前四晚)</h3><span style="background: var(--primary);">5/16 - 5/20</span></div>
+            <p style="font-size: 14px;">📍 Via Milazzo, 22</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Via+Milazzo+22+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> Google Maps 導航</a>
+        </div>
+        <div class="card accent">
+            <div class="card-header"><h3>奧爾維耶托 農莊</h3><span style="background: var(--accent); color: #333;">5/20 - 5/21</span></div>
+            <p style="font-size: 14px;">🏨 Agriturismo Podere Pescara<br>📍 Strada della Stazione 11</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Strada+della+Stazione+11+Orvieto" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> Google Maps 導航</a>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>西恩納 住宿</h3><span>5/21 - 5/22</span></div>
+            <p style="font-size: 14px;">🏨 Best Western San Marco<br>📍 Strada Massetana 70 (免進ZTL)</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Best+Western+San+Marco+Siena" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> Google Maps 導航</a>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>羅馬住宿 (後三晚)</h3><span>5/22 - 5/25</span></div>
+            <p style="font-size: 14px;">📍 Via Giovanni Giolitti, 101</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Via+Giovanni+Giolitti+101+Rome" target="_blank" class="btn-map"><i class="fas fa-map-marker-alt"></i> Google Maps 導航</a>
+        </div>
+        <div class="card primary">
+            <div class="card-header"><h3>🚗 租車自駕資訊</h3><span style="background: var(--primary);">注意事項</span></div>
+            <ul class="general-list">
+                <li><b>取/還車地：</b>Via Giovanni Giolitti, 16</li>
+                <li>務必攜帶台灣駕照正本、國際駕照、主駕駛人信用卡。</li>
+                <li><b style="color: red;">ZTL 禁區：</b>義大利古城有嚴格車輛管制區，依賴導航並注意紅色圓圈標誌，避免高額罰單。</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 3. 分帳與匯率 Tab -->
+    <div id="tab-split" class="tab-content">
+        <div class="tab-icon">🧾💸</div>
+        <!-- 匯率計算機 -->
+        <div class="card accent">
+            <div class="card-header">
+                <h3>💱 歐元台幣換算</h3>
+                <span style="background: var(--accent); color: #333;">即時試算</span>
+            </div>
+            <div class="exchange-row">
+                <div class="input-group">
+                    <label>匯率 (EUR to TWD)</label>
+                    <input type="number" id="ex-rate" value="34.5" step="0.1" oninput="calculateExchange()">
+                </div>
+                <div class="input-group">
+                    <label>歐元 (€)</label>
+                    <input type="number" id="ex-eur" placeholder="輸入金額..." oninput="calculateExchange()">
+                </div>
+            </div>
+            <div class="exchange-result" id="ex-result">NT$ 0</div>
+        </div>
+
+        <!-- 新增/編輯 花費 -->
+        <div class="card primary" id="expense-form-card">
+            <div class="card-header">
+                <h3 id="form-title">✍️ 新增一筆花費</h3>
+                <span style="background: var(--primary);">代墊紀錄</span>
+            </div>
+            <div class="input-group">
+                <label>花費項目 (如：第一天晚餐)</label>
+                <input type="text" id="exp-desc" placeholder="輸入項目名稱...">
+            </div>
+            <div class="exchange-row">
+                <div class="input-group">
+                    <label>金額 (歐元 €)</label>
+                    <input type="number" id="exp-amount" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label>類別</label>
+                    <select id="exp-category">
+                        <option value="飲食">🍽️ 飲食</option>
+                        <option value="交通">🚌 交通</option>
+                        <option value="住宿">🏨 住宿</option>
+                        <option value="門票">🎟️ 門票</option>
+                        <option value="其他">🛍️ 其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>誰先墊錢的？</label>
+                <select id="exp-payer">
+                    <option value="純德">純德</option>
+                    <option value="大雄">大雄</option>
+                    <option value="建成">建成</option>
+                    <option value="MIKA">MIKA</option>
+                </select>
+            </div>
+            <button class="btn-submit" id="btn-save-expense" onclick="addExpense()">儲存紀錄</button>
+        </div>
+
+        <!-- 結算區 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>⚖️ 最終結算試算</h3>
+                <span>誰該給誰錢</span>
+            </div>
+            <div style="font-size: 13px; color: #777; margin-bottom: 10px;">總花費：<strong id="total-expense">€0.00</strong> (每人平均：<strong id="avg-expense">€0.00</strong>)</div>
+            <div id="settlement-results" class="settlement-box">
+                <div style="text-align: center; color: #888; font-size: 14px;">目前尚無帳務需要結算</div>
+            </div>
+        </div>
+
+        <!-- 明細列表 -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🧾 歷史花費明細</h3>
+                <span>所有紀錄</span>
+            </div>
+            <ul class="expense-list" id="expense-list-container">
+                <!-- JS 動態插入 -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- 4. 總預算 Tab -->
+    <div id="tab-budget" class="tab-content">
+        <div class="tab-icon">💰📊</div>
+        <div class="card primary" style="text-align: center;">
+            <div class="card-header" style="justify-content: center;">
+                <h3 style="margin: 0;">目前累計總花費 (每人)</h3>
+            </div>
+            
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 20px 15px; margin: 15px 0;">
+                <div style="color: #666; font-size: 14px; margin-bottom: 5px;">台幣總額概算</div>
+                <h2 id="grand-total-twd" style="color: var(--primary); font-size: 32px; margin: 0; font-weight: bold;">NT$ 69,073</h2>
+            </div>
+
+            <div style="text-align: left; font-size: 14px; line-height: 2;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                    <span><i class="fas fa-check-circle" style="color: var(--secondary);"></i> 台灣已付 (機票/住宿等)</span>
+                    <strong style="color: #555;">NT$ 69,073</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #ccc; padding: 10px 0 5px 0;">
+                    <span><i class="fas fa-euro-sign" style="color: var(--accent);"></i> 旅途花費 (每人 <span id="budget-avg-eur">€0.00</span>)</span>
+                    <strong id="budget-avg-twd" style="color: var(--primary);">+ NT$ 0</strong>
+                </div>
+            </div>
+            
+            <p style="font-size: 13px; color: #888; background: #fdf2e9; padding: 12px; border-radius: 8px; margin-top: 20px; text-align: left; line-height: 1.5;">
+                💡 <b>溫馨提醒：</b>上方的「旅途花費」會自動抓取你在【🧾匯率分帳】頁籤中輸入的明細，並根據你設定的匯率即時更新！
+            </p>
+        </div>
+    </div>
+
+    <!-- 底部導覽列 (4個按鈕) -->
+    <nav>
+        <button class="active" onclick="switchTab('itinerary', this)">
+            <i class="fas fa-map-signs"></i><span>行程</span>
+        </button>
+        <button onclick="switchTab('info', this)">
+            <i class="fas fa-bed"></i><span>住宿交通</span>
+        </button>
+        <button onclick="switchTab('split', this)">
+            <i class="fas fa-hand-holding-usd"></i><span>匯率分帳</span>
+        </button>
+        <button onclick="switchTab('budget', this)">
+            <i class="fas fa-wallet"></i><span>總花費</span>
+        </button>
+    </nav>
+</div>
+
+<!-- JavaScript 邏輯 -->
+<script>
+    // 台灣已付款的固定成本 (台幣)
+    const FIXED_COST_TWD = 69073;
+    let expenses = [];
+    const users = ['純德', '大雄', '建成', 'MIKA'];
+    const userClasses = { '純德': 'chunde', '大雄': 'daxiong', '建成': 'jiancheng', 'MIKA': 'mika' };
+    let editingId = null; // 用於追蹤正在編輯的項目
+
+    // 切換標籤頁
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        btnElement.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    // 匯率計算機 與 更新預算頁面
+    function calculateExchange() {
+        const rate = parseFloat(document.getElementById('ex-rate').value) || 0;
+        const eur = parseFloat(document.getElementById('ex-eur').value) || 0;
+        const twd = Math.round(rate * eur);
+        document.getElementById('ex-result').innerText = `NT$ ${twd.toLocaleString()}`;
+        recalculateBudgetTotal();
+    }
+
+    // 更新總預算 UI
+    function updateBudgetUI(avgEur) {
+        const rate = parseFloat(document.getElementById('ex-rate').value) || 34.5;
+        const avgTwd = Math.round(avgEur * rate);
+        const grandTotal = FIXED_COST_TWD + avgTwd;
+
+        document.getElementById('budget-avg-eur').innerText = `€${avgEur.toFixed(2)}`;
+        document.getElementById('budget-avg-twd').innerText = `+ NT$ ${avgTwd.toLocaleString()}`;
+        document.getElementById('grand-total-twd').innerText = `NT$ ${grandTotal.toLocaleString()}`;
+    }
+
+    function recalculateBudgetTotal() {
+        let totalEur = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+        let avgEur = totalEur / 4;
+        updateBudgetUI(avgEur);
+    }
+
+    // 新增 或 儲存編輯的花費
+    function addExpense() {
+        const desc = document.getElementById('exp-desc').value.trim();
+        const amount = parseFloat(document.getElementById('exp-amount').value);
+        const category = document.getElementById('exp-category').value;
+        const payer = document.getElementById('exp-payer').value;
+
+        if (!desc || isNaN(amount) || amount <= 0) {
+            alert('請輸入完整的花費項目與有效金額！');
+            return;
+        }
+
+        if (editingId !== null) {
+            // 如果是在編輯狀態，更新該筆資料
+            const index = expenses.findIndex(e => e.id === editingId);
+            if(index !== -1) {
+                expenses[index] = { id: editingId, desc, amount, category, payer };
+            }
+            editingId = null;
+            document.getElementById('form-title').innerText = '✍️ 新增一筆花費';
+            document.getElementById('btn-save-expense').innerText = '新增紀錄';
+            document.getElementById('btn-save-expense').style.backgroundColor = 'var(--secondary)';
+        } else {
+            // 新增全新資料
+            const expense = { id: Date.now(), desc, amount, category, payer };
+            expenses.push(expense);
+        }
+        
+        // 清空表單
+        document.getElementById('exp-desc').value = '';
+        document.getElementById('exp-amount').value = '';
+
+        updateExpenseUI();
+    }
+
+    // 刪除花費
+    function deleteExpense(id) {
+        if(confirm('確定要刪除這筆紀錄嗎？')) {
+            expenses = expenses.filter(exp => exp.id !== id);
+            updateExpenseUI();
+        }
+    }
+
+    // 編輯花費 (把資料帶回表單)
+    function editExpense(id) {
+        const expToEdit = expenses.find(exp => exp.id === id);
+        if(expToEdit) {
+            document.getElementById('exp-desc').value = expToEdit.desc;
+            document.getElementById('exp-amount').value = expToEdit.amount;
+            document.getElementById('exp-category').value = expToEdit.category;
+            document.getElementById('exp-payer').value = expToEdit.payer;
+            
+            editingId = id;
+            document.getElementById('form-title').innerText = '✏️ 編輯花費紀錄';
+            document.getElementById('btn-save-expense').innerText = '儲存修改';
+            document.getElementById('btn-save-expense').style.backgroundColor = 'var(--primary)'; // 變色提醒正在編輯
+            
+            // 畫面捲動到輸入框
+            document.getElementById('expense-form-card').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // 更新 UI (含存入 Local Storage)
+    function updateExpenseUI() {
+        const listContainer = document.getElementById('expense-list-container');
+        listContainer.innerHTML = '';
+        
+        expenses.slice().reverse().forEach(exp => {
+            const li = document.createElement('li');
+            li.className = 'expense-item';
+            li.innerHTML = `
+                <div class="expense-info">
+                    <span class="expense-title">${exp.desc}</span>
+                    <span class="expense-meta">
+                        <span class="tag ${userClasses[exp.payer]}">${exp.payer} 墊付</span>
+                        ${exp.category}
+                    </span>
+                </div>
+                <div class="expense-right">
+                    <div class="expense-amount">€${exp.amount.toFixed(2)}</div>
+                    <div class="expense-actions">
+                        <button class="btn-edit" onclick="editExpense(${exp.id})" title="編輯"><i class="fas fa-pen"></i></button>
+                        <button class="btn-del" onclick="deleteExpense(${exp.id})" title="刪除"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+            listContainer.appendChild(li);
+        });
+
+        calculateSettlement();
+        
+        // 儲存到瀏覽器 Local Storage，確保重整資料不見
+        localStorage.setItem('italy_trip_expenses', JSON.stringify(expenses));
+    }
+
+    // 計算分帳
+    function calculateSettlement() {
+        let paid = { '純德': 0, '大雄': 0, '建成': 0, 'MIKA': 0 };
+        let total = 0;
+
+        expenses.forEach(exp => {
+            paid[exp.payer] += exp.amount;
+            total += exp.amount;
+        });
+
+        const avg = total / 4;
+        
+        document.getElementById('total-expense').innerText = `€${total.toFixed(2)}`;
+        document.getElementById('avg-expense').innerText = `€${avg.toFixed(2)}`;
+
+        // 同步更新總花費預算頁面
+        updateBudgetUI(avg);
+
+        let balances = users.map(u => ({ name: u, balance: paid[u] - avg }));
+        let debtors = balances.filter(b => b.balance < -0.01).sort((a, b) => a.balance - b.balance);
+        let creditors = balances.filter(b => b.balance > 0.01).sort((a, b) => b.balance - a.balance);
+
+        const resultsContainer = document.getElementById('settlement-results');
+        
+        if (total === 0) {
+            resultsContainer.innerHTML = '<div style="text-align: center; color: #888; font-size: 14px;">目前尚無帳務需要結算</div>';
+            return;
+        }
+
+        resultsContainer.innerHTML = '';
+        let i = 0;
+        let j = 0;
+        let hasTransactions = false;
+
+        while (i < debtors.length && j < creditors.length) {
+            let debtor = debtors[i];
+            let creditor = creditors[j];
+            let amount = Math.min(Math.abs(debtor.balance), creditor.balance);
+            
+            if (amount > 0.01) {
+                hasTransactions = true;
+                const div = document.createElement('div');
+                div.className = 'settlement-item';
+                div.innerHTML = `
+                    <span><i class="fas fa-arrow-right" style="color:#ccc; font-size:12px; margin-right:5px;"></i> 
+                    ${debtor.name} ➡️ ${creditor.name}</span>
+                    <span>€${amount.toFixed(2)}</span>
+                `;
+                resultsContainer.appendChild(div);
+            }
+
+            debtor.balance += amount;
+            creditor.balance -= amount;
+
+            if (Math.abs(debtor.balance) < 0.01) i++;
+            if (creditor.balance < 0.01) j++;
+        }
+
+        if (!hasTransactions) {
+            resultsContainer.innerHTML = '<div style="text-align: center; color: var(--secondary); font-size: 14px; font-weight:bold;">🎉 大家的帳務目前剛好平衡！</div>';
+        }
+    }
+    
+    // 初始化載入：檢查是否有先前存檔的資料
+    window.onload = function() {
+        const savedExpenses = localStorage.getItem('italy_trip_expenses');
+        if (savedExpenses) {
+            expenses = JSON.parse(savedExpenses);
+        }
+        updateExpenseUI(); // 會自動處理算錢跟更新預算頁面
+    };
+</script>
+
+</body>
+</html>
