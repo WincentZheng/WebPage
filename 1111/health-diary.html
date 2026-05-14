@@ -7,15 +7,15 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>每日健康紀錄</title>
   <!--
-    雲端同步（選用）：在下方 <script> 內填寫 firebaseConfig，並在 Firebase 主控台
-    1) 建立專案 → 啟用 Firestore
-    2) 網頁應用程式 → 複製設定到 firebaseConfig
-    3) Firestore 規則（個人備份用；請勿公開分享備份碼）：
-       match /healthSync/{docId} { allow read, write: if true; }
-       （保護依賴難以猜中的 docId = SHA-256(備份碼)，仍建議備份碼夠長）
+    雲端備份（選用）：Google 雲端硬碟 — 應用程式資料夾（drive.appdata）
+    1) Google Cloud Console 建立專案 → 啟用「Google Drive API」
+    2) 「憑證」→ 建立 OAuth 用戶端 ID → 網頁應用程式
+    3) 已授權的 JavaScript 來源：請加入你實際開啟本頁的來源（例：https://你的網域、http://localhost:8080）
+       （file:/// 無法使用 OAuth，請用本機或線上網址）
+    4) 將「用戶端 ID」貼到下方程式中的 GOOGLE_CLIENT_ID
+    備份檔僅存在該 Google 帳號的應用程式資料夾，雲端硬碟一般列表中通常看不到，需透過本頁「同步」存取。
   -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
@@ -817,7 +817,7 @@
       </div>
 
       <div class="actions">
-        <button type="button" class="btn btn-primary" id="btnSave">儲存今日紀錄</button>
+        <button type="button" class="btn btn-primary" id="btnSave">儲存紀錄</button>
         <button type="button" class="btn btn-secondary" id="btnExport">匯出備份 (JSON)</button>
       </div>
     </section>
@@ -878,20 +878,17 @@
 
     <section id="panel-settings" class="panel">
       <div class="card">
-        <h2 class="card-title">雲端同步（Firebase）</h2>
+        <h2 class="card-title">雲端備份（Google 雲端硬碟）</h2>
         <div class="settings-block">
-          <p>本地會先存在手機瀏覽器。若要<strong>雲端</strong>：在程式碼內填好 <code>firebaseConfig</code>、啟用 Firestore，並在下方設定<strong>備份碼</strong>（兩台手機填同一組即可合併；請記住備份碼）。</p>
-        </div>
-        <div class="field" style="margin:14px 0 0;">
-          <label for="syncPassphrase">雲端備份碼</label>
-          <input type="password" id="syncPassphrase" placeholder="自訂一組夠長的密語" autocomplete="new-password">
+          <p>資料預設存在手機瀏覽器。按下方按鈕後會請你登入 <strong>Google</strong>，並將合併後的紀錄同步到你帳號下的<strong>應用程式資料夾</strong>（與一般「我的雲端硬碟」列表不同，屬隱藏備份區，僅由此類應用程式存取）。</p>
+          <p>請在本檔案程式區將 <code>GOOGLE_CLIENT_ID</code> 設為 Google Cloud 主控台建立的<strong>OAuth 用戶端 ID（網頁）」</strong>；並啟用 Drive API、設定允許的 JavaScript 來源（請見檔案開頭註解）。</p>
         </div>
         <div class="actions" style="margin-top:12px;">
-          <button type="button" class="btn btn-primary" id="btnCloudSync">同步到雲端（上傳 / 下載合併）</button>
+          <button type="button" class="btn btn-primary" id="btnCloudSync">與 Google 雲端硬碟同步</button>
           <button type="button" class="btn btn-ghost" id="btnImport">從 JSON 匯入</button>
         </div>
         <input type="file" id="importFile" accept="application/json" hidden>
-        <div id="cloudStatus" class="cloud-status warn">雲端：尚未設定</div>
+        <div id="cloudStatus" class="cloud-status warn">雲端：尚未設定 Google 用戶端 ID</div>
       </div>
     </section>
   </main>
@@ -940,8 +937,15 @@
   <script>
     (function () {
       const STORAGE_KEY = 'healthDiaryRecordsV1';
-      const DEVICE_KEY = 'healthDiaryDeviceId';
-      const SYNC_KEY = 'healthDiarySyncPassphrase';
+
+      /** Drive 應用程式資料夾內的備份檔名（勿含路徑） */
+      const DRIVE_BACKUP_FILENAME = 'health-diary-records.json';
+
+      /**
+       * Google OAuth 2.0「網頁應用程式」用戶端 ID
+       * 例：123456789-xxxx.apps.googleusercontent.com
+       */
+      const GOOGLE_CLIENT_ID = '';
 
       const NUTRITION_DEF = [
         { id: 'iso', name: '大豆異黃酮', target: '40–80mg' },
@@ -969,27 +973,6 @@
       if (typeof Chart !== 'undefined') {
         Chart.defaults.font.family = '"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
         Chart.defaults.color = '#2c3e50';
-      }
-
-      /** @type {firebase.default.app.App|null} */
-      let fbApp = null;
-      /** 在此填入 Firebase 網頁應用程式設定；留空則只用本地儲存 */
-      const firebaseConfig = {
-        apiKey: '',
-        authDomain: '',
-        projectId: '',
-        storageBucket: '',
-        messagingSenderId: '',
-        appId: '',
-      };
-
-      function deviceId() {
-        let id = localStorage.getItem(DEVICE_KEY);
-        if (!id) {
-          id = 'd_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-          localStorage.setItem(DEVICE_KEY, id);
-        }
-        return id;
       }
 
       function emptyRecord(dateStr) {
@@ -1348,70 +1331,177 @@
         return out;
       }
 
-      function firebaseReady() {
-        return firebaseConfig.apiKey && firebaseConfig.projectId;
+      function googleDriveConfigured() {
+        const id = (GOOGLE_CLIENT_ID || '').trim();
+        return id.length > 15 && id.indexOf('apps.googleusercontent.com') !== -1;
       }
 
-      async function sha256Hex(text) {
-        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-        return Array.from(new Uint8Array(buf)).map(function (b) {
-          return b.toString(16).padStart(2, '0');
-        }).join('');
-      }
-
-      function ensureFirestore() {
-        if (!firebaseReady()) throw new Error('尚未設定 firebaseConfig');
-        if (!fbApp) {
-          fbApp = firebase.initializeApp(firebaseConfig);
+      function withGoogleIdentitySdk(done, onFail) {
+        if (window.google && google.accounts && google.accounts.oauth2) {
+          done();
+          return;
         }
-        return firebase.firestore();
+        var tries = 0;
+        var t = setInterval(function () {
+          tries++;
+          if (window.google && google.accounts && google.accounts.oauth2) {
+            clearInterval(t);
+            done();
+          } else if (tries > 100) {
+            clearInterval(t);
+            if (onFail) onFail();
+          }
+        }, 100);
+      }
+
+      function getDriveAccessToken() {
+        return new Promise(function (resolve, reject) {
+          if (!googleDriveConfigured()) {
+            reject(new Error('尚未設定 GOOGLE_CLIENT_ID'));
+            return;
+          }
+          withGoogleIdentitySdk(
+            function () {
+              try {
+                var client = google.accounts.oauth2.initTokenClient({
+                  client_id: GOOGLE_CLIENT_ID.trim(),
+                  scope: 'https://www.googleapis.com/auth/drive.appdata',
+                  callback: function (resp) {
+                    if (resp.error !== undefined) {
+                      reject(new Error(resp.error_description || resp.error || '授權失敗'));
+                      return;
+                    }
+                    if (resp.access_token) resolve(resp.access_token);
+                    else reject(new Error('未取得存取權杖'));
+                  },
+                });
+                client.requestAccessToken();
+              } catch (e) {
+                reject(e);
+              }
+            },
+            function () {
+              reject(new Error('無法載入 Google 登入，請檢查網路後重新整理'));
+            }
+          );
+        });
+      }
+
+      async function driveFindBackupFile(accessToken) {
+        var q = encodeURIComponent(
+          "name = '" + DRIVE_BACKUP_FILENAME + "' and 'appDataFolder' in parents and trashed = false"
+        );
+        var res = await fetch('https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id)', {
+          headers: { Authorization: 'Bearer ' + accessToken },
+        });
+        if (!res.ok) throw new Error('無法讀取雲端檔案列表（' + res.status + '）');
+        var data = await res.json();
+        return data.files && data.files[0] ? data.files[0].id : null;
+      }
+
+      async function driveDownloadBackup(accessToken, fileId) {
+        var res = await fetch(
+          'https://www.googleapis.com/drive/v3/files/' + encodeURIComponent(fileId) + '?alt=media',
+          { headers: { Authorization: 'Bearer ' + accessToken } }
+        );
+        if (!res.ok) return null;
+        return await res.text();
+      }
+
+      async function driveCreateBackup(accessToken, jsonBody) {
+        var boundary = 'healthDrive_' + Date.now();
+        var metadata = { name: DRIVE_BACKUP_FILENAME, parents: ['appDataFolder'] };
+        var body =
+          '--' + boundary + '\r\n' +
+          'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+          JSON.stringify(metadata) + '\r\n' +
+          '--' + boundary + '\r\n' +
+          'Content-Type: application/json\r\n\r\n' +
+          jsonBody + '\r\n' +
+          '--' + boundary + '--';
+        var res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'Content-Type': 'multipart/related; boundary=' + boundary,
+          },
+          body: body,
+        });
+        if (!res.ok) {
+          var errText = await res.text();
+          throw new Error('建立備份失敗（' + res.status + '）' + (errText ? ' ' + errText.slice(0, 120) : ''));
+        }
+        var data = await res.json();
+        return data.id;
+      }
+
+      async function driveUpdateBackup(accessToken, fileId, jsonBody) {
+        var res = await fetch(
+          'https://www.googleapis.com/upload/drive/v3/files/' +
+            encodeURIComponent(fileId) +
+            '?uploadType=media',
+          {
+            method: 'PATCH',
+            headers: {
+              Authorization: 'Bearer ' + accessToken,
+              'Content-Type': 'application/json',
+            },
+            body: jsonBody,
+          }
+        );
+        if (!res.ok) {
+          var errText = await res.text();
+          throw new Error('更新備份失敗（' + res.status + '）' + (errText ? ' ' + errText.slice(0, 120) : ''));
+        }
       }
 
       async function cloudSync() {
-        const status = document.getElementById('cloudStatus');
-        if (!firebaseReady()) {
+        var status = document.getElementById('cloudStatus');
+        if (!googleDriveConfigured()) {
           status.className = 'cloud-status warn';
-          status.textContent = '雲端：請先在程式碼中填入 firebaseConfig';
-          toast('請設定 Firebase 後再同步');
+          status.textContent = '雲端：請在程式碼中設定 GOOGLE_CLIENT_ID';
+          toast('請設定 Google OAuth 用戶端 ID');
           return;
         }
-        const phraseInput = document.getElementById('syncPassphrase');
-        const phrase = (phraseInput && phraseInput.value.trim()) || localStorage.getItem(SYNC_KEY) || '';
-        if (phrase.length < 8) {
-          toast('備份碼至少 8 字元');
-          status.className = 'cloud-status warn';
-          status.textContent = '雲端：請設定備份碼（至少 8 字）';
-          return;
-        }
-        localStorage.setItem(SYNC_KEY, phrase);
-        phraseInput.value = phrase;
+        status.className = 'cloud-status warn';
+        status.textContent = '雲端：等待 Google 授權…';
+        var accessToken;
         try {
-          const db = ensureFirestore();
-          const docId = await sha256Hex('health-diary-v1|' + phrase);
-          const ref = db.collection('healthSync').doc(docId);
-          const localMap = loadAll();
-          const snap = await ref.get();
-          const remote = snap.exists && snap.data() && snap.data().payload
-            ? JSON.parse(snap.data().payload)
-            : {};
-          const merged = mergeRecords(localMap, remote);
+          accessToken = await getDriveAccessToken();
+        } catch (e) {
+          status.textContent = '雲端：授權失敗或未完成';
+          toast((e && e.message) ? e.message : '授權失敗');
+          return;
+        }
+        try {
+          var localMap = loadAll();
+          var fileId = await driveFindBackupFile(accessToken);
+          var remote = {};
+          if (fileId) {
+            var txt = await driveDownloadBackup(accessToken, fileId);
+            if (txt) {
+              try {
+                var parsed = JSON.parse(txt);
+                if (parsed && typeof parsed === 'object') remote = parsed;
+              } catch (e2) { /* 忽略損毀內容 */ }
+            }
+          }
+          var merged = mergeRecords(localMap, remote);
           saveAll(merged);
-          await ref.set({
-            payload: JSON.stringify(merged),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-            deviceId: deviceId(),
-          }, { merge: true });
+          var body = JSON.stringify(merged);
+          if (fileId) await driveUpdateBackup(accessToken, fileId, body);
+          else await driveCreateBackup(accessToken, body);
           fillForm(getRecordForDate(document.getElementById('todayDate').value));
           renderHistory();
           if (chartsPanelActive()) refreshCharts();
           status.className = 'cloud-status ok';
-          status.textContent = '雲端：已同步（備份已合併到本地）';
-          toast('雲端同步完成');
+          status.textContent = '雲端：已與 Google 帳號同步（應用程式資料夾）';
+          toast('Google 雲端硬碟同步完成');
         } catch (e) {
           console.error(e);
           document.getElementById('cloudStatus').className = 'cloud-status warn';
-          document.getElementById('cloudStatus').textContent = '雲端同步失敗：' + (e.message || e);
-          toast('同步失敗，請檢查網路與 Firebase 設定');
+          document.getElementById('cloudStatus').textContent = '雲端同步失敗：' + ((e && e.message) || e);
+          toast('同步失敗，請確認已啟用 Drive API 並允許此網址');
         }
       }
 
@@ -1668,21 +1758,23 @@
       document.getElementById('todayDate').value = todayISO();
       fillForm(getRecordForDate(todayISO()));
 
-      (function () {
-        var sp = document.getElementById('syncPassphrase');
-        var saved = localStorage.getItem(SYNC_KEY);
-        if (saved) sp.value = saved;
-        sp.addEventListener('change', function () {
-          var v = this.value.trim();
-          if (v) localStorage.setItem(SYNC_KEY, v);
-        });
-      })();
-
       document.getElementById('todayDate').addEventListener('change', function () {
         fillForm(getRecordForDate(this.value));
       });
 
       document.getElementById('btnSave').addEventListener('click', function () {
+        const dateStr = document.getElementById('todayDate').value;
+        if (!dateStr) {
+          toast('請先選擇紀錄日期');
+          return;
+        }
+        const map = loadAll();
+        if (map[dateStr]) {
+          const ok = window.confirm(
+            '此日期（' + dateStr + '）已有儲存的紀錄。\n\n要以目前表單內容覆蓋嗎？\n\n「確定」覆蓋　「取消」不儲存'
+          );
+          if (!ok) return;
+        }
         const rec = readForm();
         persistRecord(rec);
         renderHistory();
@@ -1725,9 +1817,9 @@
         toast('已載入 ' + modalDate);
       });
 
-      if (firebaseReady()) {
+      if (googleDriveConfigured()) {
         document.getElementById('cloudStatus').textContent =
-          '雲端：已偵測到 Firebase 設定，請填備份碼後按「同步」';
+          '雲端：已設定 Google 用戶端 ID，可按「與 Google 雲端硬碟同步」';
         document.getElementById('cloudStatus').className = 'cloud-status ok';
       }
     })();
