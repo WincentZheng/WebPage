@@ -16,6 +16,7 @@
   -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
       --primary: #5d7a6c;
@@ -236,22 +237,114 @@
     }
 
     .history-list { list-style: none; padding: 0; margin: 0; }
+    .history-hero {
+      background: linear-gradient(145deg, #fafcfa 0%, #eef4f0 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 16px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 12px rgba(45, 74, 62, 0.06);
+    }
+    .history-hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .history-hero-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+    }
+    .history-hero-desc {
+      margin: 6px 0 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .history-count-badge {
+      flex-shrink: 0;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.03em;
+    }
+
     .history-item {
       background: var(--surface);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
+      border-radius: 14px;
+      padding: 0;
+      margin-bottom: 12px;
       border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      overflow: hidden;
       cursor: pointer;
       min-height: var(--tap);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s, transform 0.15s;
     }
-    .history-item:active { background: #f4f8f6; }
-    .history-item .d { font-weight: 700; color: var(--primary); }
-    .history-item .hint { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .history-item:active {
+      background: #fafcfa;
+      transform: scale(0.99);
+    }
+    .history-item-inner {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 0;
+    }
+    .history-item-accent {
+      width: 4px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
+    }
+    .history-item-body {
+      flex: 1;
+      padding: 14px 12px 14px 14px;
+      min-width: 0;
+    }
+    .history-item-date {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .history-item-weekday {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 3px;
+    }
+    .history-item-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .hi-chip {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(93, 122, 108, 0.1);
+      color: var(--primary-dark);
+    }
+    .hi-chip.accent { background: rgba(212, 163, 115, 0.2); color: #8b5a2b; }
+    .hi-chip.muted { background: #f0f3f1; color: var(--muted); }
+
+    .history-item-chev {
+      display: flex;
+      align-items: center;
+      padding: 0 14px 0 8px;
+      color: var(--muted);
+      font-size: 1.25rem;
+      font-weight: 300;
+    }
+
     .empty-state {
       text-align: center;
       color: var(--muted);
@@ -285,8 +378,47 @@
       align-items: center;
       gap: 4px;
     }
-    .nav-btn .icon { font-size: 1.35rem; line-height: 1; }
+    .nav-btn .icon { font-size: 1.2rem; line-height: 1; }
     .nav-btn.active { color: var(--primary); font-weight: 700; }
+    .nav-btn span:last-child { font-size: 0.68rem; line-height: 1.15; text-align: center; max-width: 4.2rem; }
+
+    .chart-card .chart-heading {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 10px;
+    }
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+      width: 100%;
+    }
+    select.chart-range {
+      width: 100%;
+      min-height: var(--tap);
+      padding: 12px 14px;
+      border: 1px solid #cdd8d2;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .stat-box {
+      background: #fafcfa;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    .stat-box .val { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+    .stat-box .lbl { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
 
     .settings-block { font-size: 0.85rem; color: var(--muted); }
     .settings-block code {
@@ -313,17 +445,310 @@
       justify-content: center;
     }
     .modal-backdrop.show { display: flex; }
-    .modal {
-      background: var(--surface);
+    .modal.modal-detail {
+      background: #f4f7f5;
       width: 100%;
       max-width: 560px;
-      max-height: 85vh;
-      overflow-y: auto;
-      border-radius: var(--radius) var(--radius) 0 0;
-      padding: 20px 16px calc(20px + var(--safe-bottom));
+      max-height: 88vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border-radius: 18px 18px 0 0;
+      padding: 0;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
     }
-    .modal h3 { margin: 0 0 12px; font-size: 1.05rem; color: var(--primary); }
-    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .modal-detail-top {
+      flex-shrink: 0;
+      background: linear-gradient(165deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 18px 16px 20px;
+      border-radius: 18px 18px 0 0;
+    }
+    .modal-detail-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .modal-detail-top h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.03em;
+    }
+    .modal-detail-sub {
+      margin: 8px 0 0;
+      font-size: 0.8rem;
+      opacity: 0.92;
+      line-height: 1.45;
+    }
+    .modal-close-x {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      padding: 0;
+    }
+    .modal-close-x:active { background: rgba(255,255,255,0.35); }
+
+    .modal-detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .detail-meta-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+    }
+
+    .modal-detail-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 14px 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .detail-card {
+      background: var(--surface);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 14px 14px 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    }
+    .detail-card-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(93, 122, 108, 0.12);
+    }
+    .detail-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(93, 122, 108, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .detail-card-title {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .detail-card-sub {
+      margin: 2px 0 0;
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .detail-progress-wrap {
+      margin-bottom: 12px;
+    }
+    .detail-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .detail-progress-track {
+      height: 8px;
+      border-radius: 999px;
+      background: #e8eeea;
+      overflow: hidden;
+    }
+    .detail-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary) 0%, #7a9d8c 100%);
+      transition: width 0.35s ease;
+    }
+
+    .detail-nutri-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-nutri-row:last-child { border-bottom: none; padding-bottom: 2px; }
+    .detail-nutri-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .detail-nutri-target { font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
+    .detail-nutri-intake {
+      font-size: 0.78rem;
+      color: #3d5248;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+    .detail-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .detail-badge.ok { background: rgba(46, 125, 74, 0.15); color: #1b5e20; }
+    .detail-badge.warn { background: rgba(179, 92, 0, 0.12); color: #b35c00; }
+    .detail-badge.neutral { background: #f0f3f1; color: var(--muted); }
+
+    .detail-meal-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .detail-meal-item {
+      background: #fafcfa;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+    }
+    .detail-meal-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .detail-meal-val {
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.45;
+    }
+    .detail-meal-val.empty { color: var(--muted); font-style: italic; }
+
+    .detail-kv2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 360px) {
+      .detail-kv2 { grid-template-columns: 1fr; }
+    }
+    .detail-kv-box {
+      background: #fafcfa;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .detail-kv-box .k {
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .detail-kv-box .v {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .detail-kv-box .v.empty { font-weight: 500; color: var(--muted); font-size: 0.82rem; }
+
+    .detail-scale-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .detail-scale-item {
+      text-align: center;
+      padding: 12px;
+      background: linear-gradient(180deg, #fafcfa, #f3f7f4);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .detail-scale-item .lbl { font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+    .detail-scale-item .num {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: 4px;
+      letter-spacing: -0.02em;
+    }
+    .detail-scale-item .num.empty { font-size: 1rem; font-weight: 600; color: var(--muted); }
+    .detail-num-suffix {
+      font-size: 0.55em;
+      font-weight: 700;
+      opacity: 0.85;
+      margin-left: 1px;
+    }
+
+    .detail-remind-list { margin: 0; padding: 0; list-style: none; }
+    .detail-remind-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: var(--text);
+    }
+    .detail-remind-list li:last-child { border-bottom: none; }
+    .detail-remind-ic {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #e8eeea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .detail-remind-list li.done .detail-remind-ic {
+      background: rgba(46, 125, 74, 0.2);
+      color: #1b5e20;
+    }
+    .detail-remind-list li.done { color: #2e4a3e; }
+
+    .detail-notes {
+      font-size: 0.84rem;
+      line-height: 1.55;
+      color: #334;
+      margin: 0;
+      white-space: pre-wrap;
+    }
+    .detail-notes.empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .modal-actions.modal-detail-actions {
+      flex-shrink: 0;
+      padding: 12px 14px calc(14px + var(--safe-bottom));
+      margin: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      gap: 10px;
+    }
+
+    .modal-actions { display: flex; gap: 8px; margin-top: 0; }
     .modal-actions .btn { flex: 1; }
 
     .pill { display: inline-block; background: rgba(93,122,108,0.12); color: var(--primary); padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; margin-bottom: 10px; }
@@ -398,9 +823,57 @@
     </section>
 
     <section id="panel-history" class="panel">
-      <p class="pill">點選日期可載入、修改後再儲存</p>
+      <div class="history-hero">
+        <div class="history-hero-top">
+          <div>
+            <h2 class="history-hero-title">健康紀錄總覽</h2>
+            <p class="history-hero-desc">點選任一日期檢視完整紀錄，並可載入表單繼續編輯。</p>
+          </div>
+          <span id="historyCountBadge" class="history-count-badge" hidden>0 筆</span>
+        </div>
+      </div>
       <ul id="historyList" class="history-list"></ul>
       <div id="historyEmpty" class="empty-state" hidden>尚無紀錄。先填寫「今日紀錄」並儲存。</div>
+    </section>
+
+    <section id="panel-charts" class="panel">
+      <div class="card">
+        <h2 class="card-title">趨勢分析</h2>
+        <p class="pill" style="margin-top:0">依已儲存紀錄繪圖（數值欄位愈完整圖表愈準）</p>
+        <label for="chartRange" class="field" style="margin:12px 0 0;display:block;">
+          <span style="display:block;font-weight:600;font-size:0.85rem;margin-bottom:6px;color:#445;">資料範圍</span>
+          <select id="chartRange" class="chart-range">
+            <option value="14">最近 14 天</option>
+            <option value="7">最近 7 天</option>
+            <option value="30">最近 30 天</option>
+            <option value="0">全部紀錄</option>
+          </select>
+        </label>
+        <div id="chartStats" class="stat-row" hidden></div>
+      </div>
+      <div id="chartsEmpty" class="empty-state">尚無已儲存紀錄，請先到「今日紀錄」填寫並儲存。</div>
+      <div id="chartsBlocks" hidden>
+        <div class="card chart-card">
+          <h3 class="chart-heading">睡眠品質與疲勞（1–10）</h3>
+          <div class="chart-wrap"><canvas id="chartSleep" aria-label="睡眠與疲勞折線圖"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <h3 class="chart-heading">夜醒次數</h3>
+          <div class="chart-wrap"><canvas id="chartWake" aria-label="夜醒長條圖"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <h3 class="chart-heading">喝水量（毫升，取自數字）</h3>
+          <div class="chart-wrap"><canvas id="chartWater" aria-label="喝水折線圖"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <h3 class="chart-heading">營養素「足夠」勾選數（每日最多 10 項）</h3>
+          <div class="chart-wrap"><canvas id="chartNutri" aria-label="營養達標折線圖"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <h3 class="chart-heading">生活提醒完成數（每日最多 5 項）</h3>
+          <div class="chart-wrap"><canvas id="chartHabit" aria-label="提醒完成長條圖"></canvas></div>
+        </div>
+      </div>
     </section>
 
     <section id="panel-settings" class="panel">
@@ -430,21 +903,34 @@
     </button>
     <button type="button" class="nav-btn" data-tab="history">
       <span class="icon">📋</span>
-      <span>歷史紀錄</span>
+      <span>歷史</span>
+    </button>
+    <button type="button" class="nav-btn" data-tab="charts">
+      <span class="icon">📈</span>
+      <span>趨勢</span>
     </button>
     <button type="button" class="nav-btn" data-tab="settings">
       <span class="icon">☁️</span>
-      <span>雲端備份</span>
+      <span>雲端</span>
     </button>
   </nav>
 
   <div id="toast" class="toast" role="status"></div>
 
   <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
-    <div class="modal">
-      <h3 id="modalTitle">紀錄詳情</h3>
-      <pre id="modalBody" style="white-space:pre-wrap;font-size:0.82rem;margin:0;color:#334;"></pre>
-      <div class="modal-actions">
+    <div class="modal modal-detail" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal-detail-top">
+        <div class="modal-detail-top-row">
+          <div>
+            <h3 id="modalTitle">紀錄詳情</h3>
+            <p id="modalSub" class="modal-detail-sub"></p>
+          </div>
+          <button type="button" class="modal-close-x" id="modalCloseX" aria-label="關閉">×</button>
+        </div>
+        <div id="modalMeta" class="modal-detail-meta"></div>
+      </div>
+      <div id="modalBody" class="modal-detail-scroll"></div>
+      <div class="modal-actions modal-detail-actions">
         <button type="button" class="btn btn-secondary" id="modalLoad">載入到表單編輯</button>
         <button type="button" class="btn btn-ghost" id="modalClose">關閉</button>
       </div>
@@ -477,6 +963,13 @@
         { id: 'r4', text: '今天有深綠色蔬菜' },
         { id: 'r5', text: '今天有日曬 10–20 分鐘' },
       ];
+
+      const chartRefs = { sleep: null, wake: null, water: null, nutri: null, habit: null };
+
+      if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = '"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+        Chart.defaults.color = '#2c3e50';
+      }
 
       /** @type {firebase.default.app.App|null} */
       let fbApp = null;
@@ -651,73 +1144,177 @@
         }).join('');
       }
 
+      function escapeHtml(s) {
+        if (s == null) return '';
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function historyWeekdayLabel(iso) {
+        const parts = iso.split('-');
+        if (parts.length !== 3) return '';
+        const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        const wk = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+        return '週' + wk;
+      }
+
+      function historyDateReadable(iso) {
+        const parts = iso.split('-');
+        if (parts.length !== 3) return iso;
+        return parts[0] + ' 年 ' + Number(parts[1]) + ' 月 ' + Number(parts[2]) + ' 日 · ' + historyWeekdayLabel(iso);
+      }
+
+      function parseNumLoose(v) {
+        if (v === '' || v == null) return null;
+        const n = Number(v);
+        return isFinite(n) ? n : null;
+      }
+
+      function mealBlock(label, val) {
+        const has = val && String(val).trim();
+        return (
+          '<div class="detail-meal-item">' +
+            '<div class="detail-meal-label">' + escapeHtml(label) + '</div>' +
+            '<div class="detail-meal-val' + (has ? '' : ' empty') + '">' +
+              (has ? escapeHtml(String(val).trim()) : '未填寫') +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function kvBox(k, v) {
+        const has = v != null && String(v).trim() !== '';
+        return (
+          '<div class="detail-kv-box">' +
+            '<div class="k">' + escapeHtml(k) + '</div>' +
+            '<div class="v' + (has ? '' : ' empty') + '">' +
+              (has ? escapeHtml(String(v).trim()) : '—') +
+            '</div>' +
+          '</div>'
+        );
+      }
+
+      function renderDetailHTML(rec) {
+        const nOk = countNutritionEnough(rec);
+        let html = '';
+
+        html += '<section class="detail-card">';
+        html += '<div class="detail-card-head"><span class="detail-card-icon">🥗</span><div><h4 class="detail-card-title">營養素追蹤</h4><p class="detail-card-sub">每日目標與攝取紀錄</p></div></div>';
+        html += '<div class="detail-progress-wrap"><div class="detail-progress-label"><span>本日「足夠」項目</span><span>' + nOk + ' / 10</span></div>';
+        html += '<div class="detail-progress-track"><div class="detail-progress-fill" style="width:' + Math.min(100, nOk * 10) + '%"></div></div></div>';
+
+        NUTRITION_DEF.forEach(function (n) {
+          const x = rec.nutrition && rec.nutrition[n.id] ? rec.nutrition[n.id] : {};
+          const intake = x.intake ? String(x.intake).trim() : '';
+          const enough = !!x.enough;
+          const badgeClass = enough ? 'ok' : (intake ? 'warn' : 'neutral');
+          const badgeText = enough ? '足夠' : (intake ? '待留意' : '未紀錄');
+          html += '<div class="detail-nutri-row">';
+          html += '<div><div class="detail-nutri-name">' + escapeHtml(n.name) + '</div>';
+          html += '<div class="detail-nutri-target">目標 ' + escapeHtml(n.target) + '</div>';
+          if (intake) html += '<div class="detail-nutri-intake">' + escapeHtml(intake) + '</div>';
+          html += '</div>';
+          html += '<span class="detail-badge ' + badgeClass + '">' + badgeText + '</span>';
+          html += '</div>';
+        });
+        html += '</section>';
+
+        html += '<section class="detail-card">';
+        html += '<div class="detail-card-head"><span class="detail-card-icon">🍽</span><div><h4 class="detail-card-title">飲食與活動</h4><p class="detail-card-sub">三餐與水分、運動</p></div></div>';
+        html += '<div class="detail-meal-grid">';
+        html += mealBlock('早餐', rec.breakfast);
+        html += mealBlock('午餐', rec.lunch);
+        html += mealBlock('晚餐', rec.dinner);
+        html += mealBlock('點心／補充品', rec.snacks);
+        html += '</div>';
+        html += '<div class="detail-kv2" style="margin-top:10px">';
+        html += kvBox('喝水量 (ml)', rec.waterMl);
+        html += kvBox('散步／活動', rec.activity);
+        html += '</div></section>';
+
+        const sq = parseNumLoose(rec.sleepQuality);
+        const ft = parseNumLoose(rec.fatigue);
+        html += '<section class="detail-card">';
+        html += '<div class="detail-card-head"><span class="detail-card-icon">🌙</span><div><h4 class="detail-card-title">睡眠與身體狀態</h4><p class="detail-card-sub">自評與症狀紀錄</p></div></div>';
+        html += '<div class="detail-scale-pair">';
+        html += '<div class="detail-scale-item"><div class="lbl">睡眠品質</div><div class="num' + (sq == null ? ' empty' : '') + '">' +
+          (sq != null ? escapeHtml(String(sq)) + '<span class="detail-num-suffix">/10</span>' : '—') +
+          '</div></div>';
+        html += '<div class="detail-scale-item"><div class="lbl">疲勞程度</div><div class="num' + (ft == null ? ' empty' : '') + '">' +
+          (ft != null ? escapeHtml(String(ft)) + '<span class="detail-num-suffix">/10</span>' : '—') +
+          '</div></div>';
+        html += '</div>';
+        html += '<div class="detail-kv2" style="margin-top:12px">';
+        html += kvBox('入睡時間', rec.sleepTime);
+        html += kvBox('夜醒次數', rec.nightWake !== '' && rec.nightWake != null ? rec.nightWake : '');
+        html += kvBox('情緒狀態', rec.mood);
+        html += kvBox('手抖／僵硬', rec.tremor);
+        html += kvBox('排便狀況', rec.bowel);
+        html += kvBox('熱潮紅／盜汗', rec.hotFlash);
+        html += '</div></section>';
+
+        html += '<section class="detail-card">';
+        html += '<div class="detail-card-head"><span class="detail-card-icon">✓</span><div><h4 class="detail-card-title">生活與用藥提醒</h4><p class="detail-card-sub">當日勾選狀態</p></div></div>';
+        html += '<ul class="detail-remind-list">';
+        REMINDER_DEF.forEach(function (r) {
+          const done = rec.reminders && rec.reminders[r.id];
+          html += '<li class="' + (done ? 'done' : '') + '"><span class="detail-remind-ic">' + (done ? '✓' : '·') + '</span><span>' + escapeHtml(r.text) + '</span></li>';
+        });
+        html += '</ul></section>';
+
+        const note = rec.notes && String(rec.notes).trim();
+        html += '<section class="detail-card">';
+        html += '<div class="detail-card-head"><span class="detail-card-icon">💬</span><div><h4 class="detail-card-title">今日觀察</h4><p class="detail-card-sub">主觀感受與備註</p></div></div>';
+        html += '<p class="detail-notes' + (note ? '' : ' empty') + '">' + (note ? escapeHtml(note) : '尚無文字紀錄。') + '</p>';
+        html += '</section>';
+
+        return html;
+      }
+
       function renderHistory() {
         const map = loadAll();
         const dates = Object.keys(map).sort(function (a, b) { return b.localeCompare(a); });
         const list = document.getElementById('historyList');
         const empty = document.getElementById('historyEmpty');
+        const badge = document.getElementById('historyCountBadge');
         list.innerHTML = '';
         if (!dates.length) {
           empty.hidden = false;
+          badge.hidden = true;
           return;
         }
         empty.hidden = true;
+        badge.hidden = false;
+        badge.textContent = dates.length + ' 筆';
         dates.forEach(function (ds) {
           const rec = map[ds];
           const li = document.createElement('li');
           li.className = 'history-item';
-          const left = document.createElement('div');
-          const line1 = document.createElement('div');
-          line1.className = 'd';
-          line1.textContent = ds;
-          const line2 = document.createElement('div');
-          line2.className = 'hint';
-          const parts = [];
-          if (rec.breakfast) parts.push('早');
-          if (rec.lunch) parts.push('午');
-          if (rec.dinner) parts.push('晚');
-          if (rec.waterMl) parts.push('水');
-          line2.textContent = parts.length ? parts.join(' · ') : '（尚無飲食摘要）';
-          left.appendChild(line1);
-          left.appendChild(line2);
-          li.appendChild(left);
-          const arrow = document.createElement('span');
-          arrow.textContent = '›';
-          arrow.style.fontSize = '1.4rem';
-          arrow.style.color = 'var(--muted)';
-          li.appendChild(arrow);
+          const nOk = countNutritionEnough(rec);
+          const rOk = countRemindersDone(rec);
+          const sq = parseNumLoose(rec.sleepQuality);
+          const ft = parseNumLoose(rec.fatigue);
+          let chips = '';
+          if (sq != null) chips += '<span class="hi-chip">睡眠 ' + sq + '/10</span>';
+          if (ft != null) chips += '<span class="hi-chip accent">疲勞 ' + ft + '/10</span>';
+          chips += '<span class="hi-chip">營養 ' + nOk + '/10</span>';
+          chips += '<span class="hi-chip muted">提醒 ' + rOk + '/5</span>';
+          li.innerHTML =
+            '<div class="history-item-inner">' +
+              '<div class="history-item-accent"></div>' +
+              '<div class="history-item-body">' +
+                '<div class="history-item-date">' + escapeHtml(ds) + '</div>' +
+                '<div class="history-item-weekday">' + escapeHtml(historyWeekdayLabel(ds)) + '</div>' +
+                '<div class="history-item-chips">' + chips + '</div>' +
+              '</div>' +
+              '<div class="history-item-chev" aria-hidden="true">›</div>' +
+            '</div>';
           li.addEventListener('click', function () { openHistoryModal(ds); });
           list.appendChild(li);
         });
-      }
-
-      function summaryText(rec) {
-        const lines = [];
-        lines.push('【日期】' + rec.date);
-        lines.push('');
-        lines.push('【營養素】');
-        NUTRITION_DEF.forEach(function (n) {
-          const x = rec.nutrition[n.id] || {};
-          lines.push('- ' + n.name + '：' + (x.intake || '—') + (x.enough ? ' （足夠）' : ''));
-        });
-        lines.push('');
-        lines.push('【飲食】早／午／晚／點心：' + ([rec.breakfast, rec.lunch, rec.dinner, rec.snacks].filter(Boolean).join('； ') || '—'));
-        lines.push('喝水：' + (rec.waterMl || '—') + '　活動：' + (rec.activity || '—'));
-        lines.push('');
-        lines.push('【睡眠與狀態】');
-        lines.push('入睡：' + (rec.sleepTime || '—') + '　夜醒：' + (rec.nightWake !== '' && rec.nightWake != null ? rec.nightWake : '—'));
-        lines.push('睡眠品質：' + (rec.sleepQuality || '—') + '　疲勞：' + (rec.fatigue || '—'));
-        lines.push('情緒：' + (rec.mood || '—') + '　手抖/僵硬：' + (rec.tremor || '—'));
-        lines.push('排便：' + (rec.bowel || '—') + '　熱潮紅：' + (rec.hotFlash || '—'));
-        lines.push('');
-        lines.push('【提醒事項】');
-        REMINDER_DEF.forEach(function (r) {
-          if (rec.reminders[r.id]) lines.push('☑ ' + r.text);
-        });
-        lines.push('');
-        lines.push('【今日觀察】');
-        lines.push(rec.notes || '—');
-        return lines.join('\n');
       }
 
       let modalDate = null;
@@ -726,8 +1323,14 @@
         const map = loadAll();
         const rec = map[dateStr];
         if (!rec) return;
-        document.getElementById('modalTitle').textContent = dateStr + ' 紀錄';
-        document.getElementById('modalBody').textContent = summaryText(rec);
+        document.getElementById('modalTitle').textContent = dateStr;
+        document.getElementById('modalSub').textContent = historyDateReadable(dateStr);
+        const nOk = countNutritionEnough(rec);
+        const rOk = countRemindersDone(rec);
+        document.getElementById('modalMeta').innerHTML =
+          '<span class="detail-meta-pill">營養達標 ' + nOk + '/10</span>' +
+          '<span class="detail-meta-pill">提醒完成 ' + rOk + '/5</span>';
+        document.getElementById('modalBody').innerHTML = renderDetailHTML(rec);
         document.getElementById('modalBackdrop').classList.add('show');
       }
       function closeModal() {
@@ -800,6 +1403,7 @@
           }, { merge: true });
           fillForm(getRecordForDate(document.getElementById('todayDate').value));
           renderHistory();
+          if (chartsPanelActive()) refreshCharts();
           status.className = 'cloud-status ok';
           status.textContent = '雲端：已同步（備份已合併到本地）';
           toast('雲端同步完成');
@@ -832,6 +1436,7 @@
             saveAll(merged);
             fillForm(getRecordForDate(document.getElementById('todayDate').value));
             renderHistory();
+            if (chartsPanelActive()) refreshCharts();
             toast('匯入完成');
           } catch (e) {
             toast('匯入失敗：' + (e.message || '未知錯誤'));
@@ -840,12 +1445,222 @@
         reader.readAsText(file, 'UTF-8');
       }
 
+      function destroyChart(key) {
+        if (chartRefs[key]) {
+          chartRefs[key].destroy();
+          chartRefs[key] = null;
+        }
+      }
+
+      function destroyAllCharts() {
+        Object.keys(chartRefs).forEach(destroyChart);
+      }
+
+      function shortDateLabel(iso) {
+        var p = iso.split('-');
+        if (p.length !== 3) return iso;
+        return String(Number(p[1])) + '/' + String(Number(p[2]));
+      }
+
+      function parseNumeric(v) {
+        if (v === '' || v == null) return null;
+        var n = Number(v);
+        return isFinite(n) ? n : null;
+      }
+
+      function parseFirstInteger(str) {
+        if (!str || typeof str !== 'string') return null;
+        var m = str.replace(/,/g, '').match(/\d+/);
+        if (!m) return null;
+        var n = parseInt(m[0], 10);
+        return isFinite(n) ? n : null;
+      }
+
+      function countNutritionEnough(rec) {
+        if (!rec.nutrition) return 0;
+        var c = 0;
+        NUTRITION_DEF.forEach(function (n) {
+          if (rec.nutrition[n.id] && rec.nutrition[n.id].enough) c++;
+        });
+        return c;
+      }
+
+      function countRemindersDone(rec) {
+        if (!rec.reminders) return 0;
+        var c = 0;
+        REMINDER_DEF.forEach(function (r) {
+          if (rec.reminders[r.id]) c++;
+        });
+        return c;
+      }
+
+      function buildSeries(maxDays) {
+        var map = loadAll();
+        var keys = Object.keys(map).sort();
+        if (maxDays > 0 && keys.length > maxDays) keys = keys.slice(-maxDays);
+        return keys.map(function (k) {
+          return { date: k, rec: map[k], label: shortDateLabel(k) };
+        });
+      }
+
+      function mobileChartOptions(extra) {
+        extra = extra || {};
+        return Object.assign({
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, padding: 8, font: { size: 11 } },
+            },
+          },
+        }, extra);
+      }
+
+      function refreshCharts() {
+        var emptyEl = document.getElementById('chartsEmpty');
+        var blocksEl = document.getElementById('chartsBlocks');
+        var statsEl = document.getElementById('chartStats');
+        if (typeof Chart === 'undefined') {
+          emptyEl.textContent = '無法載入圖表程式庫，請檢查網路後重新整理。';
+          emptyEl.hidden = false;
+          blocksEl.hidden = true;
+          statsEl.hidden = true;
+          statsEl.innerHTML = '';
+          destroyAllCharts();
+          return;
+        }
+        var rangeSel = document.getElementById('chartRange');
+        var maxDays = parseInt(rangeSel.value, 10);
+        if (isNaN(maxDays)) maxDays = 0;
+        var series = buildSeries(maxDays);
+        if (!series.length) {
+          emptyEl.hidden = false;
+          blocksEl.hidden = true;
+          statsEl.hidden = true;
+          statsEl.innerHTML = '';
+          destroyAllCharts();
+          return;
+        }
+        emptyEl.hidden = true;
+        blocksEl.hidden = false;
+        var sq = [];
+        var fat = [];
+        var wat = [];
+        series.forEach(function (row) {
+          var r = row.rec;
+          var a = parseNumeric(r.sleepQuality);
+          var b = parseNumeric(r.fatigue);
+          var w = parseFirstInteger(r.waterMl || '');
+          if (a != null) sq.push(a);
+          if (b != null) fat.push(b);
+          if (w != null) wat.push(w);
+        });
+        function avgArr(arr) {
+          if (!arr.length) return '—';
+          var s = arr.reduce(function (x, y) { return x + y; }, 0);
+          return (s / arr.length).toFixed(1);
+        }
+        statsEl.innerHTML =
+          '<div class="stat-box"><div class="val">' + avgArr(sq) + '</div><div class="lbl">平均睡眠品質</div></div>' +
+          '<div class="stat-box"><div class="val">' + avgArr(fat) + '</div><div class="lbl">平均疲勞程度</div></div>' +
+          '<div class="stat-box"><div class="val">' + avgArr(wat) + '</div><div class="lbl">平均喝水 (ml)</div></div>' +
+          '<div class="stat-box"><div class="val">' + series.length + '</div><div class="lbl">圖表天數</div></div>';
+        statsEl.hidden = false;
+        var labels = series.map(function (r) { return r.label; });
+        var colPrimary = '#5d7a6c';
+        var colAccent = '#d4a373';
+        var colMuted = 'rgba(93, 122, 108, 0.25)';
+        destroyAllCharts();
+        var sleepData = series.map(function (row) { return parseNumeric(row.rec.sleepQuality); });
+        var fatData = series.map(function (row) { return parseNumeric(row.rec.fatigue); });
+        chartRefs.sleep = new Chart(document.getElementById('chartSleep'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: '睡眠品質', data: sleepData, borderColor: colPrimary, backgroundColor: 'rgba(93,122,108,0.12)', tension: 0.25, spanGaps: true },
+              { label: '疲勞程度', data: fatData, borderColor: colAccent, backgroundColor: 'rgba(212,163,115,0.12)', tension: 0.25, spanGaps: true },
+            ],
+          },
+          options: mobileChartOptions({
+            scales: {
+              y: { min: 0, max: 10, ticks: { stepSize: 1 } },
+              x: { ticks: { maxRotation: 50, font: { size: 9 } } },
+            },
+          }),
+        });
+        var wakeData = series.map(function (row) { return parseNumeric(row.rec.nightWake); });
+        chartRefs.wake = new Chart(document.getElementById('chartWake'), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{ label: '夜醒次數', data: wakeData, backgroundColor: colPrimary + 'cc', borderRadius: 6 }],
+          },
+          options: mobileChartOptions({
+            scales: {
+              y: { beginAtZero: true, ticks: { precision: 0 } },
+              x: { ticks: { maxRotation: 50, font: { size: 9 } } },
+            },
+          }),
+        });
+        var waterData = series.map(function (row) { return parseFirstInteger(row.rec.waterMl || ''); });
+        chartRefs.water = new Chart(document.getElementById('chartWater'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{ label: '喝水 ml', data: waterData, borderColor: colPrimary, backgroundColor: colMuted, fill: true, tension: 0.2, spanGaps: true }],
+          },
+          options: mobileChartOptions({
+            scales: {
+              y: { beginAtZero: true },
+              x: { ticks: { maxRotation: 50, font: { size: 9 } } },
+            },
+          }),
+        });
+        var nutData = series.map(function (row) { return countNutritionEnough(row.rec); });
+        chartRefs.nutri = new Chart(document.getElementById('chartNutri'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{ label: '足夠項數', data: nutData, borderColor: colAccent, backgroundColor: 'rgba(212,163,115,0.2)', tension: 0.2, fill: true }],
+          },
+          options: mobileChartOptions({
+            scales: {
+              y: { min: 0, max: 10, ticks: { stepSize: 1 } },
+              x: { ticks: { maxRotation: 50, font: { size: 9 } } },
+            },
+          }),
+        });
+        var habitData = series.map(function (row) { return countRemindersDone(row.rec); });
+        chartRefs.habit = new Chart(document.getElementById('chartHabit'), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{ label: '完成項數', data: habitData, backgroundColor: colAccent + 'bb', borderRadius: 6 }],
+          },
+          options: mobileChartOptions({
+            scales: {
+              y: { min: 0, max: 5, ticks: { stepSize: 1 } },
+              x: { ticks: { maxRotation: 50, font: { size: 9 } } },
+            },
+          }),
+        });
+      }
+
       function setTab(id) {
         document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
         document.querySelectorAll('.nav-btn').forEach(function (b) { b.classList.remove('active'); });
         document.getElementById('panel-' + id).classList.add('active');
         document.querySelector('.nav-btn[data-tab="' + id + '"]').classList.add('active');
         if (id === 'history') renderHistory();
+        if (id === 'charts') refreshCharts();
+      }
+
+      function chartsPanelActive() {
+        var p = document.getElementById('panel-charts');
+        return p && p.classList.contains('active');
       }
 
       buildNutrition();
@@ -871,6 +1686,7 @@
         const rec = readForm();
         persistRecord(rec);
         renderHistory();
+        if (chartsPanelActive()) refreshCharts();
         toast('已儲存 ' + rec.date);
       });
 
@@ -878,6 +1694,10 @@
         btn.addEventListener('click', function () {
           setTab(this.getAttribute('data-tab'));
         });
+      });
+
+      document.getElementById('chartRange').addEventListener('change', function () {
+        if (chartsPanelActive()) refreshCharts();
       });
 
       document.getElementById('btnExport').addEventListener('click', exportJson);
@@ -892,6 +1712,7 @@
       });
 
       document.getElementById('modalClose').addEventListener('click', closeModal);
+      document.getElementById('modalCloseX').addEventListener('click', closeModal);
       document.getElementById('modalBackdrop').addEventListener('click', function (e) {
         if (e.target === this) closeModal();
       });
