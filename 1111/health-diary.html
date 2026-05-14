@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#5d7a6c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>每日健康紀錄</title>
+  <!--
+    雲端同步（選用）：在下方 <script> 內填寫 firebaseConfig，並在 Firebase 主控台
+    1) 建立專案 → 啟用 Firestore
+    2) 網頁應用程式 → 複製設定到 firebaseConfig
+    3) Firestore 規則（個人備份用；請勿公開分享備份碼）：
+       match /healthSync/{docId} { allow read, write: if true; }
+       （保護依賴難以猜中的 docId = SHA-256(備份碼)，仍建議備份碼夠長）
+  -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --primary: #5d7a6c;
+      --primary-dark: #4a6356;
+      --accent: #d4a373;
+      --bg: #f2f6f3;
+      --surface: #ffffff;
+      --text: #2c3e50;
+      --muted: #6b7c7a;
+      --border: #e2e8e4;
+      --radius: 14px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --tap: 48px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: calc(72px + var(--safe-bottom));
+      min-height: 100dvh;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(165deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 14px 16px 18px;
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: 0 8px 28px rgba(45, 74, 62, 0.22);
+    }
+    .app-header h1 {
+      margin: 0 0 4px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .app-header p {
+      margin: 0;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+    .date-row {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .date-row label { font-size: 0.85rem; opacity: 0.95; white-space: nowrap; }
+    .date-row input[type="date"] {
+      flex: 1;
+      min-height: var(--tap);
+      padding: 8px 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      color: var(--text);
+      background: rgba(255,255,255,0.95);
+    }
+
+    main { padding: 16px 14px 8px; max-width: 560px; margin: 0 auto; }
+
+    .panel { display: none; animation: fade 0.2s ease; }
+    .panel.active { display: block; }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(93, 122, 108, 0.2);
+    }
+
+    .nutri-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .nutri-item {
+      background: #fafcfa;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .nutri-item .name { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .nutri-item .target { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+    .nutri-item input[type="text"] {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #cdd8d2;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .nutri-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+    .nutri-check input { width: 22px; height: 22px; accent-color: var(--primary); }
+
+    .field {
+      margin-bottom: 14px;
+    }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: #445;
+    }
+    .field input[type="text"],
+    .field input[type="number"],
+    .field textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 12px 14px;
+      border: 1px solid #cdd8d2;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .field textarea { min-height: 100px; resize: vertical; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 380px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .reminder-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .reminder-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .reminder-item input { width: 22px; height: 22px; margin-top: 2px; flex-shrink: 0; accent-color: var(--accent); }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 8px 0 20px;
+    }
+    .btn {
+      min-height: var(--tap);
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.08s ease, filter 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(93, 122, 108, 0.35);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: calc(80px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #2c3e50;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.25s, transform 0.25s;
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .history-list { list-style: none; padding: 0; margin: 0; }
+    .history-item {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      min-height: var(--tap);
+    }
+    .history-item:active { background: #f4f8f6; }
+    .history-item .d { font-weight: 700; color: var(--primary); }
+    .history-item .hint { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+      font-size: 0.95rem;
+    }
+
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 8px 8px calc(8px + var(--safe-bottom));
+      z-index: 20;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+    }
+    .nav-btn {
+      flex: 1;
+      border: none;
+      background: none;
+      padding: 8px 4px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-btn .icon { font-size: 1.35rem; line-height: 1; }
+    .nav-btn.active { color: var(--primary); font-weight: 700; }
+
+    .settings-block { font-size: 0.85rem; color: var(--muted); }
+    .settings-block code {
+      display: block;
+      background: #f0f4f2;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      overflow-x: auto;
+      margin: 8px 0;
+      word-break: break-all;
+    }
+    .cloud-status { margin-top: 10px; font-size: 0.85rem; }
+    .cloud-status.ok { color: #2e7d4a; }
+    .cloud-status.warn { color: #b35c00; }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 50;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: var(--surface);
+      width: 100%;
+      max-width: 560px;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 20px 16px calc(20px + var(--safe-bottom));
+    }
+    .modal h3 { margin: 0 0 12px; font-size: 1.05rem; color: var(--primary); }
+    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .modal-actions .btn { flex: 1; }
+
+    .pill { display: inline-block; background: rgba(93,122,108,0.12); color: var(--primary); padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>每日健康紀錄</h1>
+    <p>更年期 ＋ 帕金森女性 — 營養與身體追蹤（手機版）</p>
+    <div class="date-row">
+      <label for="todayDate">紀錄日期</label>
+      <input type="date" id="todayDate">
+    </div>
+  </header>
+
+  <main>
+    <section id="panel-form" class="panel active">
+      <div class="card">
+        <h2 class="card-title">營養素與目標</h2>
+        <div id="nutritionMount" class="nutri-row"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">今日飲食紀錄</h2>
+        <div class="field"><label for="breakfast">早餐</label><input type="text" id="breakfast" placeholder="例如：燕麥片、豆漿…" autocomplete="off"></div>
+        <div class="grid-2">
+          <div class="field"><label for="lunch">午餐</label><input type="text" id="lunch" autocomplete="off"></div>
+          <div class="field"><label for="dinner">晚餐</label><input type="text" id="dinner" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="snacks">點心 / 補充品</label><input type="text" id="snacks" autocomplete="off"></div>
+        <div class="grid-2">
+          <div class="field"><label for="waterMl">喝水量 (ml)</label><input type="text" id="waterMl" inputmode="numeric" placeholder="建議 2000" autocomplete="off"></div>
+          <div class="field"><label for="activity">散步 / 活動</label><input type="text" id="activity" placeholder="分鐘 / 類型" autocomplete="off"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">睡眠與身體狀態</h2>
+        <div class="grid-2">
+          <div class="field"><label for="sleepTime">入睡時間</label><input type="text" id="sleepTime" placeholder="例如：22:30" autocomplete="off"></div>
+          <div class="field"><label for="nightWake">夜醒次數</label><input type="number" id="nightWake" min="0" step="1" inputmode="numeric"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label for="sleepQuality">睡眠品質 (1–10)</label><input type="number" id="sleepQuality" min="1" max="10" inputmode="numeric"></div>
+          <div class="field"><label for="fatigue">疲勞程度 (1–10)</label><input type="number" id="fatigue" min="1" max="10" inputmode="numeric"></div>
+        </div>
+        <div class="field"><label for="mood">情緒狀態</label><input type="text" id="mood" autocomplete="off"></div>
+        <div class="grid-2">
+          <div class="field"><label for="tremor">手抖 / 僵硬</label><input type="text" id="tremor" autocomplete="off"></div>
+          <div class="field"><label for="bowel">排便狀況</label><input type="text" id="bowel" autocomplete="off"></div>
+        </div>
+        <div class="field"><label for="hotFlash">熱潮紅 / 盜汗</label><input type="text" id="hotFlash" autocomplete="off"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">藥物與重要提醒</h2>
+        <div id="remindersMount"></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">今日觀察</h2>
+        <div class="field">
+          <label for="notes">今天什麼食物或習慣讓自己比較舒服？</label>
+          <textarea id="notes" rows="4" placeholder="紀錄心情或特殊的身體反饋…"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btnSave">儲存今日紀錄</button>
+        <button type="button" class="btn btn-secondary" id="btnExport">匯出備份 (JSON)</button>
+      </div>
+    </section>
+
+    <section id="panel-history" class="panel">
+      <p class="pill">點選日期可載入、修改後再儲存</p>
+      <ul id="historyList" class="history-list"></ul>
+      <div id="historyEmpty" class="empty-state" hidden>尚無紀錄。先填寫「今日紀錄」並儲存。</div>
+    </section>
+
+    <section id="panel-settings" class="panel">
+      <div class="card">
+        <h2 class="card-title">雲端同步（Firebase）</h2>
+        <div class="settings-block">
+          <p>本地會先存在手機瀏覽器。若要<strong>雲端</strong>：在程式碼內填好 <code>firebaseConfig</code>、啟用 Firestore，並在下方設定<strong>備份碼</strong>（兩台手機填同一組即可合併；請記住備份碼）。</p>
+        </div>
+        <div class="field" style="margin:14px 0 0;">
+          <label for="syncPassphrase">雲端備份碼</label>
+          <input type="password" id="syncPassphrase" placeholder="自訂一組夠長的密語" autocomplete="new-password">
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <button type="button" class="btn btn-primary" id="btnCloudSync">同步到雲端（上傳 / 下載合併）</button>
+          <button type="button" class="btn btn-ghost" id="btnImport">從 JSON 匯入</button>
+        </div>
+        <input type="file" id="importFile" accept="application/json" hidden>
+        <div id="cloudStatus" class="cloud-status warn">雲端：尚未設定</div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav-bar">
+    <button type="button" class="nav-btn active" data-tab="form">
+      <span class="icon">✏️</span>
+      <span>今日紀錄</span>
+    </button>
+    <button type="button" class="nav-btn" data-tab="history">
+      <span class="icon">📋</span>
+      <span>歷史紀錄</span>
+    </button>
+    <button type="button" class="nav-btn" data-tab="settings">
+      <span class="icon">☁️</span>
+      <span>雲端備份</span>
+    </button>
+  </nav>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal">
+      <h3 id="modalTitle">紀錄詳情</h3>
+      <pre id="modalBody" style="white-space:pre-wrap;font-size:0.82rem;margin:0;color:#334;"></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="modalLoad">載入到表單編輯</button>
+        <button type="button" class="btn btn-ghost" id="modalClose">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = 'healthDiaryRecordsV1';
+      const DEVICE_KEY = 'healthDiaryDeviceId';
+      const SYNC_KEY = 'healthDiarySyncPassphrase';
+
+      const NUTRITION_DEF = [
+        { id: 'iso', name: '大豆異黃酮', target: '40–80mg' },
+        { id: 'omega', name: 'Omega 3', target: '約 1000mg' },
+        { id: 'vite', name: '維生素 E', target: '15mg' },
+        { id: 'ca', name: '鈣', target: '1000–1200mg' },
+        { id: 'vitd', name: '維生素 D', target: '800–2000 IU' },
+        { id: 'mg', name: '鎂', target: '300–400mg' },
+        { id: 'zn', name: '鋅', target: '8–12mg' },
+        { id: 'vitb', name: '維生素 B 群', target: '足量' },
+        { id: 'trp', name: '色胺酸', target: '約 250–425mg' },
+        { id: 'sleepFood', name: '助眠食物', target: '有攝取即可' },
+      ];
+
+      const REMINDER_DEF = [
+        { id: 'r1', text: '左旋多巴藥物前後 30–60 分鐘避免大量蛋白質（以免影響藥效）' },
+        { id: 'r2', text: '晚上避免咖啡因與高糖食物' },
+        { id: 'r3', text: '今天有攝取發酵食物（味噌 / 納豆 / 優格）' },
+        { id: 'r4', text: '今天有深綠色蔬菜' },
+        { id: 'r5', text: '今天有日曬 10–20 分鐘' },
+      ];
+
+      /** @type {firebase.default.app.App|null} */
+      let fbApp = null;
+      /** 在此填入 Firebase 網頁應用程式設定；留空則只用本地儲存 */
+      const firebaseConfig = {
+        apiKey: '',
+        authDomain: '',
+        projectId: '',
+        storageBucket: '',
+        messagingSenderId: '',
+        appId: '',
+      };
+
+      function deviceId() {
+        let id = localStorage.getItem(DEVICE_KEY);
+        if (!id) {
+          id = 'd_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+          localStorage.setItem(DEVICE_KEY, id);
+        }
+        return id;
+      }
+
+      function emptyRecord(dateStr) {
+        const nutrition = {};
+        NUTRITION_DEF.forEach(function (n) {
+          nutrition[n.id] = { intake: '', enough: false };
+        });
+        const reminders = {};
+        REMINDER_DEF.forEach(function (r) { reminders[r.id] = false; });
+        return {
+          date: dateStr,
+          nutrition: nutrition,
+          breakfast: '', lunch: '', dinner: '', snacks: '',
+          waterMl: '', activity: '',
+          sleepTime: '', nightWake: '', sleepQuality: '', fatigue: '',
+          mood: '', tremor: '', bowel: '', hotFlash: '',
+          reminders: reminders,
+          notes: '',
+          updatedAt: Date.now(),
+        };
+      }
+
+      function loadAll() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return {};
+          const parsed = JSON.parse(raw);
+          return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveAll(map) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+      }
+
+      function getRecordForDate(dateStr) {
+        const map = loadAll();
+        if (map[dateStr]) return JSON.parse(JSON.stringify(map[dateStr]));
+        return emptyRecord(dateStr);
+      }
+
+      function persistRecord(rec) {
+        const map = loadAll();
+        rec.updatedAt = Date.now();
+        map[rec.date] = rec;
+        saveAll(map);
+      }
+
+      function readForm() {
+        const d = document.getElementById('todayDate').value;
+        const rec = getRecordForDate(d);
+        NUTRITION_DEF.forEach(function (n) {
+          const intakeEl = document.getElementById('nut-' + n.id);
+          const enoughEl = document.getElementById('nut-enough-' + n.id);
+          if (intakeEl) rec.nutrition[n.id].intake = intakeEl.value.trim();
+          if (enoughEl) rec.nutrition[n.id].enough = enoughEl.checked;
+        });
+        REMINDER_DEF.forEach(function (r) {
+          const el = document.getElementById('rem-' + r.id);
+          if (el) rec.reminders[r.id] = el.checked;
+        });
+        rec.breakfast = document.getElementById('breakfast').value.trim();
+        rec.lunch = document.getElementById('lunch').value.trim();
+        rec.dinner = document.getElementById('dinner').value.trim();
+        rec.snacks = document.getElementById('snacks').value.trim();
+        rec.waterMl = document.getElementById('waterMl').value.trim();
+        rec.activity = document.getElementById('activity').value.trim();
+        rec.sleepTime = document.getElementById('sleepTime').value.trim();
+        rec.nightWake = document.getElementById('nightWake').value;
+        rec.sleepQuality = document.getElementById('sleepQuality').value;
+        rec.fatigue = document.getElementById('fatigue').value;
+        rec.mood = document.getElementById('mood').value.trim();
+        rec.tremor = document.getElementById('tremor').value.trim();
+        rec.bowel = document.getElementById('bowel').value.trim();
+        rec.hotFlash = document.getElementById('hotFlash').value.trim();
+        rec.notes = document.getElementById('notes').value.trim();
+        rec.date = d;
+        return rec;
+      }
+
+      function fillForm(rec) {
+        document.getElementById('todayDate').value = rec.date;
+        NUTRITION_DEF.forEach(function (n) {
+          const intakeEl = document.getElementById('nut-' + n.id);
+          const enoughEl = document.getElementById('nut-enough-' + n.id);
+          const block = rec.nutrition && rec.nutrition[n.id] ? rec.nutrition[n.id] : { intake: '', enough: false };
+          if (intakeEl) intakeEl.value = block.intake || '';
+          if (enoughEl) enoughEl.checked = !!block.enough;
+        });
+        REMINDER_DEF.forEach(function (r) {
+          const el = document.getElementById('rem-' + r.id);
+          if (el) el.checked = !!(rec.reminders && rec.reminders[r.id]);
+        });
+        document.getElementById('breakfast').value = rec.breakfast || '';
+        document.getElementById('lunch').value = rec.lunch || '';
+        document.getElementById('dinner').value = rec.dinner || '';
+        document.getElementById('snacks').value = rec.snacks || '';
+        document.getElementById('waterMl').value = rec.waterMl || '';
+        document.getElementById('activity').value = rec.activity || '';
+        document.getElementById('sleepTime').value = rec.sleepTime || '';
+        document.getElementById('nightWake').value = rec.nightWake != null && rec.nightWake !== '' ? rec.nightWake : '';
+        document.getElementById('sleepQuality').value = rec.sleepQuality != null && rec.sleepQuality !== '' ? rec.sleepQuality : '';
+        document.getElementById('fatigue').value = rec.fatigue != null && rec.fatigue !== '' ? rec.fatigue : '';
+        document.getElementById('mood').value = rec.mood || '';
+        document.getElementById('tremor').value = rec.tremor || '';
+        document.getElementById('bowel').value = rec.bowel || '';
+        document.getElementById('hotFlash').value = rec.hotFlash || '';
+        document.getElementById('notes').value = rec.notes || '';
+      }
+
+      function todayISO() {
+        const t = new Date();
+        const y = t.getFullYear();
+        const m = String(t.getMonth() + 1).padStart(2, '0');
+        const da = String(t.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + da;
+      }
+
+      function toast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(el._t);
+        el._t = setTimeout(function () { el.classList.remove('show'); }, 2200);
+      }
+
+      function buildNutrition() {
+        const mount = document.getElementById('nutritionMount');
+        mount.innerHTML = NUTRITION_DEF.map(function (n) {
+          return (
+            '<div class="nutri-item">' +
+              '<div class="name">' + n.name + '</div>' +
+              '<div class="target">每日目標：' + n.target + '</div>' +
+              '<input type="text" id="nut-' + n.id + '" placeholder="今天攝取 / 狀態" autocomplete="off">' +
+              '<div class="nutri-check"><input type="checkbox" id="nut-enough-' + n.id + '"><span>是否足夠</span></div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
+      function buildReminders() {
+        const mount = document.getElementById('remindersMount');
+        mount.innerHTML = REMINDER_DEF.map(function (r) {
+          return (
+            '<label class="reminder-item">' +
+              '<input type="checkbox" id="rem-' + r.id + '">' +
+              '<span>' + r.text + '</span>' +
+            '</label>'
+          );
+        }).join('');
+      }
+
+      function renderHistory() {
+        const map = loadAll();
+        const dates = Object.keys(map).sort(function (a, b) { return b.localeCompare(a); });
+        const list = document.getElementById('historyList');
+        const empty = document.getElementById('historyEmpty');
+        list.innerHTML = '';
+        if (!dates.length) {
+          empty.hidden = false;
+          return;
+        }
+        empty.hidden = true;
+        dates.forEach(function (ds) {
+          const rec = map[ds];
+          const li = document.createElement('li');
+          li.className = 'history-item';
+          const left = document.createElement('div');
+          const line1 = document.createElement('div');
+          line1.className = 'd';
+          line1.textContent = ds;
+          const line2 = document.createElement('div');
+          line2.className = 'hint';
+          const parts = [];
+          if (rec.breakfast) parts.push('早');
+          if (rec.lunch) parts.push('午');
+          if (rec.dinner) parts.push('晚');
+          if (rec.waterMl) parts.push('水');
+          line2.textContent = parts.length ? parts.join(' · ') : '（尚無飲食摘要）';
+          left.appendChild(line1);
+          left.appendChild(line2);
+          li.appendChild(left);
+          const arrow = document.createElement('span');
+          arrow.textContent = '›';
+          arrow.style.fontSize = '1.4rem';
+          arrow.style.color = 'var(--muted)';
+          li.appendChild(arrow);
+          li.addEventListener('click', function () { openHistoryModal(ds); });
+          list.appendChild(li);
+        });
+      }
+
+      function summaryText(rec) {
+        const lines = [];
+        lines.push('【日期】' + rec.date);
+        lines.push('');
+        lines.push('【營養素】');
+        NUTRITION_DEF.forEach(function (n) {
+          const x = rec.nutrition[n.id] || {};
+          lines.push('- ' + n.name + '：' + (x.intake || '—') + (x.enough ? ' （足夠）' : ''));
+        });
+        lines.push('');
+        lines.push('【飲食】早／午／晚／點心：' + ([rec.breakfast, rec.lunch, rec.dinner, rec.snacks].filter(Boolean).join('； ') || '—'));
+        lines.push('喝水：' + (rec.waterMl || '—') + '　活動：' + (rec.activity || '—'));
+        lines.push('');
+        lines.push('【睡眠與狀態】');
+        lines.push('入睡：' + (rec.sleepTime || '—') + '　夜醒：' + (rec.nightWake !== '' && rec.nightWake != null ? rec.nightWake : '—'));
+        lines.push('睡眠品質：' + (rec.sleepQuality || '—') + '　疲勞：' + (rec.fatigue || '—'));
+        lines.push('情緒：' + (rec.mood || '—') + '　手抖/僵硬：' + (rec.tremor || '—'));
+        lines.push('排便：' + (rec.bowel || '—') + '　熱潮紅：' + (rec.hotFlash || '—'));
+        lines.push('');
+        lines.push('【提醒事項】');
+        REMINDER_DEF.forEach(function (r) {
+          if (rec.reminders[r.id]) lines.push('☑ ' + r.text);
+        });
+        lines.push('');
+        lines.push('【今日觀察】');
+        lines.push(rec.notes || '—');
+        return lines.join('\n');
+      }
+
+      let modalDate = null;
+      function openHistoryModal(dateStr) {
+        modalDate = dateStr;
+        const map = loadAll();
+        const rec = map[dateStr];
+        if (!rec) return;
+        document.getElementById('modalTitle').textContent = dateStr + ' 紀錄';
+        document.getElementById('modalBody').textContent = summaryText(rec);
+        document.getElementById('modalBackdrop').classList.add('show');
+      }
+      function closeModal() {
+        document.getElementById('modalBackdrop').classList.remove('show');
+        modalDate = null;
+      }
+
+      function mergeRecords(localMap, remoteMap) {
+        const out = Object.assign({}, localMap);
+        Object.keys(remoteMap || {}).forEach(function (k) {
+          const r = remoteMap[k];
+          const l = out[k];
+          if (!l || (r.updatedAt || 0) > (l.updatedAt || 0)) out[k] = r;
+        });
+        return out;
+      }
+
+      function firebaseReady() {
+        return firebaseConfig.apiKey && firebaseConfig.projectId;
+      }
+
+      async function sha256Hex(text) {
+        const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+        return Array.from(new Uint8Array(buf)).map(function (b) {
+          return b.toString(16).padStart(2, '0');
+        }).join('');
+      }
+
+      function ensureFirestore() {
+        if (!firebaseReady()) throw new Error('尚未設定 firebaseConfig');
+        if (!fbApp) {
+          fbApp = firebase.initializeApp(firebaseConfig);
+        }
+        return firebase.firestore();
+      }
+
+      async function cloudSync() {
+        const status = document.getElementById('cloudStatus');
+        if (!firebaseReady()) {
+          status.className = 'cloud-status warn';
+          status.textContent = '雲端：請先在程式碼中填入 firebaseConfig';
+          toast('請設定 Firebase 後再同步');
+          return;
+        }
+        const phraseInput = document.getElementById('syncPassphrase');
+        const phrase = (phraseInput && phraseInput.value.trim()) || localStorage.getItem(SYNC_KEY) || '';
+        if (phrase.length < 8) {
+          toast('備份碼至少 8 字元');
+          status.className = 'cloud-status warn';
+          status.textContent = '雲端：請設定備份碼（至少 8 字）';
+          return;
+        }
+        localStorage.setItem(SYNC_KEY, phrase);
+        phraseInput.value = phrase;
+        try {
+          const db = ensureFirestore();
+          const docId = await sha256Hex('health-diary-v1|' + phrase);
+          const ref = db.collection('healthSync').doc(docId);
+          const localMap = loadAll();
+          const snap = await ref.get();
+          const remote = snap.exists && snap.data() && snap.data().payload
+            ? JSON.parse(snap.data().payload)
+            : {};
+          const merged = mergeRecords(localMap, remote);
+          saveAll(merged);
+          await ref.set({
+            payload: JSON.stringify(merged),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            deviceId: deviceId(),
+          }, { merge: true });
+          fillForm(getRecordForDate(document.getElementById('todayDate').value));
+          renderHistory();
+          status.className = 'cloud-status ok';
+          status.textContent = '雲端：已同步（備份已合併到本地）';
+          toast('雲端同步完成');
+        } catch (e) {
+          console.error(e);
+          document.getElementById('cloudStatus').className = 'cloud-status warn';
+          document.getElementById('cloudStatus').textContent = '雲端同步失敗：' + (e.message || e);
+          toast('同步失敗，請檢查網路與 Firebase 設定');
+        }
+      }
+
+      function exportJson() {
+        const map = loadAll();
+        const blob = new Blob([JSON.stringify(map, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'health-backup-' + todayISO() + '.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        toast('已下載備份檔');
+      }
+
+      function importJsonFile(file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          try {
+            const data = JSON.parse(reader.result);
+            if (!data || typeof data !== 'object') throw new Error('格式錯誤');
+            const merged = mergeRecords(loadAll(), data);
+            saveAll(merged);
+            fillForm(getRecordForDate(document.getElementById('todayDate').value));
+            renderHistory();
+            toast('匯入完成');
+          } catch (e) {
+            toast('匯入失敗：' + (e.message || '未知錯誤'));
+          }
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+
+      function setTab(id) {
+        document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+        document.querySelectorAll('.nav-btn').forEach(function (b) { b.classList.remove('active'); });
+        document.getElementById('panel-' + id).classList.add('active');
+        document.querySelector('.nav-btn[data-tab="' + id + '"]').classList.add('active');
+        if (id === 'history') renderHistory();
+      }
+
+      buildNutrition();
+      buildReminders();
+      document.getElementById('todayDate').value = todayISO();
+      fillForm(getRecordForDate(todayISO()));
+
+      (function () {
+        var sp = document.getElementById('syncPassphrase');
+        var saved = localStorage.getItem(SYNC_KEY);
+        if (saved) sp.value = saved;
+        sp.addEventListener('change', function () {
+          var v = this.value.trim();
+          if (v) localStorage.setItem(SYNC_KEY, v);
+        });
+      })();
+
+      document.getElementById('todayDate').addEventListener('change', function () {
+        fillForm(getRecordForDate(this.value));
+      });
+
+      document.getElementById('btnSave').addEventListener('click', function () {
+        const rec = readForm();
+        persistRecord(rec);
+        renderHistory();
+        toast('已儲存 ' + rec.date);
+      });
+
+      document.querySelectorAll('.nav-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          setTab(this.getAttribute('data-tab'));
+        });
+      });
+
+      document.getElementById('btnExport').addEventListener('click', exportJson);
+      document.getElementById('btnCloudSync').addEventListener('click', function () { cloudSync(); });
+      document.getElementById('btnImport').addEventListener('click', function () {
+        document.getElementById('importFile').click();
+      });
+      document.getElementById('importFile').addEventListener('change', function (e) {
+        const f = e.target.files && e.target.files[0];
+        if (f) importJsonFile(f);
+        e.target.value = '';
+      });
+
+      document.getElementById('modalClose').addEventListener('click', closeModal);
+      document.getElementById('modalBackdrop').addEventListener('click', function (e) {
+        if (e.target === this) closeModal();
+      });
+      document.getElementById('modalLoad').addEventListener('click', function () {
+        if (!modalDate) return;
+        document.getElementById('todayDate').value = modalDate;
+        fillForm(getRecordForDate(modalDate));
+        closeModal();
+        setTab('form');
+        toast('已載入 ' + modalDate);
+      });
+
+      if (firebaseReady()) {
+        document.getElementById('cloudStatus').textContent =
+          '雲端：已偵測到 Firebase 設定，請填備份碼後按「同步」';
+        document.getElementById('cloudStatus').className = 'cloud-status ok';
+      }
+    })();
+  </script>
+</body>
+</html>
