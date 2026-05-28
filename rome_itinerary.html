@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>🏛️ 羅馬假期 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5EDD8;
+    --warm-white: #FBF7F0;
+    --terracotta: #C4623A;
+    --terracotta-dark: #9E4527;
+    --gold: #C9973A;
+    --gold-light: #E8C46A;
+    --deep-brown: #2C1810;
+    --mid-brown: #5C3A1E;
+    --stone: #9E8E7A;
+    --stone-light: #C8BAA8;
+    --shadow: rgba(44,24,16,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--deep-brown);
+    font-family: 'Noto Serif TC', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(160deg, #1a0a04 0%, #3d1a0b 40%, #6b2e14 70%, #9e4527 100%);
+    padding: 48px 20px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+  }
+  .hero-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 12px;
+    opacity: 0.9;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    margin-bottom: 6px;
+  }
+  .hero-title span {
+    color: var(--gold-light);
+  }
+  .hero-date {
+    font-size: 13px;
+    color: var(--stone-light);
+    letter-spacing: 1px;
+    margin-top: 10px;
+  }
+  .hero-pills {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .hero-pill {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Days nav */
+  .days-nav {
+    background: var(--deep-brown);
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .days-nav::-webkit-scrollbar { display: none; }
+  .day-btn {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--stone-light);
+    font-size: 11px;
+    font-family: 'Noto Serif TC', serif;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .day-btn:hover, .day-btn.active {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: #fff;
+  }
+
+  /* Main content */
+  .content {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* Day card */
+  .day-section {
+    margin-bottom: 24px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow);
+    animation: fadeIn 0.4s ease both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .day-header {
+    background: linear-gradient(135deg, var(--terracotta-dark), var(--terracotta));
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .day-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .day-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.25);
+    line-height: 1;
+  }
+  .day-info {}
+  .day-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 2px;
+  }
+  .day-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .day-date {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+  }
+  .day-toggle {
+    color: rgba(255,255,255,0.6);
+    font-size: 18px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .day-section.collapsed .day-toggle {
+    transform: rotate(-90deg);
+  }
+
+  /* Events */
+  .day-events {
+    background: var(--warm-white);
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    max-height: 2000px;
+  }
+  .day-section.collapsed .day-events {
+    max-height: 0;
+  }
+
+  .event {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(158,142,122,0.15);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: background 0.15s;
+  }
+  .event:last-child { border-bottom: none; }
+  .event:active { background: rgba(196,98,58,0.05); }
+
+  .event-time {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--terracotta);
+    min-width: 40px;
+    padding-top: 1px;
+    letter-spacing: 0.3px;
+  }
+  .event-icon {
+    font-size: 18px;
+    line-height: 1.3;
+    flex-shrink: 0;
+  }
+  .event-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .event-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--deep-brown);
+    line-height: 1.4;
+  }
+  .event-desc {
+    font-size: 11px;
+    color: var(--stone);
+    margin-top: 3px;
+    line-height: 1.5;
+  }
+
+  /* Map button */
+  .map-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    background: linear-gradient(135deg, var(--terracotta), var(--terracotta-dark));
+    color: #fff;
+    text-decoration: none;
+    font-size: 10px;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(196,98,58,0.3);
+  }
+  .map-btn:active { opacity: 0.85; transform: scale(0.97); }
+  .map-btn svg {
+    width: 10px; height: 10px;
+    fill: currentColor;
+  }
+
+  /* Multi-stop map button */
+  .multi-map-wrap {
+    padding: 10px 18px 14px;
+    background: var(--warm-white);
+  }
+  .multi-map-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--terracotta));
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s;
+    box-shadow: 0 3px 12px rgba(201,151,58,0.3);
+  }
+  .multi-map-btn:active { opacity: 0.85; }
+
+  /* Tips section */
+  .tips-section {
+    background: linear-gradient(135deg, var(--deep-brown), var(--mid-brown));
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+  .tips-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tip-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--stone-light);
+    line-height: 1.6;
+  }
+  .tip-icon { flex-shrink: 0; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 11px;
+    color: var(--stone);
+    letter-spacing: 1px;
+  }
+  .footer span { color: var(--terracotta); }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-subtitle">✦ 旅行企劃 2025 ✦</div>
+  <div class="hero-title">羅馬<br><span>假期</span></div>
+  <div class="hero-date">5月16日 — 5月25日・10天9夜</div>
+  <div class="hero-pills">
+    <span class="hero-pill">🇮🇹 義大利</span>
+    <span class="hero-pill">🏛️ 羅馬</span>
+    <span class="hero-pill">🌊 阿瑪菲</span>
+    <span class="hero-pill">🚗 托斯卡尼自駕</span>
+  </div>
+</div>
+
+<!-- Sticky nav -->
+<div class="days-nav" id="daysNav">
+  <button class="day-btn active" onclick="scrollToDay(0)">Day 1</button>
+  <button class="day-btn" onclick="scrollToDay(1)">Day 2</button>
+  <button class="day-btn" onclick="scrollToDay(2)">Day 3</button>
+  <button class="day-btn" onclick="scrollToDay(3)">Day 4</button>
+  <button class="day-btn" onclick="scrollToDay(4)">Day 5</button>
+  <button class="day-btn" onclick="scrollToDay(5)">Day 6</button>
+  <button class="day-btn" onclick="scrollToDay(6)">Day 7</button>
+  <button class="day-btn" onclick="scrollToDay(7)">Day 8</button>
+  <button class="day-btn" onclick="scrollToDay(8)">Day 9</button>
+  <button class="day-btn" onclick="scrollToDay(9)">Day 10</button>
+</div>
+
+<div class="content">
+
+  <!-- Day 1 -->
+  <div class="day-section" id="day-0">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">01</div>
+        <div class="day-info">
+          <div class="day-label">Day 1</div>
+          <div class="day-title">羅馬假期啟動</div>
+          <div class="day-date">5/16（六）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">10:00</div>
+        <div class="event-icon">🛬</div>
+        <div class="event-body">
+          <div class="event-name">抵達羅馬・飯店 Check-in</div>
+          <div class="event-desc">入住飯店，稍作休整準備出發</div>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">11:30</div>
+        <div class="event-icon">⛲</div>
+        <div class="event-body">
+          <div class="event-name">西班牙廣場 & 特雷維噴泉</div>
+          <div class="event-desc">許願池前投幣許願，感受羅馬浪漫</div>
+          <a class="map-btn" href="https://www.google.com/maps/dir/Piazza+di+Spagna,+Roma/Fontana+di+Trevi,+Roma" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">12:30</div>
+        <div class="event-icon">🍝</div>
+        <div class="event-body">
+          <div class="event-name">午餐時間</div>
+          <div class="event-desc">享用道地義大利料理</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+near+Fontana+di+Trevi+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🏛️</div>
+        <div class="event-body">
+          <div class="event-name">萬神殿 Pantheon</div>
+          <div class="event-desc">西元 125 年建成，穹頂至今無釘一顆釘</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Pantheon,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">15:00</div>
+        <div class="event-icon">☕</div>
+        <div class="event-body">
+          <div class="event-name">金杯咖啡・聖依納爵堂・許願池</div>
+          <div class="event-desc">Sant'Eustachio il Caffè 百年咖啡館</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Sant'Eustachio+il+Caffe,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">18:30</div>
+        <div class="event-icon">🍽️</div>
+        <div class="event-body">
+          <div class="event-name">晚餐時間</div>
+          <div class="event-desc">羅馬市區覓食</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+Rome+city+center" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="multi-map-wrap">
+        <a class="multi-map-btn" href="https://www.google.com/maps/dir/Piazza+di+Spagna+Rome/Fontana+di+Trevi+Rome/Pantheon+Rome/Sant'Eustachio+il+Caffe+Rome" target="_blank">
+          🗺️ 一鍵查看 Day 1 完整路線
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-section" id="day-1">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">02</div>
+        <div class="day-info">
+          <div class="day-label">Day 2</div>
+          <div class="day-title">南義絕美海岸與古城</div>
+          <div class="day-date">5/17（日）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">07:50</div>
+        <div class="event-icon">🚌</div>
+        <div class="event-body">
+          <div class="event-name">出發龐貝古城一日遊（跟團）</div>
+          <div class="event-desc">蘇連多 + 阿瑪菲海岸 + 龐貝古城</div>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">全天</div>
+        <div class="event-icon">🌊</div>
+        <div class="event-body">
+          <div class="event-name">阿瑪菲海岸 Amalfi Coast</div>
+          <div class="event-desc">UNESCO 世界遺產，懸崖海岸絕景</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Amalfi+Coast,+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">全天</div>
+        <div class="event-icon">🏛️</div>
+        <div class="event-body">
+          <div class="event-name">龐貝古城 Pompeii</div>
+          <div class="event-desc">西元 79 年火山爆發封存的古羅馬城市</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Pompeii+Archaeological+Park" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:30</div>
+        <div class="event-icon">🌅</div>
+        <div class="event-body">
+          <div class="event-name">蘇連多 Sorrento</div>
+          <div class="event-desc">結束行程，夕陽下的絕美海灣小鎮</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Sorrento,+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-section" id="day-2">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">03</div>
+        <div class="day-info">
+          <div class="day-label">Day 3</div>
+          <div class="day-title">走進梵蒂岡藝術殿堂</div>
+          <div class="day-date">5/18（一）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">07:00</div>
+        <div class="event-icon">🍎</div>
+        <div class="event-body">
+          <div class="event-name">羅馬傳統市場巡禮</div>
+          <div class="event-desc">Campo de' Fiori 等傳統市集，感受晨間生活</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Campo+de'+Fiori,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">13:30</div>
+        <div class="event-icon">⛪</div>
+        <div class="event-body">
+          <div class="event-name">梵蒂岡博物館・西斯汀禮拜堂</div>
+          <div class="event-desc">米開朗基羅〈創世紀〉天頂畫，震撼心靈</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Vatican+Museums" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">下午</div>
+        <div class="event-icon">🕍</div>
+        <div class="event-body">
+          <div class="event-name">聖彼得大教堂（登頂）</div>
+          <div class="event-desc">攀登圓頂俯瞰整個梵蒂岡城邦</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/St.+Peter's+Basilica" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">傍晚</div>
+        <div class="event-icon">🏰</div>
+        <div class="event-body">
+          <div class="event-name">聖天使城堡 & 協和大道</div>
+          <div class="event-desc">橋上天使雕像，台伯河畔黃昏美景</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Castel+Sant'Angelo,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:00</div>
+        <div class="event-icon">🍽️</div>
+        <div class="event-body">
+          <div class="event-name">晚餐時間</div>
+          <div class="event-desc">梵蒂岡周邊覓食</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+near+Vatican+City+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="multi-map-wrap">
+        <a class="multi-map-btn" href="https://www.google.com/maps/dir/Vatican+Museums+Rome/St+Peter's+Basilica+Rome/Castel+Sant'Angelo+Rome" target="_blank">
+          🗺️ 一鍵查看 Day 3 完整路線
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="day-section" id="day-3">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">04</div>
+        <div class="day-info">
+          <div class="day-label">Day 4</div>
+          <div class="day-title">穿越古羅馬帝國</div>
+          <div class="day-date">5/19（二）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">09:30</div>
+        <div class="event-icon">⚔️</div>
+        <div class="event-body">
+          <div class="event-name">羅馬競技場 Colosseum</div>
+          <div class="event-desc">容納 5 萬人的古羅馬鬥獸場，震撼人心</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Colosseum,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">12:30</div>
+        <div class="event-icon">🏛️</div>
+        <div class="event-body">
+          <div class="event-name">古羅馬廣場 & 帕拉提諾之丘</div>
+          <div class="event-desc">漫步羅馬帝國的政治與宗教中心遺址</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Roman+Forum,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">下午</div>
+        <div class="event-icon">🏛️</div>
+        <div class="event-body">
+          <div class="event-name">威尼斯廣場 & 圖拉真市集</div>
+          <div class="event-desc">白色婚禮蛋糕建築與古代購物中心</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Piazza+Venezia,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">下午</div>
+        <div class="event-icon">🎪</div>
+        <div class="event-body">
+          <div class="event-name">納沃納廣場 Piazza Navona</div>
+          <div class="event-desc">貝尼尼四河噴泉，露天藝術廣場</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Piazza+Navona,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">17:00</div>
+        <div class="event-icon">🦌</div>
+        <div class="event-body">
+          <div class="event-name">鹿角咖啡下午茶</div>
+          <div class="event-desc">Antico Caffè Greco，1760年開業的古老咖啡館</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Antico+Caffe+Greco,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">18:30</div>
+        <div class="event-icon">🍕</div>
+        <div class="event-body">
+          <div class="event-name">晚餐時間（換換口味！）</div>
+          <div class="event-desc">嘗試正宗羅馬薄底披薩</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/pizza+restaurants+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近披薩店
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">20:00</div>
+        <div class="event-icon">🪙</div>
+        <div class="event-body">
+          <div class="event-name">夜訪羅馬許願池</div>
+          <div class="event-desc">燈光點亮的特雷維噴泉，比白天更夢幻</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Fontana+di+Trevi,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="multi-map-wrap">
+        <a class="multi-map-btn" href="https://www.google.com/maps/dir/Colosseum+Rome/Roman+Forum+Rome/Piazza+Venezia+Rome/Piazza+Navona+Rome/Fontana+di+Trevi+Rome" target="_blank">
+          🗺️ 一鍵查看 Day 4 完整路線
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="day-section" id="day-4">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">05</div>
+        <div class="day-info">
+          <div class="day-label">Day 5</div>
+          <div class="day-title">啟程！中部自駕遊</div>
+          <div class="day-date">5/20（三）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">09:30</div>
+        <div class="event-icon">🚗</div>
+        <div class="event-body">
+          <div class="event-name">Termini 車站取車出發</div>
+          <div class="event-desc">義大利自駕旅程正式開始！</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Roma+Termini" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">12:30</div>
+        <div class="event-icon">☁️</div>
+        <div class="event-body">
+          <div class="event-name">天空之城 Civita di Bagnoregio</div>
+          <div class="event-desc">建在凝灰岩台地上的千年古村，夢境般的存在</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Civita+di+Bagnoregio" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">16:30</div>
+        <div class="event-icon">🏰</div>
+        <div class="event-body">
+          <div class="event-name">奧爾維耶托 Orvieto 觀光</div>
+          <div class="event-desc">建於火山岩上的中世紀小城，大教堂壯麗精絕</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Orvieto,+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:30</div>
+        <div class="event-icon">🍷</div>
+        <div class="event-body">
+          <div class="event-name">奧爾維耶托晚餐</div>
+          <div class="event-desc">搭配當地 Orvieto Classico 白葡萄酒</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+Orvieto+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="multi-map-wrap">
+        <a class="multi-map-btn" href="https://www.google.com/maps/dir/Roma+Termini/Civita+di+Bagnoregio/Orvieto+Italy" target="_blank">
+          🗺️ 一鍵查看 Day 5 完整路線
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 6 -->
+  <div class="day-section" id="day-5">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">06</div>
+        <div class="day-info">
+          <div class="day-label">Day 6</div>
+          <div class="day-title">托斯卡尼浪漫山城</div>
+          <div class="day-date">5/21（四）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">11:00</div>
+        <div class="event-icon">🏘️</div>
+        <div class="event-body">
+          <div class="event-name">皮耶扎 Pienza 古城</div>
+          <div class="event-desc">文藝復興理想城市，乳酪與蜂蜜的天堂</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Pienza,+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">12:30</div>
+        <div class="event-icon">🍝</div>
+        <div class="event-body">
+          <div class="event-name">皮耶扎午餐</div>
+          <div class="event-desc">品嚐 Pecorino 羊奶乾酪</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+Pienza+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">16:30</div>
+        <div class="event-icon">🐎</div>
+        <div class="event-body">
+          <div class="event-name">西恩納 Siena 進城觀光</div>
+          <div class="event-desc">貝殼形廣場、斑馬紋大教堂，托斯卡尼之冠</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Siena,+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:30</div>
+        <div class="event-icon">🥩</div>
+        <div class="event-body">
+          <div class="event-name">西恩納晚餐</div>
+          <div class="event-desc">必點佛羅倫斯大牛排 Bistecca alla Fiorentina</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+Siena+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="multi-map-wrap">
+        <a class="multi-map-btn" href="https://www.google.com/maps/dir/Pienza+Italy/Siena+Italy" target="_blank">
+          🗺️ 一鍵查看 Day 6 完整路線
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 7 -->
+  <div class="day-section" id="day-6">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">07</div>
+        <div class="day-info">
+          <div class="day-label">Day 7</div>
+          <div class="day-title">湖光山色與重返羅馬</div>
+          <div class="day-date">5/22（五）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">10:00</div>
+        <div class="event-icon">⛪</div>
+        <div class="event-body">
+          <div class="event-name">小耳教堂</div>
+          <div class="event-desc">Cappella della Madonna di Vitaleta，柏樹夾道的夢幻小教堂</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Madonna+di+Vitaleta+Chapel,+San+Quirico+d'Orcia" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">12:00</div>
+        <div class="event-icon">🌊</div>
+        <div class="event-body">
+          <div class="event-name">博爾塞納火山湖・午餐</div>
+          <div class="event-desc">義大利最大火山口湖，湖畔享用新鮮魚料理</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Lake+Bolsena,+Italy" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">14:00</div>
+        <div class="event-icon">🚙</div>
+        <div class="event-body">
+          <div class="event-name">返回羅馬 Termini 還車</div>
+          <div class="event-desc">自駕之旅圓滿完成！</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Roma+Termini" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:00</div>
+        <div class="event-icon">🍽️</div>
+        <div class="event-body">
+          <div class="event-name">晚餐時間</div>
+          <div class="event-desc">回到羅馬，熟悉的城市氣息</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 8 -->
+  <div class="day-section" id="day-7">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">08</div>
+        <div class="day-info">
+          <div class="day-label">Day 8</div>
+          <div class="day-title">購物狂歡日</div>
+          <div class="day-date">5/23（六）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">10:00</div>
+        <div class="event-icon">🛍️</div>
+        <div class="event-body">
+          <div class="event-name">Castel Romano Designer Outlet</div>
+          <div class="event-desc">搭乘 Klook 接送專車，精品折扣買好買滿！</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Castel+Romano+Designer+Outlet" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:00</div>
+        <div class="event-icon">🥙</div>
+        <div class="event-body">
+          <div class="event-name">晚餐（自由覓食）</div>
+          <div class="event-desc">輕鬆的購物後晚餐</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/restaurants+Rome+city+center" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 9 -->
+  <div class="day-section" id="day-8">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">09</div>
+        <div class="day-info">
+          <div class="day-label">Day 9</div>
+          <div class="day-title">羅馬最後巡禮</div>
+          <div class="day-date">5/24（日）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">09:00</div>
+        <div class="event-icon">🕊️</div>
+        <div class="event-body">
+          <div class="event-name">聖母大殿・聖神降臨節</div>
+          <div class="event-desc">Basilica di Santa Maria Maggiore，節日玫瑰花瓣從穹頂飄落</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Basilica+di+Santa+Maria+Maggiore,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">12:00</div>
+        <div class="event-icon">👜</div>
+        <div class="event-body">
+          <div class="event-name">市區精品購物</div>
+          <div class="event-desc">LV・Chanel・MiuMiu — 康多提大道 Via Condotti</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Via+Condotti,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">19:00</div>
+        <div class="event-icon">🥂</div>
+        <div class="event-body">
+          <div class="event-name">旅程最後的晚餐</div>
+          <div class="event-desc">選一家心儀的餐廳，為這段旅程畫上完美句點</div>
+          <a class="map-btn" href="https://www.google.com/maps/search/fine+dining+restaurants+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            附近餐廳
+          </a>
+        </div>
+      </div>
+      <div class="event">
+        <div class="event-time">21:00</div>
+        <div class="event-icon">🌙</div>
+        <div class="event-body">
+          <div class="event-name">夜訪羅馬競技場</div>
+          <div class="event-desc">在夜色中與這座千年競技場道別</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Colosseum,+Rome" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 10 -->
+  <div class="day-section" id="day-9">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-header-left">
+        <div class="day-number">10</div>
+        <div class="day-info">
+          <div class="day-label">Day 10</div>
+          <div class="day-title">帶著回憶返家</div>
+          <div class="day-date">5/25（一）</div>
+        </div>
+      </div>
+      <div class="day-toggle">▾</div>
+    </div>
+    <div class="day-events">
+      <div class="event">
+        <div class="event-time">07:00</div>
+        <div class="event-icon">✈️</div>
+        <div class="event-body">
+          <div class="event-name">前往 FCO 菲烏米奇諾機場</div>
+          <div class="event-desc">帶著滿滿的回憶與戰利品，準備踏上歸途</div>
+          <a class="map-btn" href="https://www.google.com/maps/place/Rome+Fiumicino+Airport" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            在 Google Maps 開啟
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips-section">
+    <div class="tips-title">💡 旅行小提醒</div>
+    <div class="tip-item">
+      <span class="tip-icon">🎫</span>
+      <span>景點門票建議提前在 GetYourGuide 預訂，旺季排隊時間很長</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">💳</span>
+      <span>義大利部分景點及市集仍習慣現金，建議隨身備妥歐元</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🕐</span>
+      <span>教堂入場需衣著保守，請準備遮蓋肩膀與膝蓋的衣物</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🚇</span>
+      <span>羅馬市內建議購買 48/72 小時交通通票，地鐵+公車通用</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">☀️</span>
+      <span>五月天氣宜人，白天約 22-26°C，晚上可帶薄外套</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    🏛️ <span>ROMA AETERNA</span> · 永恆之城 · 2025
+  </div>
+
+</div>
+
+<script>
+  function toggleDay(header) {
+    const section = header.closest('.day-section');
+    section.classList.toggle('collapsed');
+  }
+
+  function scrollToDay(index) {
+    const section = document.getElementById('day-' + index);
+    if (!section) return;
+    // Expand if collapsed
+    section.classList.remove('collapsed');
+    const nav = document.getElementById('daysNav');
+    const navH = nav ? nav.offsetHeight : 56;
+    const top = section.getBoundingClientRect().top + window.scrollY - navH - 10;
+    window.scrollTo({ top, behavior: 'smooth' });
+    // Update active button
+    document.querySelectorAll('.day-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === index);
+    });
+  }
+
+  // Update active day button on scroll
+  const sections = Array.from({ length: 10 }, (_, i) => document.getElementById('day-' + i));
+  const buttons = document.querySelectorAll('.day-btn');
+  const nav = document.getElementById('daysNav');
+
+  window.addEventListener('scroll', () => {
+    const navH = nav ? nav.offsetHeight : 56;
+    let current = 0;
+    sections.forEach((s, i) => {
+      if (s && s.getBoundingClientRect().top <= navH + 40) current = i;
+    });
+    buttons.forEach((btn, i) => btn.classList.toggle('active', i === current));
+  }, { passive: true });
+</script>
+</body>
+</html>
