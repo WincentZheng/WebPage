@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🇬🇧 London Bound 12-Day Travel Companion</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #f8fafc;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pb-nav { padding-bottom: 90px; }
+    .bg-royal-navy { background-color: #0b2240; }
+    .text-royal-navy { color: #0b2240; }
+    .border-royal-navy { border-color: #0b2240; }
+    .bg-british-red { background-color: #8b1e23; }
+    .text-british-red { color: #8b1e23; }
+    .bg-london-gold { background-color: #d4af37; }
+    .text-london-gold { color: #d4af37; }
+    .border-london-gold { border-color: #d4af37; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const { useState, useEffect } = React;
+    const e = React.createElement;
+
+    // 替換為高穩定度、符合當日景點特色的代表圖
+    const itineraryData = [
+      { 
+        day: "D1", 
+        date: "2026/10/4", 
+        morning: "-", 
+        afternoon: "抵達希斯洛機場第二航廈（LHR T2），辦理入境", 
+        evening: "民宿 Check-in，周邊熟悉環境、採買物資", 
+        transport: "伊莉莎白線、步行", 
+        food: "車站 M&S 超市輕食", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "-", 
+        notes: "全程平路有電梯，直接推行李進民宿。可先在超市買好大瓶水與隔天零食。",
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop" // 抵達倫敦街景
+      },
+      { 
+        day: "D2", 
+        date: "2026/10/5", 
+        morning: "帕丁頓出發，前往國王十字車站朝聖哈利波特 9 ¾ 月台", 
+        afternoon: "前往肯頓市集（Camden Market），體驗復古龐克與市集文化", 
+        evening: "散步至櫻草花山（Primrose Hill）俯瞰全倫敦絕美日落", 
+        transport: "地鐵、巴士、步行", 
+        food: "肯頓市集水岸小吃、市區傳統英式 Pub", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "-", 
+        notes: "拍月台照片如果排隊太長，可先逛旁邊的官方商店。市集內有很多異國小吃，邊走邊吃最道地。傍晚風大，記得多帶一件防風外套。",
+        image: "https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?q=80&w=600&auto=format&fit=crop" // 國王十字/經典紅巴士
+      },
+      { 
+        day: "D3", 
+        date: "2026/10/6", 
+        morning: "帕丁頓搭巴士直達大英博物館，主攻埃及館與希臘帕德嫩", 
+        afternoon: "散步至柯芬園（Covent Garden）與蘇活區（Soho）街區散步", 
+        evening: "-", 
+        transport: "雙層巴士、步行", 
+        food: "Bancone（米其林必比登手工義麵）", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "大英博物館（出發前3-5天預約免費票）、Bancone 義大利麵（出發前2週官網訂位）", 
+        notes: "搭巴士可免去地鐵走樓梯的痛苦，還能沿途賞街景。柯芬園街頭藝人表演很精彩，看表演時注意隨身財物。",
+        image: "https://images.unsplash.com/photo-1574359411659-15573a27f812?q=80&w=600&auto=format&fit=crop" // 大英博物館中庭
+      },
+      { 
+        day: "D4", 
+        date: "2026/10/7", 
+        morning: "搭地鐵直達倫敦塔，參觀皇家珠寶與千年古堡", 
+        afternoon: "步行橫跨倫敦塔橋，至波羅市場（Borough Market）美食尋寶", 
+        evening: "登上 Sky Garden 空中花園，飽覽泰晤士河岸黃金夜景", 
+        transport: "地鐵、步行", 
+        food: "波羅市場在地小吃", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "倫敦塔電子票（出發前1-2週預購）、Sky Garden（出發前3週週一線上搶免費票）", 
+        notes: "線上先買好電子票可排特快通道，省下現場排隊時間。Sky Garden 嚴格執行安檢，水瓶內若有水需要倒掉才能進場。",
+        image: "https://images.unsplash.com/photo-1513635269975-59663e0ca1ad?q=80&w=600&auto=format&fit=crop" // 倫敦塔橋 Tower Bridge
+      },
+      { 
+        day: "D5", 
+        date: "2026/10/8", 
+        morning: "【巨石陣＋巴斯古城一日遊】", 
+        afternoon: "專車接送往返郊區", 
+        evening: "-", 
+        transport: "Local Tour 遊覽專車", 
+        food: "巴斯傳統英式茶屋、市區小餐館", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "郊區一日遊（出發前1個月線上報名）", 
+        notes: "帕丁頓出發非常方便，在車上可以充分補眠休息。",
+        image: "https://images.unsplash.com/photo-1508849789987-4e5333c12b78?q=80&w=600&auto=format&fit=crop" // 巨石陣 Stonehenge
+      },
+      { 
+        day: "D6", 
+        date: "2026/10/9", 
+        morning: "白金漢宮看衛兵交接，隨後散步至西敏區", 
+        afternoon: "參觀西敏寺，大笨鐘拍照，隨後前往倫敦西區準備看劇", 
+        evening: "觀賞經典西區音樂劇（如歌劇魅影或獅子王）", 
+        transport: "地鐵、步行", 
+        food: "Flat Iron Covent Garden 牛排", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "西敏寺電子票（1-2週前）、西區音樂劇（1-2個月前劃位）", 
+        notes: "衛兵交接人潮極多，建議提早 40 分鐘抵達卡位。西敏寺內部非常壯觀，語音導覽有中文版。音樂劇座位開演前 30 分鐘需進場。",
+        image: "https://images.unsplash.com/photo-1529655683826-09574835a14a?q=80&w=600&auto=format&fit=crop" // 大笨鐘 Big Ben
+      },
+      { 
+        day: "D7", 
+        date: "2026/10/10", 
+        morning: "【科茲窩鄉村＋牛津大學城一日遊】", 
+        afternoon: "走訪英國最美童話小鎮與最高學府", 
+        evening: "-", 
+        transport: "Local Tour 遊覽專車", 
+        food: "科茲窩小河畔景觀餐廳", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "郊區一日遊（出發前1個月線上報名）", 
+        notes: "週末去郊區路況可能較擁擠，專車接送是最安全放心的選擇。",
+        image: "https://images.unsplash.com/photo-1543872084-c7bd3822856f?q=80&w=600&auto=format&fit=crop" // 牛津大學 Oxford
+      },
+      { 
+        day: "D8", 
+        date: "2026/10/11", 
+        morning: "從市中心碼頭搭乘泰晤士河遊船，優雅前往格林威治", 
+        afternoon: "逛格林威治市集與古董尋寶，隨後登上本初子午線天文台", 
+        evening: "-", 
+        transport: "泰晤士河遊船、步行", 
+        food: "格林威治市集小吃", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "-", 
+        notes: "碼頭直接用手機感應上船即可享折價，免排隊買票。天文台位於丘陵上，散步上去視野極佳。",
+        image: "https://images.unsplash.com/photo-1511960017405-c0897587c6f0?q=80&w=600&auto=format&fit=crop" // 泰晤士河遊船船景
+      },
+      { 
+        day: "D9", 
+        date: "2026/10/12", 
+        morning: "【溫莎城堡皇家一日遊】搭火車直達溫莎，參觀女王生前最愛的城堡", 
+        afternoon: "返回帕丁頓市區", 
+        evening: "輕鬆用晚餐與休息", 
+        transport: "國鐵火車、步行", 
+        food: "溫莎百年古老英式酒吧 Pub 午餐、周邊料理", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "溫莎城堡時段票（出發前2週官網預購）", 
+        notes: "車站可直刷手機進站，Slough 站同月台轉車超簡單。連續奔波，今晚適合提早回民宿休息、整理行李。",
+        image: "https://images.unsplash.com/photo-1585468770731-01f65d6c8fe9?q=80&w=600&auto=format&fit=crop" // 溫莎城堡 Windsor Castle
+      },
+      { 
+        day: "D10", 
+        date: "2026/10/13", 
+        morning: "前往 V&A 博物館，欣賞世界頂級的工藝、設計與時尚館藏", 
+        afternoon: "海德公園悠閒散步，隨後前往頂級哈洛德百貨（Harrods）朝聖", 
+        evening: "-", 
+        transport: "巴士或地鐵、步行", 
+        food: "Kitchen W8（米其林一星，高CP午間法菜）", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "Kitchen W8 法菜（出發前2-3週官網預約）", 
+        notes: "V&A 的中庭咖啡廳非常美，累了可以喝杯咖啡。Kitchen W8 的 Set Lunch物超所值，一定要提早訂。",
+        image: "https://images.unsplash.com/photo-1559564454-05183c11a40d?q=80&w=600&auto=format&fit=crop" // 哈洛德百貨夜景
+      },
+      { 
+        day: "D11", 
+        date: "2026/10/14", 
+        morning: "參觀特拉法加廣場旁的國家美術館，欣賞梵谷《向日葵》", 
+        afternoon: "【Burberry Outlet 極簡直拼】前往東二區暢貨中心掃貨", 
+        evening: "換上漂亮衣服，前往 Fortnum & Mason 享受正統英式下午茶", 
+        transport: "地鐵、城際鐵路、步行", 
+        food: "Fortnum & Mason（皇家御用正統下午茶）", 
+        hotel: "倫敦帕丁頓的JS房間", 
+        reserve: "國家美術館（免票預約）、Fortnum & Mason（2-4週前預約）", 
+        notes: "買完戰利品先搭車回帕丁頓放，再優雅空手去吃下午茶。",
+        image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=600&auto=format&fit=crop" // 正統英式下午茶 Afternoon tea
+      },
+      { 
+        day: "D12", 
+        date: "2026/10/15", 
+        morning: "悠閒享用最後的道地英式早餐，並在帕丁頓周邊最後採買", 
+        afternoon: "17:30 準時由帕丁頓站出發前往機場", 
+        evening: "-", 
+        transport: "步行、伊莉莎白線（一車直達）", 
+        food: "享用當地 Full English Breakfast", 
+        hotel: "機上", 
+        reserve: "-", 
+        notes: "確認民宿是否可寄放行李，若不行可寄放於 Paddington 車站。30分鐘一車直達機場 T2。",
+        image: "https://images.unsplash.com/photo-1542296332-2e4473fac563?q=80&w=600&auto=format&fit=crop" // 機場航廈返程
+      }
+    ];
+
+    const createSvg = (paths, attrs = {}) => {
+      return e('svg', { xmlns: 'http://www.w3.org/2000/svg', width: '22', height: '22', viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: '2.5', strokeLinecap: 'round', strokeLinejoin: 'round', ...attrs }, ...paths);
+    };
+
+    const Icons = {
+      Map: () => createSvg([e('polygon', { points: '3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21' }), e('line', { x1: '9', y1: '3', x2: '9', y2: '21' }), e('line', { x1: '15', y1: '3', x2: '15', y2: '21' })]),
+      Home: () => createSvg([e('path', { d: 'm3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' }), e('polyline', { points: '9 22 9 12 15 12 15 22' })]),
+      Wallet: () => createSvg([e('path', { d: 'M21 12V7H5a2 2 0 0 1 0-4h14v4' }), e('path', { d: 'M3 5v14a2 2 0 0 0 2 2h16v-5' }), e('path', { d: 'M18 12a2 2 0 0 0 0 4h4v-4Z' })]),
+      PieChart: () => createSvg([e('path', { d: 'M21.21 15.89A10 10 0 1 1 8 2.83' }), e('path', { d: 'M22 12A10 10 0 0 0 12 2v10z' })]),
+      Link: () => createSvg([e('path', { d: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' }), e('polyline', { points: '15 3 21 3 21 9' }), e('line', { x1: '10', y1: '14', x2: '21', y2: '3' })], { width: '12', height: '12', className: 'inline ml-1 opacity-70' }),
+      ChevronDown: () => createSvg([e('polyline', { points: '6 9 12 15 18 9' })], { width: '16', height: '16' }),
+      ChevronUp: () => createSvg([e('polyline', { points: '18 15 12 9 6 15' })], { width: '16', height: '16' })
+    };
+
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('itinerary');
+      const [expenses, setExpenses] = useState([]);
+      const [expandedDay, setExpandedDay] = useState('D1');
+      const exchangeRate = 42;
+
+      useEffect(() => {
+        const savedExpenses = localStorage.getItem('londonExpenses');
+        if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
+      }, []);
+
+      useEffect(() => {
+        localStorage.setItem('londonExpenses', JSON.stringify(expenses));
+      }, [expenses]);
+
+      const openGoogleMaps = (query) => {
+        window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query + ' London'), '_blank');
+      };
+
+      const formatLinks = (text) => {
+        if (!text || text === '-') return e('span', { className: 'text-gray-400 italic text-xs' }, '無行程');
+        const parts = text.split(/，|、/);
+        return e('div', { className: 'flex flex-col gap-1.5 mt-1' },
+          parts.map((part, index) => e('button', {
+            key: index,
+            onClick: () => openGoogleMaps(part),
+            className: 'text-left font-medium text-slate-800 bg-slate-50 active:bg-slate-200 px-3 py-2.5 rounded-xl text-sm transition-colors border border-slate-200 flex justify-between items-center w-full'
+          }, part, e(Icons.Link)))
+        );
+      };
+
+      const ItineraryTab = () => {
+        return e('div', { className: 'space-y-3' },
+          e('h2', { className: 'text-xl font-bold text-slate-800 px-1 mb-1 border-l-4 border-royal-navy pl-2 flex justify-between items-center' }, 
+            '每日行程清單',
+            e('span', { className: 'text-xs font-normal text-slate-400' }, '點擊可展開景點與圖文')
+          ),
+          itineraryData.map((day, idx) => {
+            const isExpanded = expandedDay === day.day;
+            return e('div', { key: idx, className: 'bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden transition-all' },
+              e('div', { 
+                onClick: () => setExpandedDay(isExpanded ? null : day.day),
+                className: 'px-4 py-3.5 flex justify-between items-center cursor-pointer select-none ' + (isExpanded ? 'bg-royal-navy text-white' : 'bg-slate-50 text-slate-700')
+              },
+                e('div', { className: 'flex items-center gap-3' },
+                  e('span', { className: 'font-black text-base tracking-wide ' + (isExpanded ? 'text-london-gold' : 'text-royal-navy') }, day.day),
+                  e('span', { className: 'text-xs font-semibold tracking-wider opacity-80' }, day.date)
+                ),
+                e('div', { className: 'opacity-70' }, isExpanded ? e(Icons.ChevronUp) : e(Icons.ChevronDown))
+              ),
+              isExpanded && e('div', null,
+                day.image && e('div', { className: 'w-full h-44 bg-slate-200 overflow-hidden relative' }, 
+                  e('img', { 
+                    src: day.image, 
+                    alt: day.day + "景點圖", 
+                    className: "w-full h-full object-cover border-b",
+                    // 防錯機制：如果因為file://安全機制被檔，顯示優雅的預設漸層底色
+                    onError: (err) => { err.target.style.display = 'none'; }
+                  })
+                ),
+                e('div', { className: 'p-4 space-y-4 text-sm bg-white' },
+                  e('div', { className: 'grid grid-cols-1 gap-3.5' },
+                    e('div', null,
+                      e('div', { className: 'text-xs text-slate-400 font-bold uppercase tracking-wider mb-1' }, '🌅 Morning 早上'),
+                      formatLinks(day.morning)
+                    ),
+                    e('div', null,
+                      e('div', { className: 'text-xs text-slate-400 font-bold uppercase tracking-wider mb-1' }, '☀️ Afternoon 下午'),
+                      formatLinks(day.afternoon)
+                    ),
+                    e('div', null,
+                      e('div', { className: 'text-xs text-slate-400 font-bold uppercase tracking-wider mb-1' }, '🌙 Evening 晚上'),
+                      formatLinks(day.evening)
+                    )
+                  ),
+                  e('div', { className: 'bg-amber-50 p-3.5 rounded-xl border border-amber-200/70 mt-2' },
+                    e('span', { className: 'text-xs text-amber-800 font-bold block mb-1 flex items-center gap-1' }, '💡 Tube Tips & Bookings'),
+                    e('div', { className: 'text-slate-700 mb-1 text-xs leading-relaxed' }, e('strong', { className: 'text-slate-900' }, '預約：'), day.reserve),
+                    e('div', { className: 'text-slate-700 text-xs leading-relaxed' }, e('strong', { className: 'text-slate-900' }, '攻略：'), day.notes)
+                  )
+                )
+              )
+            );
+          })
+        );
+      };
+
+      const AccommodationTab = () => {
+        return e('div', { className: 'space-y-4' },
+          e('h2', { className: 'text-xl font-bold text-slate-800 px-1 border-l-4 border-royal-navy pl-2' }, '住宿與後勤指南'),
+          e('div', { className: "w-full h-40 bg-slate-200 overflow-hidden rounded-xl border shadow-sm" },
+            e('img', { 
+              src: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=600&auto=format&fit=crop", 
+              alt: "倫敦飯店意境圖", 
+              className: "w-full h-full object-cover",
+              onError: (err) => { err.target.style.display = 'none'; }
+            })
+          ),
+          e('div', { className: 'bg-white rounded-xl shadow-sm border p-5 relative overflow-hidden' },
+            e('div', { className: 'absolute right-0 top-0 bg-london-gold text-royal-navy text-[10px] font-black px-3 py-1 uppercase tracking-widest rounded-bl-lg' }, '11 Nights'),
+            e('h3', { className: 'text-lg font-bold text-royal-navy mb-1' }, '倫敦帕丁頓的JS房間'),
+            e('p', { className: 'text-slate-400 mb-4 text-xs' }, '固定留宿免搬行李 ‧ 帕丁頓樞紐特區'),
+            e('div', { className: 'space-y-3 border-t pt-4' },
+              e('div', { className: 'flex items-start gap-2.5' },
+                e('span', { className: 'text-base mt-0.5' }, '📍'),
+                e('div', null,
+                  e('div', { className: 'text-xs font-bold text-slate-400 uppercase tracking-wider' }, 'Address'),
+                  e('div', { className: 'text-sm font-medium text-slate-800 mt-0.5' }, '190 Sussex Gardens, London W2 1TU'),
+                  e('button', { 
+                    onClick: () => openGoogleMaps("190 Sussex Gardens, London"), 
+                    className: 'mt-2 text-xs bg-royal-navy text-white font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1 active:opacity-90' 
+                  }, '地圖導航', e(Icons.Link))
+                )
+              )
+            )
+          ),
+          e('div', { className: 'bg-red-50 rounded-xl border border-red-200/60 p-5' },
+            e('h3', { className: 'text-base font-bold text-british-red mb-2.5 flex items-center gap-1.5' }, '🚨 Emergency & Check-in'),
+            e('ul', { className: 'space-y-2.5 text-xs text-slate-700 list-disc pl-4 leading-relaxed' },
+              e('li', null, e('strong', { className: 'text-british-red' }, 'D1 入住必看：'), '民宿通常沒有 24 小時前台，請提前透過 Airbnb 確認抵達時間與入住方式。'),
+              e('li', null, e('strong', { className: 'text-british-red' }, 'D12 行李寄存：'), '若退房後無法寄放行李，可至 Paddington 車站的 Left Luggage 付費寄存中心辦理。')
+            )
+          )
+        );
+      };
+
+      const ExpenseTab = () => {
+        const [desc, setDesc] = useState('');
+        const [amount, setAmount] = useState('');
+        const [category, setCategory] = useState('飲食');
+        const categories = ['飲食', '交通', '購物', '門票', '住宿', '其他'];
+
+        const handleAdd = (event) => {
+          event.preventDefault();
+          if (!desc || !amount) return;
+          const gbp = parseFloat(amount);
+          const newExp = { id: Date.now(), date: new Date().toLocaleDateString('zh-TW'), desc, category, gbp, twd: Math.round(gbp * exchangeRate) };
+          setExpenses([newExp, ...expenses]);
+          setDesc(''); setAmount('');
+        };
+
+        const del = (id) => setExpenses(expenses.filter(item => item.id !== id));
+
+        return e('div', { className: 'space-y-4' },
+          e('div', { className: 'flex justify-between items-end px-1 border-l-4 border-royal-navy pl-2' },
+            e('h2', { className: 'text-xl font-bold text-slate-800' }, '公費記帳簿'),
+            e('span', { className: 'text-xs font-bold text-london-gold bg-royal-navy px-2 py-0.5 rounded' }, '固定匯率 £1 = ' + exchangeRate + ' TWD')
+          ),
+          e('form', { onSubmit: handleAdd, className: 'bg-white rounded-xl shadow-sm border p-4 space-y-4' },
+            e('div', { className: 'grid grid-cols-2 gap-3' },
+              e('div', null,
+                e('label', { className: 'block text-xs font-bold text-slate-400 mb-1' }, '項目名稱'),
+                e('input', { type: 'text', value: desc, onChange: (event) => setDesc(event.target.value), placeholder: '例: Flat Iron 牛排', className: 'w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:border-royal-navy', required: true })
+              ),
+              e('div', null,
+                e('label', { className: 'block text-xs font-bold text-slate-400 mb-1' }, '項目分類'),
+                e('select', { value: category, onChange: (event) => setCategory(event.target.value), className: 'w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:border-royal-navy bg-white' },
+                  categories.map(c => e('option', { key: c, value: c }, c))
+                )
+              )
+            ),
+            e('div', null,
+              e('label', { className: 'block text-xs font-bold text-slate-400 mb-1' }, '金額 (英鎊 GBP)'),
+              e('div', { className: 'relative' },
+                e('span', { className: 'absolute left-3.5 top-2.5 text-slate-400 font-bold' }, '£'),
+                e('input', { type: 'number', step: '0.01', value: amount, onChange: (event) => setAmount(event.target.value), placeholder: '0.00', className: 'w-full border border-slate-200 rounded-xl p-2.5 pl-8 text-sm outline-none focus:border-royal-navy', required: true })
+              ),
+              amount && e('div', { className: 'text-xs text-slate-400 mt-1.5 text-right font-medium' }, '換算台幣約 NT$ ' + Math.round(amount * exchangeRate).toLocaleString())
+            ),
+            e('button', { type: 'submit', className: 'w-full bg-royal-navy text-white font-bold rounded-xl py-3 text-sm tracking-wider active:opacity-90 transition-opacity' }, '新增一筆花費')
+          ),
+          e('div', { className: 'space-y-2 mt-4' },
+            e('h3', { className: 'text-xs font-bold text-slate-400 uppercase tracking-wider px-1' }, '消費明細'),
+            expenses.length === 0 ? e('div', { className: 'text-center text-slate-300 text-sm py-8 bg-white rounded-xl border border-dashed' }, '目前還沒有記帳紀錄喔！') : expenses.map(exp => (
+              e('div', { key: exp.id, className: 'bg-white rounded-xl p-3.5 shadow-sm border border-slate-100 flex justify-between items-center' },
+                e('div', null,
+                  e('div', { className: 'flex items-center gap-2' },
+                    e('span', { className: 'text-[10px] font-black bg-slate-100 text-slate-600 px-2 py-0.5 rounded' }, exp.category),
+                    e('span', { className: 'font-semibold text-slate-800 text-sm' }, exp.desc)
+                  ),
+                  e('div', { className: 'text-[10px] text-slate-400 mt-1 font-medium' }, exp.date)
+                ),
+                e('div', { className: 'text-right flex items-center gap-3.5' },
+                  e('div', null,
+                    e('div', { className: 'font-extrabold text-royal-navy text-sm' }, '£' + exp.gbp.toFixed(2)),
+                    e('div', { className: 'text-[10px] text-slate-400 font-medium' }, 'NT$' + exp.twd.toLocaleString())
+                  ),
+                  e('button', { onClick: () => del(exp.id), className: 'text-slate-300 hover:text-red-500 font-bold text-base p-1' }, '✕')
+                )
+              )
+            ))
+          )
+        );
+      };
+
+      const SummaryTab = () => {
+        const totalGBP = expenses.reduce((sum, item) => sum + item.gbp, 0);
+        const totalTWD = expenses.reduce((sum, item) => sum + item.twd, 0);
+        const catTotals = expenses.reduce((acc, item) => { acc[item.category] = (acc[item.category] || 0) + item.gbp; return acc; }, {});
+
+        return e('div', { className: 'space-y-4' },
+          e('h2', { className: 'text-xl font-bold text-slate-800 px-1 border-l-4 border-royal-navy pl-2' }, '預算花費總覽'),
+          e('div', { className: 'bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-md p-6 text-white text-center relative overflow-hidden border border-slate-700' },
+            e('div', { className: 'text-xs text-london-gold font-bold uppercase tracking-widest opacity-80 mb-1' }, 'Total Expenses'),
+            e('div', { className: 'text-4xl font-black mb-2 tracking-tight text-white' }, '£ ' + totalGBP.toFixed(2)),
+            e('div', { className: 'text-xs opacity-90 border-t border-slate-700 pt-2.5 inline-block px-6 font-medium text-slate-300' }, '等值台幣約 NT$ ' + totalTWD.toLocaleString())
+          ),
+          e('div', { className: 'bg-white rounded-xl shadow-sm border p-4' },
+            e('h3', { className: 'text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b pb-2' }, '各類支出佔比'),
+            Object.keys(catTotals).length === 0 ? e('div', { className: 'text-center text-slate-300 text-sm py-4' }, '暫無統計資料') : (
+              e('div', { className: 'space-y-4' },
+                Object.entries(catTotals).sort((a, b) => b[1] - a[1]).map(([cat, amount]) => {
+                  const pct = totalGBP > 0 ? ((amount / totalGBP) * 100).toFixed(1) : 0;
+                  return e('div', { key: cat },
+                    e('div', { className: 'flex justify-between text-xs mb-1.5' },
+                      e('span', { className: 'font-bold text-slate-700' }, cat),
+                      e('span', { className: 'font-extrabold text-royal-navy' }, '£' + amount.toFixed(2) + ' ', e('span', { className: 'text-[10px] text-slate-400 font-normal' }, '(' + pct + '%)'))
+                    ),
+                    e('div', { className: 'w-full bg-slate-100 rounded-full h-2' },
+                      e('div', { className: 'bg-london-gold h-2 rounded-full', style: { width: pct + '%' } })
+                    )
+                  );
+                })
+              )
+            )
+          )
+        );
+      };
+
+      const TabButton = (tab, iconComponent, label) => {
+        const isSel = activeTab === tab;
+        return e('button', {
+          onClick: () => setActiveTab(tab),
+          className: 'flex flex-col items-center justify-center w-full h-full transition-all active:scale-95 ' + (isSel ? 'text-royal-navy scale-105' : 'text-slate-400')
+        }, 
+          e('div', { className: isSel ? 'bg-slate-100 p-1.5 rounded-xl text-royal-navy' : 'p-1.5' }, e(iconComponent)), 
+          e('span', { className: 'text-[10px] mt-0.5 font-bold tracking-wider' }, label)
+        );
+      };
+
+      return e('div', { className: 'max-w-md mx-auto min-h-screen relative pb-nav bg-slate-50 shadow-xl' },
+        e('div', { className: 'bg-royal-navy border-b border-slate-800 sticky top-0 z-10 px-4 py-3.5 shadow-md flex justify-center items-center gap-2' },
+          e('span', { className: 'text-lg' }, '🇬🇧'),
+          e('h1', { className: 'font-black text-sm tracking-widest text-white uppercase' }, 'London Bound 12 Days')
+        ),
+        e('div', { className: 'p-4' },
+          activeTab === 'itinerary' && e(ItineraryTab),
+          activeTab === 'accommodation' && e(AccommodationTab),
+          activeTab === 'expense' && e(ExpenseTab),
+          activeTab === 'summary' && e(SummaryTab)
+        ),
+        e('div', { className: 'fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center h-20 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] max-w-md mx-auto px-2' },
+          TabButton('itinerary', Icons.Map, '行程'),
+          TabButton('accommodation', Icons.Home, '住宿'),
+          TabButton('expense', Icons.Wallet, '記帳'),
+          TabButton('summary', Icons.PieChart, '總計')
+        )
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(e(App));
+  </script>
+</body>
+</html>
