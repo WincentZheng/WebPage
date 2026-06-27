@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>倫敦12天自由行專屬 APP</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pb-nav { padding-bottom: 80px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const itineraryData = [
+      { day: "D1", date: "2026/10/4", morning: "-", afternoon: "抵達希斯洛機場第二航廈（LHR T2），辦理入境", evening: "民宿 Check-in，周邊熟悉環境、採買物資", transport: "伊莉莎白線、步行", food: "車站 M&S 超市輕食", hotel: "倫敦帕丁頓的JS房間", reserve: "-", notes: "全程平路有電梯，直接推行李進民宿。可先在超市買好大瓶水與隔天零食。" },
+      { day: "D2", date: "2026/10/5", morning: "帕丁頓出發，前往國王十字車站朝聖哈利波特 9 ¾ 月台", afternoon: "前往肯頓市集（Camden Market），體驗復古龐克與市集文化", evening: "散步至櫻草花山（Primrose Hill）俯瞰全倫敦絕美日落", transport: "地鐵、巴士、步行", food: "肯頓市集水岸小吃、市區傳統英式 Pub", hotel: "倫敦帕丁頓的JS房間", reserve: "-", notes: "拍月台照片如果排隊太長，可先逛旁邊的官方商店。市集內有很多異國小吃，邊走邊吃最道地。傍晚風大，記得多帶一件防風外套。" },
+      { day: "D3", date: "2026/10/6", morning: "帕丁頓搭巴士直達大英博物館，主攻埃及館與希臘帕德嫩", afternoon: "散步至柯芬園（Covent Garden）與蘇活區（Soho）街區散步", evening: "-", transport: "雙層巴士、步行", food: "Bancone（米其林必比登手工義麵）", hotel: "倫敦帕丁頓的JS房間", reserve: "大英博物館（出發前3-5天預約免費票）、Bancone 義大利麵（出發前2週官網訂位）", notes: "搭巴士可免去地鐵走樓梯的痛苦，還能沿途賞街景。柯芬園街頭藝人表演很精彩，看表演時注意隨身財物。" },
+      { day: "D4", date: "2026/10/7", morning: "搭地鐵直達倫敦塔，參觀皇家珠寶與千年古堡", afternoon: "步行橫跨倫敦塔橋，至波羅市場（Borough Market）美食尋寶", evening: "登上 Sky Garden 空中花園，飽覽泰晤士河岸黃金夜景", transport: "地鐵、步行", food: "波羅市場在地小吃", hotel: "倫敦帕丁頓的JS房間", reserve: "倫敦塔電子票（出發前1-2週預購）、Sky Garden（出發前3週週一線上搶免費票）", notes: "線上先買好電子票可排特快通道，省下現場排隊時間。Sky Garden 嚴格執行安檢，水瓶內若有水需要倒掉才能進場。" },
+      { day: "D5", date: "2026/10/8", morning: "【巨石陣＋巴斯古城一日遊】", afternoon: "專車接送往返郊區", evening: "-", transport: "Local Tour 遊覽專車", food: "巴斯傳統英式茶屋、市區小餐館", hotel: "倫敦帕丁頓的JS房間", reserve: "郊區一日遊（出發前1個月線上報名）", notes: "帕丁頓出發非常方便，在車上可以充分補眠休息。" },
+      { day: "D6", date: "2026/10/9", morning: "白金漢宮看衛兵交接，隨後散步至西敏區", afternoon: "參觀西敏寺，大笨鐘拍照，隨後前往倫敦西區準備看劇", evening: "觀賞經典西區音樂劇（如歌劇魅影或獅子王）", transport: "地鐵、步行", food: "Flat Iron Covent Garden 牛排", hotel: "倫敦帕丁頓的JS房間", reserve: "西敏寺電子票（1-2週前）、西區音樂劇（1-2個月前劃位）", notes: "衛兵交接人潮極多，建議提早 40 分鐘抵達卡位。西敏寺內部非常壯觀，語音導覽有中文版。音樂劇座位開演前 30 分鐘需進場。" },
+      { day: "D7", date: "2026/10/10", morning: "【科茲窩鄉村＋牛津大學城一日遊】", afternoon: "走訪英國最美童話小鎮與最高學府", evening: "-", transport: "Local Tour 遊覽專車", food: "科茲窩小河畔景觀餐廳", hotel: "倫敦帕丁頓的JS房間", reserve: "郊區一日遊（出發前1個月線上報名）", notes: "週末去郊區路況可能較擁擠，專車接送是最安全放心的選擇。" },
+      { day: "D8", date: "2026/10/11", morning: "從市中心碼頭搭乘泰晤士河遊船，優雅前往格林威治", afternoon: "逛格林威治市集與古董尋寶，隨後登上本初子午線天文台", evening: "-", transport: "泰晤士河遊船、步行", food: "格林威治市集小吃", hotel: "倫敦帕丁頓的JS房間", reserve: "-", notes: "碼頭直接用手機感應上船即可享折價，免排隊買票。天文台位於丘陵上，散步上去視野極佳。" },
+      { day: "D9", date: "2026/10/12", morning: "【溫莎城堡皇家一日遊】搭火車直達溫莎，參觀女王生前最愛的城堡", afternoon: "返回帕丁頓市區", evening: "輕鬆用晚餐與休息", transport: "國鐵火車、步行", food: "溫莎百年古老英式酒吧 Pub 午餐、周邊料理", hotel: "倫敦帕丁頓的JS房間", reserve: "溫莎城堡時段票（出發前2週官網預購）", notes: "車站可直刷手機進站，Slough 站同月台轉車超簡單。連續奔波，今晚適合提早回民宿休息、整理行李。" },
+      { day: "D10", date: "2026/10/13", morning: "前往 V&A 博物館，欣賞世界頂級的工藝、設計與時尚館藏", afternoon: "海德公園悠閒散步，隨後前往頂級哈洛德百貨（Harrods）朝聖", evening: "-", transport: "巴士或地鐵、步行", food: "Kitchen W8（米其林一星，高CP午間法菜）", hotel: "倫敦帕丁頓的JS房間", reserve: "Kitchen W8 法菜（出發前2-3週官網預約）", notes: "V&A 的中庭咖啡廳非常美，累了可以喝杯咖啡。Kitchen W8 的 Set Lunch 物超所值，一定要提早訂。" },
+      { day: "D11", date: "2026/10/14", morning: "參觀特拉法加廣場旁的國家美術館，欣賞梵谷《向日葵》", afternoon: "【Burberry Outlet 極簡直拼】前往東二區暢貨中心掃貨", evening: "換上漂亮衣服，前往 Fortnum & Mason 享受正統英式下午茶", transport: "地鐵、城際鐵路、步行", food: "Fortnum & Mason（皇家御用正統下午茶）", hotel: "倫敦帕丁頓的JS房間", reserve: "國家美術館（免票預約）、Fortnum & Mason（2-4週前預約）", notes: "買完戰利品先搭車回帕丁頓放，再優雅空手去吃下午茶。" },
+      { day: "D12", date: "2026/10/15", morning: "悠閒享用最後的道地英式早餐，並在帕丁頓周邊最後採買", afternoon: "17:30 準時由帕丁頓站出發前往機場", evening: "-", transport: "步行、伊莉莎白線（一車直達）", food: "享用當地 Full English Breakfast", hotel: "機上", reserve: "-", notes: "確認民宿是否可寄放行李，若不行可寄放於 Paddington 車站。30分鐘一車直達機場 T2。" }
+    ];
+
+    const Icons = {
+      Map: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>,
+      Home: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>,
+      Wallet: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>,
+      PieChart: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>,
+      Link: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline ml-1"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+    };
+
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('itinerary');
+      const [expenses, setExpenses] = useState([]);
+      const exchangeRate = 42;
+
+      useEffect(() => {
+        const savedExpenses = localStorage.getItem('londonExpenses');
+        if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
+      }, []);
+
+      useEffect(() => {
+        localStorage.setItem('londonExpenses', JSON.stringify(expenses));
+      }, [expenses]);
+
+      const openGoogleMaps = (query) => {
+        window.open(`https://maps.google.com/?q=${encodeURIComponent(query + ' London')}`, '_blank');
+      };
+
+      const formatLinks = (text) => {
+        if (!text || text === '-') return <span className="text-gray-400">-</span>;
+        const parts = text.split(/，|、/);
+        return (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {parts.map((part, index) => (
+              <button key={index} onClick={() => openGoogleMaps(part)} className="text-left text-blue-700 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded text-sm transition-colors border border-blue-100">
+                {part} <Icons.Link />
+              </button>
+            ))}
+          </div>
+        );
+      };
+
+      const ItineraryTab = () => (
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-gray-800 px-2">每日行程總覽</h2>
+          {itineraryData.map((day, idx) => (
+            <div key={idx} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="bg-blue-600 text-white px-4 py-2 flex justify-between items-center">
+                <span className="font-bold">{day.day}</span>
+                <span className="text-sm opacity-90">{day.date}</span>
+              </div>
+              <div className="p-4 space-y-4 text-sm">
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="bg-gray-50 p-3 rounded-lg border">
+                    <div className="text-xs text-gray-500 font-bold mb-1">🌅 早上</div>
+                    {formatLinks(day.morning)}
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg border">
+                    <div className="text-xs text-gray-500 font-bold mb-1">☀️ 下午</div>
+                    {formatLinks(day.afternoon)}
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg border">
+                    <div className="text-xs text-gray-500 font-bold mb-1">🌙 晚上</div>
+                    {formatLinks(day.evening)}
+                  </div>
+                </div>
+                <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                  <span className="text-xs text-yellow-800 font-bold block mb-1">⚠️ 預約與密技</span>
+                  <div className="text-gray-700 mb-1 text-xs"><strong>預約：</strong>{day.reserve}</div>
+                  <div className="text-gray-700 text-xs"><strong>密技：</strong>{day.notes}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+
+      const AccommodationTab = () => (
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-gray-800 px-2">住宿與後勤資訊</h2>
+          <div className="bg-white rounded-xl shadow-sm border p-5">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">倫敦帕丁頓的JS房間</h3>
+            <p className="text-gray-600 mb-4 text-sm">11 晚固定住宿，免除搬運轉移煩惱。</p>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <span className="mr-2">📍</span>
+                <div>
+                  <div className="text-sm font-bold">地址</div>
+                  <div className="text-sm text-gray-600">190 Sussex Gardens, London W2 1TU</div>
+                  <button onClick={() => openGoogleMaps("190 Sussex Gardens, London")} className="mt-1 text-sm text-blue-600 underline">在 Google Map 開啟</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-red-50 rounded-xl shadow-sm border border-red-100 p-5">
+            <h3 className="text-lg font-bold text-red-800 mb-3 flex items-center">🚨 重要注意事項</h3>
+            <ul className="space-y-2 text-sm text-red-900 list-disc pl-5">
+              <li><strong>D1 入住聯繫：</strong> 民宿通常沒有 24 小時前台，請提前透過 Airbnb 確認抵達時間與入住方式。</li>
+              <li><strong>D12 行李寄放：</strong> 若退房後無法寄放行李，可至 Paddington 車站的 Left Luggage（付費行李寄存中心）。</li>
+            </ul>
+          </div>
+        </div>
+      );
+
+      const ExpenseTab = () => {
+        const [desc, setDesc] = useState('');
+        const [amount, setAmount] = useState('');
+        const [category, setCategory] = useState('飲食');
+        const categories = ['飲食', '交通', '購物', '門票', '住宿', '其他'];
+
+        const handleAdd = (e) => {
+          e.preventDefault();
+          if (!desc || !amount) return;
+          const gbp = parseFloat(amount);
+          const newExp = { id: Date.now(), date: new Date().toLocaleDateString('zh-TW'), desc, category, gbp, twd: Math.round(gbp * exchangeRate) };
+          setExpenses([newExp, ...expenses]);
+          setDesc(''); setAmount('');
+        };
+
+        const del = (id) => setExpenses(expenses.filter(e => e.id !== id));
+
+        return (
+          <div className="space-y-4">
+            <div className="flex justify-between items-end px-2">
+              <h2 className="text-xl font-bold text-gray-800">記帳系統</h2>
+              <span className="text-xs text-gray-500">匯率: £1 = {exchangeRate} NT$</span>
+            </div>
+            <form onSubmit={handleAdd} className="bg-white rounded-xl shadow-sm border p-4 space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">消費項目</label>
+                  <input type="text" value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="如: 牛排" className="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">分類</label>
+                  <select value={category} onChange={(e)=>setCategory(e.target.value)} className="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">金額 (GBP)</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2 text-gray-500">£</span>
+                  <input type="number" step="0.01" value={amount} onChange={(e)=>setAmount(e.target.value)} placeholder="0.00" className="w-full border rounded-lg p-2 pl-7 text-sm outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                {amount && <div className="text-xs text-gray-400 mt-1 text-right">約 NT$ {Math.round(amount * exchangeRate).toLocaleString()}</div>}
+              </div>
+              <button type="submit" className="w-full bg-blue-600 text-white font-bold rounded-lg py-2 hover:bg-blue-700">新增消費</button>
+            </form>
+            <div className="space-y-2 mt-4">
+              <h3 className="text-sm font-bold text-gray-700 px-2">消費明細</h3>
+              {expenses.length === 0 ? <div className="text-center text-gray-400 text-sm py-4">尚無消費紀錄</div> : expenses.map(exp => (
+                <div key={exp.id} className="bg-white rounded-lg p-3 shadow-sm border flex justify-between items-center">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">{exp.category}</span>
+                      <span className="font-bold text-sm">{exp.desc}</span>
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">{exp.date}</div>
+                  </div>
+                  <div className="text-right flex items-center gap-3">
+                    <div>
+                      <div className="font-bold text-blue-600 text-sm">£{exp.gbp.toFixed(2)}</div>
+                      <div className="text-xs text-gray-400">NT${exp.twd.toLocaleString()}</div>
+                    </div>
+                    <button onClick={()=>del(exp.id)} className="text-red-400 hover:text-red-600 font-bold p-1">✕</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      const SummaryTab = () => {
+        const totalGBP = expenses.reduce((sum, exp) => sum + exp.gbp, 0);
+        const totalTWD = expenses.reduce((sum, exp) => sum + exp.twd, 0);
+        const catTotals = expenses.reduce((acc, exp) => { acc[exp.category] = (acc[exp.category] || 0) + exp.gbp; return acc; }, {});
+
+        return (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-gray-800 px-2">消費總計</h2>
+            <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-md p-6 text-white text-center">
+              <div className="text-sm opacity-80 mb-1">總花費 (英鎊)</div>
+              <div className="text-4xl font-bold mb-2">£ {totalGBP.toFixed(2)}</div>
+              <div className="text-sm opacity-90 border-t border-blue-400 pt-2 inline-block px-4">約 NT$ {totalTWD.toLocaleString()}</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border p-4">
+              <h3 className="text-sm font-bold text-gray-700 mb-3 border-b pb-2">分類統計</h3>
+              {Object.keys(catTotals).length === 0 ? <div className="text-center text-gray-400 text-sm py-2">無資料</div> : (
+                <div className="space-y-3">
+                  {Object.entries(catTotals).sort((a,b) => b[1] - a[1]).map(([cat, amount]) => {
+                    const pct = ((amount / totalGBP) * 100).toFixed(1);
+                    return (
+                      <div key={cat}>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="font-medium text-gray-700">{cat}</span>
+                          <span className="font-bold">£{amount.toFixed(2)} <span className="text-xs text-gray-400 font-normal">({pct}%)</span></span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-1.5"><div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${pct}%` }}></div></div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div className="max-w-md mx-auto min-h-screen relative pb-nav bg-gray-50">
+          <div className="bg-white border-b sticky top-0 z-10 px-4 py-3 shadow-sm flex justify-center">
+            <h1 className="font-extrabold text-lg tracking-wide text-gray-800">🇬🇧 倫敦之旅專屬小幫手</h1>
+          </div>
+          <div className="p-4">
+            {activeTab === 'itinerary' && <ItineraryTab />}
+            {activeTab === 'accommodation' && <AccommodationTab />}
+            {activeTab === 'expense' && <ExpenseTab />}
+            {activeTab === 'summary' && <SummaryTab />}
+          </div>
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center h-16 z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] max-w-md mx-auto">
+            <button onClick={() => setActiveTab('itinerary')} className={`flex flex-col items-center justify-center w-full h-full ${activeTab === 'itinerary' ? 'text-blue-600' : 'text-gray-400'}`}>
+              <Icons.Map /><span className="text-[10px] mt-1 font-bold">行程</span>
+            </button>
+            <button onClick={() => setActiveTab('accommodation')} className={`flex flex-col items-center justify-center w-full h-full ${activeTab === 'accommodation' ? 'text-blue-600' : 'text-gray-400'}`}>
+              <Icons.Home /><span className="text-[10px] mt-1 font-bold">住宿</span>
+            </button>
+            <button onClick={() => setActiveTab('expense')} className={`flex flex-col items-center justify-center w-full h-full ${activeTab === 'expense' ? 'text-blue-600' : 'text-gray-400'}`}>
+              <Icons.Wallet /><span className="text-[10px] mt-1 font-bold">記帳</span>
+            </button>
+            <button onClick={() => setActiveTab('summary')} className={`flex flex-col items-center justify-center w-full h-full ${activeTab === 'summary' ? 'text-blue-600' : 'text-gray-400'}`}>
+              <Icons.PieChart /><span className="text-[10px] mt-1 font-bold">總計</span>
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
