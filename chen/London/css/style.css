@@ -1,29 +1,36 @@
 /* ==========================================================================
-   🇬🇧 倫敦 2026 自由行 - 行動伴旅系統 Design System & Core Styles
-   Modern Mobile-First Web Application with Glassmorphism & British Elegance
+   🇬🇧 倫敦 2026 自由行 - 行動伴旅系統 Design System
+   Modern Mobile-First Web Application with Glassmorphism, Dual Themes & Font Scaling
    ========================================================================== */
 
 :root {
-  /* Color Palette: Royal British Navy & High Contrast Accents */
-  --bg-dark: #080c16;
-  --bg-card: rgba(18, 25, 43, 0.78);
-  --bg-card-hover: rgba(26, 36, 61, 0.9);
-  --bg-surface: #0f1629;
-  --bg-input: rgba(15, 22, 41, 0.85);
+  /* Font Scaling System */
+  --font-base: 15px;
+  --font-scale: 1;
+
+  /* Default Dark Mode (Royal British Navy Theme) */
+  --bg-dark: #070b14;
+  --bg-surface: #0e1526;
+  --bg-card: rgba(18, 26, 44, 0.85);
+  --bg-card-hover: rgba(26, 38, 64, 0.95);
+  --bg-card-solid: #121a2c;
+  --bg-input: rgba(14, 21, 38, 0.9);
   
-  --primary: #3b82f6;          /* Royal Oxford Blue */
+  --primary: #3b82f6;           /* Royal Oxford Blue */
+  --primary-hover: #2563eb;
   --primary-glow: rgba(59, 130, 246, 0.35);
-  --accent-gold: #f59e0b;       /* British Royal Amber Gold */
+  --accent-gold: #f59e0b;        /* British Royal Amber Gold */
   --accent-gold-glow: rgba(245, 158, 11, 0.25);
-  --accent-red: #ef4444;        /* London Bus Red */
-  --accent-green: #10b981;      /* Emerald Transit */
-  --accent-purple: #8b5cf6;     /* Royal Violet */
+  --accent-red: #ef4444;         /* London Bus Red */
+  --accent-green: #10b981;       /* Emerald Transit */
+  --accent-purple: #8b5cf6;      /* Royal Violet */
+  --accent-cyan: #06b6d4;
 
   --text-main: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(59, 130, 246, 0.5);
+  --text-secondary: #cbd5e1;
+  --text-muted: #8492a6;
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --border-active: rgba(59, 130, 246, 0.55);
 
   --radius-xs: 6px;
   --radius-sm: 10px;
@@ -31,29 +38,130 @@
   --radius-lg: 22px;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.22);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 25px rgba(59, 130, 246, 0.25);
 
   --nav-height: 68px;
-  --header-height: 64px;
   --safe-bottom: env(safe-area-inset-bottom, 16px);
 
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
 }
 
-/* Light Mode Overrides (Optional / Default is Sleek Night Mode) */
+/* ================= Font Scaling Attributes ================= */
+html[data-font-size="normal"] {
+  --font-base: 15px;
+  --font-scale: 1;
+}
+
+html[data-font-size="large"] {
+  --font-base: 17px;
+  --font-scale: 1.15;
+}
+
+html[data-font-size="xlarge"] {
+  --font-base: 19px;
+  --font-scale: 1.30;
+}
+
+/* ================= ☀️ Light Theme Overrides (純白優雅英倫風) ================= */
 body.light-theme {
   --bg-dark: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.88);
-  --bg-card-hover: rgba(255, 255, 255, 0.98);
-  --bg-surface: #ffffff;
-  --bg-input: #f8fafc;
+  --bg-surface: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-card-hover: #ffffff;
+  --bg-card-solid: #ffffff;
+  --bg-input: #ffffff;
+
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-glow: rgba(29, 78, 216, 0.18);
+  --accent-gold: #d97706;
+  --accent-gold-glow: rgba(217, 119, 6, 0.15);
+  --accent-red: #dc2626;
+  --accent-green: #059669;
+
   --text-main: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
   --border-subtle: rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.06);
+  --border-active: rgba(29, 78, 216, 0.4);
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+body.light-theme .bg-glow-1 {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(245, 158, 11, 0.05) 50%, transparent 70%);
+}
+body.light-theme .bg-glow-2 {
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.04) 0%, transparent 60%);
+}
+
+body.light-theme .top-header,
+body.light-theme .bottom-nav {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .hero-clock-card.primary-clock {
+  background: linear-gradient(135deg, #1e3a8a, #172554);
+  color: #ffffff;
+}
+body.light-theme .hero-clock-card.primary-clock .clock-hero-time {
+  color: #ffffff;
+}
+body.light-theme .hero-clock-card.primary-clock .clock-hero-date {
+  color: #bfdbfe;
+}
+body.light-theme .hero-clock-card.secondary-clock,
+body.light-theme .hero-weather-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .day-banner-card {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  color: #ffffff;
+}
+body.light-theme .day-badge-large {
+  color: #ffffff;
+}
+body.light-theme .day-date-tag {
+  color: #dbeafe;
+}
+body.light-theme .day-theme-title {
+  color: #ffffff;
+}
+body.light-theme .day-tag {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+body.light-theme .time-card,
+body.light-theme .place-card,
+body.light-theme .emergency-card,
+body.light-theme .guide-item,
+body.light-theme .check-item,
+body.light-theme .expense-item {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .sub-info-card {
+  background: #f1f5f9;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-theme .budget-summary-card {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #ffffff;
+}
+
+body.light-theme .modal-sheet {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* ================= Base & Layout ================= */
@@ -64,7 +172,12 @@ body.light-theme {
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html {
+  font-size: var(--font-base);
+  transition: font-size 0.2s ease;
+}
+
+body {
   width: 100%;
   min-height: 100%;
   background-color: var(--bg-dark);
@@ -72,17 +185,13 @@ html, body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-}
-
-body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 100vh;
-  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Ambient Background Light Gradients */
+/* Ambient Background Lights */
 .bg-glow-1 {
   position: fixed;
   top: -100px;
@@ -90,9 +199,10 @@ body {
   transform: translateX(-50%);
   width: 600px;
   height: 400px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(139, 92, 246, 0.07) 50%, transparent 70%);
   pointer-events: none;
   z-index: 0;
+  transition: background 0.3s ease;
 }
 .bg-glow-2 {
   position: fixed;
@@ -100,12 +210,13 @@ body {
   right: 10%;
   width: 400px;
   height: 350px;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.07) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
+  transition: background 0.3s ease;
 }
 
-/* Mobile Frame Container (Max 480px on desktop for realistic mobile testing, 100% on phone) */
+/* Mobile Frame Container */
 #app-viewport {
   width: 100%;
   max-width: 480px;
@@ -116,6 +227,7 @@ body {
   display: flex;
   flex-direction: column;
   z-index: 1;
+  transition: background-color 0.3s ease;
 }
 
 /* ================= Top Bar Header ================= */
@@ -123,11 +235,12 @@ body {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(15, 22, 41, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(14, 21, 38, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 10px 16px 12px;
+  padding: 10px 16px 10px;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .header-row {
@@ -143,13 +256,13 @@ body {
 }
 
 .brand-flag {
-  font-size: 26px;
+  font-size: 1.8rem;
   line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .brand-titles h1 {
-  font-size: 17px;
+  font-size: 1.15rem;
   font-weight: 800;
   letter-spacing: -0.3px;
   color: var(--text-main);
@@ -159,17 +272,17 @@ body {
 }
 
 .brand-badge {
-  font-size: 10px;
+  font-size: 0.72rem;
   padding: 2px 7px;
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.2));
   color: var(--accent-gold);
   border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: var(--radius-full);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .brand-subtitle {
-  font-size: 11px;
+  font-size: 0.78rem;
   color: var(--text-muted);
   margin-top: 1px;
 }
@@ -177,13 +290,13 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .icon-btn {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
+  color: var(--text-main);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -192,63 +305,223 @@ body {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 15px;
+  font-size: 1rem;
+}
+body.light-theme .icon-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 .icon-btn:hover, .icon-btn:active {
   background: rgba(59, 130, 246, 0.2);
-  color: var(--text-main);
   border-color: var(--primary);
   transform: scale(0.96);
 }
 
-/* Dual Timezone & Weather Pill */
-.dual-time-bar {
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+/* ================= 🔤 Font Size Quick Bar ================= */
+.font-scale-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  margin-top: 8px;
+  font-size: 0.8rem;
 }
-
-.clock-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+body.light-theme .font-scale-bar {
+  background: rgba(0, 0, 0, 0.03);
 }
-.clock-label {
+.fs-label {
   color: var(--text-muted);
-  font-weight: 600;
-}
-.clock-val {
-  color: var(--accent-gold);
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.5px;
-}
-
-.weather-badge {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #38bdf8;
+}
+.fs-pills-wrap {
+  display: flex;
+  gap: 4px;
+}
+.fs-pill {
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.fs-pill.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* ================= 🌟 Hero Status Card (倫敦 vs 台北時間 + 天氣) ================= */
+.time-weather-hero {
+  padding: 10px 14px 4px;
+}
+
+.hero-clocks-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 10px;
+}
+
+/* London Primary Clock */
+.hero-clock-card.primary-clock {
+  background: linear-gradient(145deg, rgba(20, 31, 56, 0.95), rgba(12, 19, 36, 0.98));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+.hero-clock-card.primary-clock::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.25), transparent 70%);
+  pointer-events: none;
+}
+
+.clock-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.clock-flag-tag {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.clock-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulseDot 2s infinite;
+}
+@keyframes pulseDot {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.clock-hero-time {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  margin: 6px 0 3px;
+  text-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
+}
+.clock-hero-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
   font-weight: 600;
 }
 
-/* ================= Main Tab Views ================= */
+/* Side Column: Taipei Clock & Weather */
+.hero-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hero-clock-card.secondary-clock {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+}
+.clock-side-time {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #38bdf8;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+body.light-theme .clock-side-time {
+  color: #0284c7;
+}
+
+.hero-weather-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.weather-row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.weather-big-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.weather-temp-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.weather-temp {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+.weather-city {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.weather-tip-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  white-space: nowrap;
+}
+body.light-theme .weather-tip-pill {
+  color: #0369a1;
+  background: rgba(2, 132, 199, 0.1);
+}
+
+/* ================= Main Content Views ================= */
 .main-content {
   flex: 1;
-  padding: 12px 14px 100px;
+  padding: 8px 14px 100px;
   display: flex;
   flex-direction: column;
 }
 
 .tab-pane {
   display: none;
-  animation: fadeIn 0.25s ease-out;
+  animation: fadeIn 0.22s ease-out;
 }
 .tab-pane.active {
   display: block;
@@ -264,10 +537,10 @@ body {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 2px 12px;
-  margin-bottom: 12px;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  padding: 4px 2px 10px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .itinerary-scroll-nav::-webkit-scrollbar {
   display: none;
@@ -279,22 +552,22 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
-  min-width: 64px;
+  padding: 8px 14px;
+  min-width: 66px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .day-pill .dp-day {
-  font-size: 13px;
+  font-size: 0.95rem;
   font-weight: 800;
 }
 .day-pill .dp-date {
-  font-size: 10px;
-  opacity: 0.75;
+  font-size: 0.72rem;
+  opacity: 0.8;
   margin-top: 2px;
 }
 .day-pill:hover {
@@ -315,11 +588,11 @@ body {
 
 /* Day Header Banner */
 .day-banner-card {
-  background: linear-gradient(135deg, rgba(30, 41, 69, 0.9), rgba(17, 24, 39, 0.95));
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: linear-gradient(135deg, rgba(28, 41, 71, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -329,9 +602,9 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  width: 120px;
+  width: 140px;
   height: 100%;
-  background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.15), transparent 70%);
+  background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.18), transparent 70%);
   pointer-events: none;
 }
 .day-banner-top {
@@ -340,7 +613,7 @@ body {
   justify-content: space-between;
 }
 .day-badge-large {
-  font-size: 24px;
+  font-size: 1.55rem;
   font-weight: 900;
   color: #60a5fa;
   display: flex;
@@ -348,16 +621,16 @@ body {
   gap: 8px;
 }
 .day-date-tag {
-  font-size: 12px;
+  font-size: 0.82rem;
   color: var(--text-secondary);
-  font-weight: 600;
+  font-weight: 700;
 }
 .day-theme-title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--text-main);
   margin-top: 6px;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 .day-tags {
   display: flex;
@@ -366,12 +639,13 @@ body {
   margin-top: 10px;
 }
 .day-tag {
-  font-size: 11px;
-  padding: 3px 8px;
-  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-full);
   color: var(--accent-gold);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 /* Schedule Time Slot Cards */
@@ -387,11 +661,10 @@ body {
   border-radius: var(--radius-md);
   padding: 14px 16px;
   transition: all 0.2s ease;
-  position: relative;
 }
 .time-card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 .time-card-header {
   display: flex;
@@ -400,10 +673,10 @@ body {
   margin-bottom: 6px;
 }
 .time-icon {
-  font-size: 18px;
+  font-size: 1.25rem;
 }
 .time-period {
-  font-size: 12px;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -414,8 +687,8 @@ body {
 .time-period.dinner { color: #f43f5e; }
 
 .time-content {
-  font-size: 14px;
-  line-height: 1.55;
+  font-size: 0.95rem;
+  line-height: 1.6;
   color: var(--text-main);
   font-weight: 500;
 }
@@ -424,7 +697,7 @@ body {
 .sub-info-card {
   margin-top: 14px;
   padding: 14px 16px;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(14, 21, 38, 0.65);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   display: flex;
@@ -435,8 +708,8 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 0.88rem;
+  line-height: 1.55;
 }
 .sub-info-label {
   flex-shrink: 0;
@@ -444,7 +717,7 @@ body {
   align-items: center;
   gap: 4px;
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 800;
 }
 .sub-info-val {
   color: var(--text-secondary);
@@ -452,10 +725,10 @@ body {
 
 /* Places Quick Navigation Grid */
 .places-section {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 .section-title {
-  font-size: 13px;
+  font-size: 0.85rem;
   font-weight: 800;
   color: var(--text-muted);
   letter-spacing: 0.5px;
@@ -469,13 +742,13 @@ body {
 .places-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 .place-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 13px 15px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
@@ -489,21 +762,22 @@ body {
   transform: translateX(3px);
 }
 .place-meta h4 {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   color: var(--text-main);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .place-meta p {
-  font-size: 12px;
+  font-size: 0.8rem;
   color: var(--text-muted);
   margin-top: 3px;
+  line-height: 1.4;
 }
 .place-action-btn {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 800;
   padding: 6px 12px;
   background: rgba(59, 130, 246, 0.15);
   color: #60a5fa;
@@ -514,13 +788,18 @@ body {
   gap: 4px;
   flex-shrink: 0;
 }
+body.light-theme .place-action-btn {
+  background: rgba(29, 78, 216, 0.1);
+  color: #1d4ed8;
+  border-color: rgba(29, 78, 216, 0.25);
+}
 
-/* ================= Tab 2: Splitwise Multi-Person Budget (記帳分帳) ================= */
+/* ================= Tab 2: Splitwise Multi-Person Budget ================= */
 .budget-summary-card {
   background: linear-gradient(135deg, rgba(24, 34, 58, 0.95), rgba(15, 23, 42, 0.98));
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: 18px 20px;
   margin-bottom: 16px;
   box-shadow: var(--shadow-md);
 }
@@ -532,7 +811,7 @@ body {
 }
 
 .budget-total-label {
-  font-size: 12px;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -540,7 +819,7 @@ body {
 }
 
 .budget-total-amt {
-  font-size: 30px;
+  font-size: 2rem;
   font-weight: 900;
   color: #ffffff;
   margin-top: 4px;
@@ -550,16 +829,16 @@ body {
   color: var(--accent-gold);
 }
 .budget-total-twd {
-  font-size: 13px;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   margin-top: 2px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .ex-rate-pill {
-  font-size: 11px;
+  font-size: 0.78rem;
   padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
   color: var(--accent-gold);
@@ -567,7 +846,7 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Member Expenditure Bars */
@@ -583,33 +862,33 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 0.88rem;
 }
 .member-tag {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-weight: 700;
 }
 .member-avatar-circle {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 0.8rem;
   background: rgba(255,255,255,0.1);
 }
 .member-val-paid {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-main);
 }
 
-/* Settlement Result Box (誰該給誰多少錢) */
+/* Settlement Result Box */
 .settlement-card {
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.09);
+  border: 1px solid rgba(16, 185, 129, 0.35);
   border-radius: var(--radius-md);
   padding: 14px 16px;
   margin-bottom: 16px;
@@ -619,9 +898,9 @@ body {
   border-color: rgba(59, 130, 246, 0.2);
 }
 .settlement-title {
-  font-size: 12px;
+  font-size: 0.82rem;
   font-weight: 800;
-  color: #34d399;
+  color: #10b981;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -630,17 +909,17 @@ body {
   justify-content: space-between;
 }
 .copy-settlement-btn {
-  font-size: 10px;
-  color: #6ee7b7;
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 3px 8px;
+  font-size: 0.72rem;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  padding: 4px 10px;
   border-radius: var(--radius-full);
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 800;
 }
 .debt-item {
-  font-size: 13px;
+  font-size: 0.9rem;
   line-height: 1.6;
   color: var(--text-main);
   display: flex;
@@ -648,11 +927,11 @@ body {
   gap: 6px;
 }
 .debt-amount-highlight {
-  font-weight: 800;
+  font-weight: 900;
   color: var(--accent-gold);
 }
 
-/* Add Expense Trigger & Expense History */
+/* Action Bars */
 .budget-action-bar {
   display: flex;
   gap: 10px;
@@ -663,10 +942,10 @@ body {
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
   border: none;
-  padding: 12px 16px;
+  padding: 13px 16px;
   border-radius: var(--radius-md);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -679,13 +958,13 @@ body {
   transform: scale(0.98);
 }
 .btn-secondary-action {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  padding: 12px 14px;
+  padding: 13px 14px;
   border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -713,23 +992,23 @@ body {
   gap: 12px;
 }
 .expense-cat-icon {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   background: rgba(59, 130, 246, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 1.35rem;
   flex-shrink: 0;
 }
 .expense-desc h5 {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   color: var(--text-main);
 }
 .expense-desc p {
-  font-size: 11px;
+  font-size: 0.78rem;
   color: var(--text-muted);
   margin-top: 3px;
 }
@@ -738,23 +1017,24 @@ body {
   flex-shrink: 0;
 }
 .expense-amt-gbp {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 1.05rem;
+  font-weight: 900;
   color: var(--accent-gold);
 }
 .expense-amt-twd {
-  font-size: 11px;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
+  font-weight: 600;
 }
 .expense-del-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 14px;
-  padding: 4px;
+  font-size: 0.78rem;
+  padding: 3px;
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.7;
   margin-top: 4px;
 }
 .expense-del-btn:hover {
@@ -762,15 +1042,20 @@ body {
   color: var(--accent-red);
 }
 
-/* ================= Tab 3: Practical Guide & Stay (指南與住宿) ================= */
+/* ================= Tab 3: Practical Guide & Stay ================= */
 .hotel-card {
   background: linear-gradient(135deg, rgba(29, 39, 66, 0.95), rgba(15, 23, 42, 0.98));
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: 18px 20px;
   margin-bottom: 16px;
   position: relative;
   overflow: hidden;
+}
+body.light-theme .hotel-card {
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
 }
 .hotel-card::after {
   content: '🏨';
@@ -778,7 +1063,7 @@ body {
   right: -10px;
   bottom: -15px;
   font-size: 90px;
-  opacity: 0.07;
+  opacity: 0.08;
   pointer-events: none;
 }
 .hotel-title-row {
@@ -788,22 +1073,26 @@ body {
   margin-bottom: 8px;
 }
 .hotel-name {
-  font-size: 18px;
-  font-weight: 800;
-  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--text-main);
 }
 .hotel-station-badge {
-  font-size: 11px;
+  font-size: 0.75rem;
   padding: 3px 8px;
   background: rgba(59, 130, 246, 0.2);
   color: #60a5fa;
   border-radius: var(--radius-full);
-  font-weight: 700;
+  font-weight: 800;
+}
+body.light-theme .hotel-station-badge {
+  color: #1d4ed8;
+  background: rgba(29, 78, 216, 0.12);
 }
 .hotel-address {
-  font-size: 13px;
+  font-size: 0.88rem;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.6;
   margin-bottom: 12px;
 }
 .hotel-action-buttons {
@@ -812,10 +1101,10 @@ body {
   gap: 8px;
 }
 .hotel-btn {
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -834,44 +1123,48 @@ body {
   border-color: var(--border-subtle);
   color: var(--text-main);
 }
+body.light-theme .hotel-btn.secondary {
+  background: #f1f5f9;
+  border-color: rgba(0, 0, 0, 0.08);
+}
 .hotel-btn:active {
   transform: scale(0.97);
 }
 
-/* Emergency Contacts Quick Cards */
+/* Emergency Grid */
 .emergency-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 8px;
+  gap: 9px;
   margin-bottom: 16px;
 }
 .emergency-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 13px 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .emergency-card.taiwan {
-  border-color: rgba(239, 68, 68, 0.35);
-  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.09);
 }
 .em-info h5 {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 800;
   color: var(--text-main);
 }
 .em-info p {
-  font-size: 11px;
+  font-size: 0.78rem;
   color: var(--text-muted);
   margin-top: 2px;
 }
 .em-call-btn {
-  font-size: 12px;
+  font-size: 0.8rem;
   font-weight: 800;
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: #dc2626;
   color: #ffffff;
   border-radius: var(--radius-full);
@@ -894,9 +1187,9 @@ body {
   overflow: hidden;
 }
 .guide-header {
-  padding: 14px;
-  font-size: 14px;
-  font-weight: 700;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  font-weight: 800;
   color: var(--text-main);
   display: flex;
   align-items: center;
@@ -905,22 +1198,26 @@ body {
   background: rgba(255, 255, 255, 0.02);
 }
 .guide-body {
-  padding: 0 14px 14px;
-  font-size: 13px;
-  line-height: 1.6;
+  padding: 0 16px 14px;
+  font-size: 0.88rem;
+  line-height: 1.65;
   color: var(--text-secondary);
 }
 .guide-body .highlight-box {
   margin-top: 8px;
-  padding: 8px 10px;
-  background: rgba(59, 130, 246, 0.1);
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.12);
   border-left: 3px solid var(--primary);
   border-radius: var(--radius-xs);
   color: #93c5fd;
-  font-size: 12px;
+  font-size: 0.82rem;
+}
+body.light-theme .guide-body .highlight-box {
+  background: rgba(29, 78, 216, 0.08);
+  color: #1e40af;
 }
 
-/* ================= Tab 4: Checklists & Shopping (行前清單與購物) ================= */
+/* ================= Tab 4: Checklists & Shopping ================= */
 .checklist-progress-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -931,8 +1228,8 @@ body {
 .progress-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 800;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
@@ -942,6 +1239,9 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-full);
   overflow: hidden;
+}
+body.light-theme .progress-bar-bg {
+  background: rgba(0, 0, 0, 0.08);
 }
 .progress-bar-fill {
   height: 100%;
@@ -953,7 +1253,7 @@ body {
 .checklist-items {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 .check-item {
   background: var(--bg-card);
@@ -970,19 +1270,22 @@ body {
   background: rgba(255, 255, 255, 0.02);
   border-color: rgba(255, 255, 255, 0.04);
 }
+body.light-theme .check-item.done {
+  background: rgba(0, 0, 0, 0.02);
+}
 .check-item.done .check-title {
   text-decoration: line-through;
   color: var(--text-muted);
 }
 .custom-checkbox {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 6px;
   border: 2px solid var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 0.85rem;
   color: #ffffff;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -992,21 +1295,25 @@ body {
   border-color: #10b981;
 }
 .check-title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.92rem;
+  font-weight: 700;
   color: var(--text-main);
   flex: 1;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 .check-cat {
-  font-size: 10px;
-  padding: 2px 6px;
+  font-size: 0.72rem;
+  padding: 2px 7px;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 4px;
   color: var(--text-muted);
+  font-weight: 700;
+}
+body.light-theme .check-cat {
+  background: rgba(0, 0, 0, 0.05);
 }
 
-/* ================= Bottom Navigation Bar (iOS App Style) ================= */
+/* ================= Bottom Navigation Bar (iOS Style) ================= */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -1024,6 +1331,7 @@ body {
   align-items: center;
   justify-content: space-around;
   z-index: 50;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .nav-tab-btn {
@@ -1041,16 +1349,16 @@ body {
   transition: all 0.2s ease;
 }
 .nav-tab-btn .nav-icon {
-  font-size: 20px;
+  font-size: 1.35rem;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .nav-tab-btn .nav-label {
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 800;
   letter-spacing: 0.2px;
 }
 .nav-tab-btn.active {
-  color: #60a5fa;
+  color: #3b82f6;
 }
 .nav-tab-btn.active .nav-icon {
   transform: translateY(-2px) scale(1.15);
@@ -1063,7 +1371,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(8px);
   z-index: 99;
   display: none;
@@ -1092,11 +1400,14 @@ body {
 }
 
 .sheet-handle {
-  width: 40px;
+  width: 42px;
   height: 4px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   margin: 0 auto 16px;
+}
+body.light-theme .sheet-handle {
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .sheet-header {
@@ -1106,7 +1417,7 @@ body {
   margin-bottom: 18px;
 }
 .sheet-title {
-  font-size: 17px;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--text-main);
 }
@@ -1114,24 +1425,27 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border: none;
   color: var(--text-secondary);
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 1rem;
+}
+body.light-theme .close-modal-btn {
+  background: rgba(0, 0, 0, 0.06);
 }
 
-/* Form Styles */
+/* Forms */
 .form-group {
   margin-bottom: 14px;
 }
 .form-label {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 800;
   color: var(--text-secondary);
   margin-bottom: 6px;
 }
@@ -1142,10 +1456,14 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-main);
-  font-size: 14px;
+  font-size: 0.95rem;
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s ease;
+}
+body.light-theme .form-input,
+body.light-theme .form-select {
+  border-color: rgba(0, 0, 0, 0.12);
 }
 .form-input:focus, .form-select:focus {
   border-color: var(--primary);
@@ -1158,11 +1476,11 @@ body {
 }
 .currency-input-wrap .form-input {
   flex: 1;
-  font-size: 20px;
+  font-size: 1.4rem;
   font-weight: 800;
 }
 .currency-selector {
-  width: 90px;
+  width: 100px;
   font-weight: 800;
 }
 
@@ -1176,35 +1494,38 @@ body {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
-  font-size: 13px;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  font-weight: 600;
+  font-weight: 700;
   transition: all 0.2s ease;
+}
+body.light-theme .member-pill-choice {
+  background: rgba(0, 0, 0, 0.04);
 }
 .member-pill-choice.selected {
   background: rgba(59, 130, 246, 0.2);
   border-color: var(--primary);
-  color: #ffffff;
+  color: var(--text-main);
 }
 
-/* Toast Message */
+/* Toast */
 .toast-msg {
   position: fixed;
   top: 76px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(15, 23, 42, 0.96);
   border: 1px solid rgba(59, 130, 246, 0.4);
   color: #ffffff;
   padding: 10px 18px;
   border-radius: var(--radius-full);
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  font-size: 0.88rem;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   z-index: 100;
   opacity: 0;
   pointer-events: none;
@@ -1212,6 +1533,10 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+body.light-theme .toast-msg {
+  background: #0f172a;
+  color: #ffffff;
 }
 .toast-msg.show {
   opacity: 1;

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-font-size="normal">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="倫敦 2026">
-  <meta name="theme-color" content="#080c16">
+  <meta name="theme-color" content="#070b14">
   <title>🇬🇧 倫敦 2026 自由行 - 多人伴旅手冊 (12天10夜)</title>
 
   <!-- Google Fonts -->
@@ -41,30 +41,73 @@
         </div>
 
         <div class="header-actions">
+          <!-- ☀️ / 🌙 淺色與深色皮膚切換 -->
+          <button class="icon-btn" id="theme-toggle-btn" title="切換深色/淺色外觀">
+            ☀️
+          </button>
+          <!-- 🔤 字體大小快速切換 -->
+          <button class="icon-btn" id="font-size-toggle-btn" title="調整字體大小">
+            🔤
+          </button>
+          <!-- 💱 匯率換算機 -->
           <button class="icon-btn" id="ex-rate-pill" title="匯率換算機">
             💱
           </button>
+          <!-- ⚙️ 旅程備份與管理 -->
           <button class="icon-btn" id="btn-backup-data" title="旅程備份與管理">
             ⚙️
           </button>
         </div>
       </div>
 
-      <!-- Dual Timezone & Live Clocks -->
-      <div class="dual-time-bar">
-        <div class="clock-item">
-          <span class="clock-label">🇬🇧 倫敦:</span>
-          <span class="clock-val" id="clock-london-val">--:--:--</span>
-        </div>
-        <div class="clock-item">
-          <span class="clock-label">🇹🇼 台北:</span>
-          <span class="clock-val" id="clock-tpe-val" style="color: #60a5fa;">--:--</span>
-        </div>
-        <div class="weather-badge">
-          <span>🌧️ 14°C 倫敦</span>
+      <!-- Quick Font Size Control Bar -->
+      <div class="font-scale-bar" id="font-scale-bar">
+        <span class="fs-label">🔤 閱讀字體大小：</span>
+        <div class="fs-pills-wrap">
+          <button class="fs-pill active" data-size="normal">標準 A</button>
+          <button class="fs-pill" data-size="large">放大 A+</button>
+          <button class="fs-pill" data-size="xlarge">特大 A++</button>
         </div>
       </div>
     </header>
+
+    <!-- 🌟 Hero Status Dashboard (超醒目倫敦 vs 台北時間 + 倫敦即時天氣) -->
+    <section class="time-weather-hero">
+      <div class="hero-clocks-grid">
+        <!-- 🇬🇧 London Primary Hero Clock -->
+        <div class="hero-clock-card primary-clock">
+          <div class="clock-card-top">
+            <span class="clock-flag-tag">🇬🇧 倫敦時間 (GMT+1)</span>
+            <span class="clock-status-dot" title="連線同步中"></span>
+          </div>
+          <div class="clock-hero-time" id="hero-london-time">--:--:--</div>
+          <div class="clock-hero-date" id="hero-london-date">----年--月--日</div>
+        </div>
+
+        <!-- Side Column: 🇹🇼 Taipei Comparative Clock & London Weather -->
+        <div class="hero-side-column">
+          <!-- Taipei Clock -->
+          <div class="hero-clock-card secondary-clock">
+            <div class="clock-card-top">
+              <span class="clock-flag-tag">🇹🇼 台北 (快 7h)</span>
+            </div>
+            <div class="clock-side-time" id="hero-tpe-time">--:--</div>
+          </div>
+
+          <!-- London Weather Widget -->
+          <div class="hero-weather-card">
+            <div class="weather-row-top">
+              <span class="weather-big-icon">🌧️</span>
+              <div class="weather-temp-wrap">
+                <span class="weather-temp">14°C</span>
+                <span class="weather-city">倫敦 ‧ 陰雨</span>
+              </div>
+            </div>
+            <div class="weather-tip-pill">☂️ 降雨率 40% ‧ 帶傘防風</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Main Content Area -->
     <main class="main-content">
@@ -230,7 +273,6 @@
         </div>
 
         <form id="form-add-expense" onsubmit="window.londonApp.handleSaveExpense(event)">
-          <!-- 金額與幣別 -->
           <div class="form-group">
             <label class="form-label">支出金額</label>
             <div class="currency-input-wrap">
@@ -242,7 +284,6 @@
             </div>
           </div>
 
-          <!-- 分類與日期 -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="form-group">
               <label class="form-label">費用分類</label>
@@ -262,13 +303,11 @@
             </div>
           </div>
 
-          <!-- 說明 -->
           <div class="form-group">
             <label class="form-label">項目備忘 / 地點</label>
             <input type="text" id="expense-desc-input" class="form-input" placeholder="例如：Flat Iron 牛排、Oyster 加值">
           </div>
 
-          <!-- 付款人 -->
           <div class="form-group">
             <label class="form-label">誰先掏錢代墊？(付款人)</label>
             <select id="expense-payer-select" class="form-select">
@@ -276,7 +315,6 @@
             </select>
           </div>
 
-          <!-- 分攤成員 -->
           <div class="form-group">
             <label class="form-label">哪些人一起平分？(點選勾選)</label>
             <div class="member-select-pills" id="expense-split-members">
@@ -335,7 +373,7 @@
       <div class="modal-sheet">
         <div class="sheet-handle"></div>
         <div class="sheet-header">
-          <div class="sheet-title">⚙️ 旅程資料備份與分享</div>
+          <div class="sheet-title">⚙️ 旅程資料備份與管理</div>
           <button class="close-modal-btn">✕</button>
         </div>
 

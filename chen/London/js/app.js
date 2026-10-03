@@ -21,6 +21,7 @@
   // 3. 初始化載入
   function init() {
     loadSavedData();
+    setupThemeAndFontSize();
     setupEventListeners();
     setupClocks();
     renderCurrentTab();
@@ -56,7 +57,79 @@
     }
   }
 
-  // 4. 雙時區時鐘與天氣更新
+  // 4. 外觀主題與字體大小管理
+  function setupThemeAndFontSize() {
+    // 載入儲存的主題 (預設 dark)
+    const savedTheme = localStorage.getItem('london_travel_theme') || 'dark';
+    applyTheme(savedTheme);
+
+    // 載入儲存的字級 (預設 normal)
+    const savedFs = localStorage.getItem('london_travel_fontsize') || 'normal';
+    applyFontSize(savedFs);
+
+    // 點擊主題切換按鈕 (☀️ / 🌙)
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const current = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+        const target = current === 'light' ? 'dark' : 'light';
+        applyTheme(target);
+        showToast(target === 'light' ? '已切換為：☀️ 淺色白天皮膚' : '已切換為：🌙 深色夜間皮膚');
+      });
+    }
+
+    // 點擊頂部字級圖示 (🔤)：依序循環 normal -> large -> xlarge
+    const fsToggleBtn = document.getElementById('font-size-toggle-btn');
+    if (fsToggleBtn) {
+      fsToggleBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-font-size') || 'normal';
+        const sequence = ['normal', 'large', 'xlarge'];
+        const nextIdx = (sequence.indexOf(current) + 1) % sequence.length;
+        const next = sequence[nextIdx];
+        applyFontSize(next);
+        const labels = { normal: '標準 A', large: '放大 A+', xlarge: '特大 A++' };
+        showToast(`字體大小已設定為：${labels[next]}`);
+      });
+    }
+
+    // 點擊字級膠囊按鈕
+    document.querySelectorAll('.fs-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const size = btn.dataset.size;
+        applyFontSize(size);
+        const labels = { normal: '標準 A', large: '放大 A+', xlarge: '特大 A++' };
+        showToast(`字體大小：${labels[size]}`);
+      });
+    });
+  }
+
+  function applyTheme(theme) {
+    const isLight = theme === 'light';
+    document.body.classList.toggle('light-theme', isLight);
+    localStorage.setItem('london_travel_theme', theme);
+
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (themeBtn) {
+      themeBtn.textContent = isLight ? '🌙' : '☀️';
+      themeBtn.title = isLight ? '切換為深色模式' : '切換為淺色模式';
+    }
+
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', isLight ? '#f1f5f9' : '#070b14');
+    }
+  }
+
+  function applyFontSize(size) {
+    document.documentElement.setAttribute('data-font-size', size);
+    localStorage.setItem('london_travel_fontsize', size);
+
+    document.querySelectorAll('.fs-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.size === size);
+    });
+  }
+
+  // 5. 雙時區時鐘與天氣更新
   function setupClocks() {
     function updateClock() {
       const now = new Date();
@@ -70,6 +143,15 @@
         second: '2-digit'
       });
 
+      // 倫敦完整日期 (Europe/London)
+      const londonDateStr = now.toLocaleDateString('zh-TW', {
+        timeZone: 'Europe/London',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long'
+      });
+
       // 台北時間 (Asia/Taipei)
       const tpeTimeStr = now.toLocaleTimeString('zh-TW', {
         timeZone: 'Asia/Taipei',
@@ -78,17 +160,21 @@
         minute: '2-digit'
       });
 
-      const londonEl = document.getElementById('clock-london-val');
-      const tpeEl = document.getElementById('clock-tpe-val');
-      if (londonEl) londonEl.textContent = londonTimeStr;
-      if (tpeEl) tpeEl.textContent = tpeTimeStr;
+      // 更新超醒目 Hero 戰情面板
+      const heroLondonTime = document.getElementById('hero-london-time');
+      const heroLondonDate = document.getElementById('hero-london-date');
+      const heroTpeTime = document.getElementById('hero-tpe-time');
+
+      if (heroLondonTime) heroLondonTime.textContent = londonTimeStr;
+      if (heroLondonDate) heroLondonDate.textContent = londonDateStr;
+      if (heroTpeTime) heroTpeTime.textContent = tpeTimeStr;
     }
 
     updateClock();
     setInterval(updateClock, 1000);
   }
 
-  // 5. 事件監聽設定
+  // 6. 事件監聽設定
   function setupEventListeners() {
     // 底部導覽切換
     const tabButtons = document.querySelectorAll('.nav-tab-btn');
