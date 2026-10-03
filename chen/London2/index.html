@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-font-size="normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="倫敦 2026">
+  <meta name="theme-color" content="#070b14">
+  <title>🇬🇧 倫敦 2026 自由行 - 多人伴旅手冊 (12天10夜)</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Ambient Light Effects -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Mobile Viewport Container -->
+  <div id="app-viewport">
+
+    <!-- Top Sticky Header -->
+    <header class="top-header">
+      <div class="header-row">
+        <div class="brand-info">
+          <span class="brand-flag">🇬🇧</span>
+          <div class="brand-titles">
+            <h1>
+              <span>倫敦自由行</span>
+              <span class="brand-badge">12天10夜</span>
+            </h1>
+            <div class="brand-subtitle">帕丁頓進駐 ‧ 德德 & 大熊 伴旅手冊</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <!-- ☀️ / 🌙 淺色與深色皮膚切換 -->
+          <button class="icon-btn" id="theme-toggle-btn" title="切換深色/淺色外觀">
+            ☀️
+          </button>
+          <!-- 🔤 字體大小快速切換 -->
+          <button class="icon-btn" id="font-size-toggle-btn" title="調整字體大小">
+            🔤
+          </button>
+          <!-- 💱 匯率換算機 -->
+          <button class="icon-btn" id="ex-rate-pill" title="匯率換算機">
+            💱
+          </button>
+          <!-- ⚙️ 旅程備份與管理 -->
+          <button class="icon-btn" id="btn-backup-data" title="旅程備份與管理">
+            ⚙️
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Font Size Control Bar -->
+      <div class="font-scale-bar" id="font-scale-bar">
+        <span class="fs-label">🔤 閱讀字體大小：</span>
+        <div class="fs-pills-wrap">
+          <button class="fs-pill active" data-size="normal">標準 A</button>
+          <button class="fs-pill" data-size="large">放大 A+</button>
+          <button class="fs-pill" data-size="xlarge">特大 A++</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 🌟 Hero Status Dashboard (超醒目倫敦 vs 台北時間 + 倫敦即時天氣) -->
+    <section class="time-weather-hero">
+      <div class="hero-clocks-grid">
+        <!-- 🇬🇧 London Primary Hero Clock -->
+        <div class="hero-clock-card primary-clock">
+          <div class="clock-card-top">
+            <span class="clock-flag-tag">🇬🇧 倫敦時間 (GMT+1)</span>
+            <span class="clock-status-dot" title="連線同步中"></span>
+          </div>
+          <div class="clock-hero-time" id="hero-london-time">--:--:--</div>
+          <div class="clock-hero-date" id="hero-london-date">----年--月--日</div>
+        </div>
+
+        <!-- Side Column: 🇹🇼 Taipei Comparative Clock & London Weather -->
+        <div class="hero-side-column">
+          <!-- Taipei Clock -->
+          <div class="hero-clock-card secondary-clock">
+            <div class="clock-card-top">
+              <span class="clock-flag-tag">🇹🇼 台北 (快 7h)</span>
+            </div>
+            <div class="clock-side-time" id="hero-tpe-time">--:--</div>
+          </div>
+
+          <!-- London Weather Widget -->
+          <div class="hero-weather-card">
+            <div class="weather-row-top">
+              <span class="weather-big-icon">🌧️</span>
+              <div class="weather-temp-wrap">
+                <span class="weather-temp">14°C</span>
+                <span class="weather-city">倫敦 ‧ 陰雨</span>
+              </div>
+            </div>
+            <div class="weather-tip-pill">☂️ 降雨率 40% ‧ 帶傘防風</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- ================= Tab 1: 行程表 (Itinerary) ================= -->
+      <section id="tab-itinerary" class="tab-pane active">
+        <!-- Day Navigation Pills -->
+        <div class="itinerary-scroll-nav" id="day-pill-container">
+          <!-- Rendered by JS: D1 ~ D12 -->
+        </div>
+
+        <!-- Day Overview Banner -->
+        <div class="day-banner-card" id="day-banner-content">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Day Schedule Content -->
+        <div id="day-schedule-content">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Day Spots & Maps Grid -->
+        <div id="day-places-content">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ================= Tab 2: 多人記帳分帳 (Budget & Splitwise) ================= -->
+      <section id="tab-budget" class="tab-pane">
+        <!-- Budget Total Card -->
+        <div class="budget-summary-card">
+          <div class="budget-header-flex">
+            <div>
+              <div class="budget-total-label">總旅費支出 (多人合計)</div>
+              <div class="budget-total-amt" id="budget-total-gbp-val">£ 0.00</div>
+              <div class="budget-total-twd" id="budget-total-twd-val">≈ NT$ 0</div>
+            </div>
+            <div class="ex-rate-pill" id="current-ex-rate-display" onclick="window.londonApp.updateQuickConvert(10)">
+              匯率 1 : 42.15 ✏️
+            </div>
+          </div>
+
+          <!-- Member Spend Breakdown -->
+          <div class="members-spend-box" id="members-spend-box">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Settlement Result Card (誰該給誰多少錢) -->
+        <div id="settlement-results-box">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="budget-action-bar">
+          <button class="btn-primary-action" id="btn-add-expense-trigger">
+            <span>＋</span> 新增花費紀錄
+          </button>
+          <button class="btn-secondary-action" onclick="window.londonApp.openAddMemberModal()">
+            <span>👤</span> 新增旅伴
+          </button>
+        </div>
+
+        <!-- Expense History -->
+        <div class="section-title">
+          <span>🧾 旅費支出流水帳</span>
+        </div>
+        <div class="expense-list" id="expense-history-list">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ================= Tab 3: 指南與住宿 (Guide & Stay) ================= -->
+      <section id="tab-guide" class="tab-pane">
+        <!-- Hotel Accommodation Card -->
+        <div id="guide-hotel-content">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Emergency Contacts Section -->
+        <div class="section-title">
+          <span>🚨 緊急救助與駐外代表處 (點擊直撥)</span>
+        </div>
+        <div class="emergency-grid" id="guide-emergency-list">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Transport Tips Section -->
+        <div class="section-title" style="margin-top: 18px;">
+          <span>🚇 交通規則與省錢撇步</span>
+        </div>
+        <div class="guide-accordion" id="guide-transport-list">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Travel Tips Section -->
+        <div class="section-title" style="margin-top: 18px;">
+          <span>💡 英倫在地旅遊錦囊</span>
+        </div>
+        <div class="guide-accordion" id="guide-tips-list">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ================= Tab 4: 行李清單與購物願望 (Checklist) ================= -->
+      <section id="tab-checklist" class="tab-pane">
+        <!-- Progress Bar -->
+        <div class="checklist-progress-card" id="checklist-progress-box">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Checklist Items -->
+        <div class="section-title">
+          <span>🎒 行前必備行李與證件打卡</span>
+        </div>
+        <div class="checklist-items" id="checklist-items-container">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Shopping Wishlist -->
+        <div class="section-title" style="margin-top: 24px;">
+          <span>🛍️ 多人伴手禮與代購願望清單</span>
+        </div>
+        <div class="checklist-items" id="shopping-items-container">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar (iOS App Tab Bar) -->
+    <nav class="bottom-nav">
+      <button class="nav-tab-btn active" data-tab="itinerary">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">每日行程</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="budget">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">多人分帳</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="guide">
+        <span class="nav-icon">🏨</span>
+        <span class="nav-label">住宿指南</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="checklist">
+        <span class="nav-icon">🎒</span>
+        <span class="nav-label">裝備清單</span>
+      </button>
+    </nav>
+
+    <!-- ================= Modals ================= -->
+
+    <!-- Modal 1: 新增花費彈窗 -->
+    <div class="modal-overlay" id="modal-add-expense">
+      <div class="modal-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title">🧾 新增一筆花費</div>
+          <button class="close-modal-btn">✕</button>
+        </div>
+
+        <form id="form-add-expense" onsubmit="window.londonApp.handleSaveExpense(event)">
+          <div class="form-group">
+            <label class="form-label">支出金額</label>
+            <div class="currency-input-wrap">
+              <input type="number" id="expense-amount-input" class="form-input" placeholder="0.00" step="0.01" required autofocus>
+              <select id="expense-currency-select" class="form-select currency-selector">
+                <option value="GBP">£ 英鎊</option>
+                <option value="TWD">NT$ 台幣</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">費用分類</label>
+              <select id="expense-cat-select" class="form-select">
+                <option value="餐飲">🍽️ 餐飲美食</option>
+                <option value="交通">🚇 地鐵交通</option>
+                <option value="門票">🎫 景點門票</option>
+                <option value="購物">🛍️ 伴手購物</option>
+                <option value="住宿">🏨 飯店住宿</option>
+                <option value="其他">📦 其他雜項</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">消費日期</label>
+              <input type="text" id="expense-date-input" class="form-input" value="2026/10/04">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">項目備忘 / 地點</label>
+            <input type="text" id="expense-desc-input" class="form-input" placeholder="例如：Flat Iron 牛排、Oyster 加值">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">誰先掏錢代墊？(付款人)</label>
+            <select id="expense-payer-select" class="form-select">
+              <!-- Rendered by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">哪些人一起平分？(點選勾選)</label>
+            <div class="member-select-pills" id="expense-split-members">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary-action" style="width: 100%; margin-top: 14px; padding: 14px;">
+            確認記錄此筆花費
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal 2: 即時匯率換算機 -->
+    <div class="modal-overlay" id="modal-currency">
+      <div class="modal-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title">💱 匯率換算與自訂</div>
+          <button class="close-modal-btn">✕</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">自訂目前英鎊匯率 (1 GBP = ? TWD)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="number" id="input-custom-exrate" class="form-input" step="0.05" value="42.15">
+            <button type="button" class="btn-primary-action" style="flex: 0 0 80px;" onclick="window.londonApp.handleSaveExchangeRate()">
+              儲存
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.04); border-radius: 14px; border: 1px solid var(--border-subtle);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">即時隨手算</div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="flex: 1;">
+              <span style="font-size: 11px; color: var(--text-muted);">英鎊 (£)</span>
+              <input type="number" id="convert-input-gbp" class="form-input" value="10" 
+                oninput="window.londonApp.updateQuickConvert(this.value)">
+            </div>
+            <span style="font-size: 20px; color: var(--text-muted); margin-top: 12px;">➔</span>
+            <div style="flex: 1;">
+              <span style="font-size: 11px; color: var(--text-muted);">折合新台幣 (TWD)</span>
+              <div id="convert-result-twd" style="font-size: 18px; font-weight: 800; color: var(--accent-gold); padding: 12px 0;">
+                ≈ NT$ 422
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 3: 旅程備份與重設 -->
+    <div class="modal-overlay" id="modal-backup">
+      <div class="modal-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-title">⚙️ 旅程資料備份與管理</div>
+          <button class="close-modal-btn">✕</button>
+        </div>
+
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+          此網頁支援<strong>離線隨身儲存 (Local Storage)</strong>，在沒有網路時也能照常查看行程與記帳。您可以將資料匯出成 JSON 傳給旅伴，或在換手機時直接匯入！
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button class="btn-primary-action" onclick="window.londonApp.exportTripJson()">
+            📥 下載旅程備份檔案 (JSON)
+          </button>
+
+          <label class="btn-secondary-action" style="cursor: pointer; justify-content: center;">
+            📤 匯入備份檔案 (JSON)
+            <input type="file" accept=".json" style="display: none;" onchange="window.londonApp.importTripJson(event)">
+          </label>
+
+          <button class="btn-secondary-action" style="color: var(--accent-red); border-color: rgba(239, 68, 68, 0.3); justify-content: center; margin-top: 10px;" onclick="window.londonApp.resetToDefault()">
+            ⚠️ 還原原廠 SPEC 行程 (清除自訂記錄)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-msg" id="app-toast"></div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
